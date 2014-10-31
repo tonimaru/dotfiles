@@ -140,7 +140,7 @@ if 1
     let g:quickrun_config['watchdogs_checker/_' ]['outputter/quickfix/open_cmd'] = ''
     let g:quickrun_config['watchdogs_checker/_' ]['runner/vimproc/updatetime'] = 40
 
-    let g:watchdogs_check_BufWritePost_enables = { 'javascript': 1, }
+    let g:watchdogs_check_BufWritePost_enables = { 'cpp': 1, 'javascript': 1, }
 
     let g:haskell_conceal = 0
 
@@ -152,6 +152,12 @@ if 1
     let g:brightest#highlight['group'] = 'VimrcBrightest'
     let g:brightest#highlight['format'] = '\(^\|\W\zs\)%s\(\ze\W\|$\)'
 
+    let g:marching_clang_command_option = "-std=c++1y"
+    let g:marching_enable_neocomplete = 1
+    if !executable('clang')
+        let g:marching_backend = 'sywnc_wandbox'
+    endif
+
     if has('vim_starting')
         execute 'set runtimepath+='.s:neobundle_path
     endif
@@ -161,8 +167,8 @@ if 1
     NeoBundle 'Shougo/neomru.vim'
     NeoBundle 'altercation/vim-colors-solarized'
     NeoBundle 'blueyed/vim-diminactive'
+    NeoBundle 'cohama/vim-hier'
     NeoBundle 'itchyny/lightline.vim'
-    NeoBundle 'jceb/vim-hier'
     NeoBundle 'kana/vim-repeat'
     NeoBundle 'kana/vim-smartword'
     NeoBundle 'kana/vim-textobj-entire', {'depends': 'kana/vim-textobj-user'}
@@ -185,7 +191,7 @@ if 1
     NeoBundleLazy 'Shougo/vesting'
     NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': 'Shougo/unite.vim'}
     NeoBundleLazy 'Shougo/vimproc.vim', {'build': {'others': 'make'}}
-    NeoBundleLazy 'Shougo/vimshell.vim', {'depends': 'Shougo/vimproc.vim'}
+    NeoBundleLazy 'Shougo/vimshell.vim', {'depends': ['Shougo/vimproc.vim', 'Shougo/unite.vim']}
     NeoBundleLazy 'clausreinke/typescript-tools', {'build': {'others': '[ -x npm ]; npm install -g'}}
     NeoBundleLazy 'cohama/agit.vim'
     NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
@@ -201,6 +207,7 @@ if 1
     NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'mattn/webapi-vim'
     NeoBundleLazy 'osyo-manga/unite-vimpatches', {'depends': 'Shougo/unite.vim', 'autoload': {'unite_source': 'vimpatches'}}
+    NeoBundleLazy 'osyo-manga/vim-marching', {'autoload': {'filetypes': ['cpp']}}
     NeoBundleLazy 'osyo-manga/vim-precious', {'depends': 'Shougo/context_filetype.vim', 'autoload': {'filetypes': ['vim', 'markdown']}}
     NeoBundleLazy 'othree/html5.vim', {'autoload': {'filetypes': ['html']}}
     NeoBundleLazy 'pangloss/vim-javascript', {'autoload': {'filetypes': ['javascript']}}
