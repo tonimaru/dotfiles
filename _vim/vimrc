@@ -1,3 +1,5 @@
+if 1
+
 scriptencoding utf-8
 
 let s:is_mswin = has('win95') || has('win16') || has('win32') || has('win64')
@@ -125,10 +127,7 @@ let g:eskk#start_completion_length = 2
 let g:eskk#auto_save_dictionary_at_exit = 0
 
 if executable('google-ime-skk')
-    let g:eskk#server = {
-                \       'host': 'localhost',
-                \       'port': 55100,
-                \   }
+    let g:eskk#server = { 'host': 'localhost', 'port': 55100, }
 
     call system('ps x | grep google-ime-skk | grep -v grep')
     if v:shell_error
@@ -137,10 +136,9 @@ if executable('google-ime-skk')
 endif
 
 let g:quickrun_config = {}
-let g:quickrun_config['watchdogs_checker/_' ] = {
-            \       'outputter/quickfix/open_cmd': '',
-            \       'runner/vimproc/updatetime': 40,
-            \   }
+let g:quickrun_config['watchdogs_checker/_' ] = {}
+let g:quickrun_config['watchdogs_checker/_' ]['outputter/quickfix/open_cmd'] = ''
+let g:quickrun_config['watchdogs_checker/_' ]['runner/vimproc/updatetime'] = 40
 
 let g:watchdogs_check_BufWritePost_enables = { 'javascript': 1, }
 
@@ -150,10 +148,9 @@ let g:diminactive_use_colorcolumn = 0
 let g:diminactive_use_syntax = 1
 
 let g:brightest#pattern = '\w\+'
-let g:brightest#highlight = {
-            \       'group': 'VimrcBrightest',
-            \       'format': '\(^\|\W\zs\)%s\(\ze\W\|$\)',
-            \   }
+let g:brightest#highlight = {}
+let g:brightest#highlight['group'] = 'VimrcBrightest'
+let g:brightest#highlight['format'] = '\(^\|\W\zs\)%s\(\ze\W\|$\)'
 
 if has('vim_starting')
     execute 'set runtimepath+='.s:neobundle_path
@@ -472,3 +469,4 @@ function! s:t.cpp.get_path()
     return s:include_paths(s:c_cmd, 'c++', '')
 endfunction
 
+endif
