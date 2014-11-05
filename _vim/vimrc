@@ -138,71 +138,87 @@ if 1
     let g:quickrun_config = {}
 
     let s:pp = {'name': 'pp'}
-    function! s:pp.extend_to(q) dict
-        let a:q['cmdopt'] = get(a:q, 'cmdopt', '').' -E -C'
-        let a:q['exec'] = '%c %o %s'
+    function! s:pp.set_to(config) dict
+        let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -E'
+        let a:config['exec'] = '%c %o %s'
+        return a:config
     endfunction
 
     let s:asm = {'name': 'asm'}
-    function! s:asm.extend_to(q) dict
-        let a:q['cmdopt'] = get(a:q, 'cmdopt', '').' -S'
-        " TODO
-        let a:q['exec'] = ['%c %o %s -o -']
+    function! s:asm.set_to(config) dict
+        let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -S'
+        let a:config['exec'] = ['%c %o %s -o -']
+        return a:config
     endfunction
 
-    function! s:cxxstd(q) dict
-        let a:q['cmdopt'] = get(a:q, 'cmdopt', '').' -std=c++'.self['name']
+    function! s:cxxstd(config) dict
+        let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -std=c++'.self['name']
+        return a:config
     endfunction
-    let s:cxx03 = {'name': '03', 'extend_to': function('s:cxxstd')}
-    let s:cxx0x = {'name': '0x', 'extend_to': function('s:cxxstd')}
-    let s:cxx11 = {'name': '11', 'extend_to': function('s:cxxstd')}
-    let s:cxx1y = {'name': '1y', 'extend_to': function('s:cxxstd')}
-    let s:cxx14 = {'name': '14', 'extend_to': function('s:cxxstd')}
+    let s:cxx03 = {'name': '03', 'set_to': function('s:cxxstd')}
+    let s:cxx0x = {'name': '0x', 'set_to': function('s:cxxstd')}
+    let s:cxx11 = {'name': '11', 'set_to': function('s:cxxstd')}
+    let s:cxx1y = {'name': '1y', 'set_to': function('s:cxxstd')}
+    let s:cxx14 = {'name': '14', 'set_to': function('s:cxxstd')}
 
+    " TODO libcxx path
     let s:libcxx = {'name': 'libcxx'}
-    function! s:libcxx.extend_to(q) dict
-        let a:q['cmdopt'] = get(a:q, 'cmdopt', '').' -stdlib=libc++'
-        if a:q['cmdopt'] !~# '\(^\|\s\+\)-[ES]\(\s\+\|$\)'
-            let a:q['cmdopt'] .= ' -L'.$HOME.'local/llvm/lib -lc++abi'
+    function! s:libcxx.set_to(config) dict
+        let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -stdlib=libc++'
+
+        if a:config['cmdopt'] !~# '\(^\|\s\+\)-[ES]\(\s\+\|$\)'
+            let a:config['cmdopt'] .= ' -L'.$HOME.'local/llvm/lib -lc++abi'
         endif
+        return a:config
     endfunction
 
     let s:cxxdst = [s:pp, s:asm]
     let s:cxxstd = [s:cxx03, s:cxx0x, s:cxx11, s:cxx1y, s:cxx14]
     let s:cxxlib = [s:libcxx]
 
-    " TODO function name
-    function! s:f(c, a)
+    function! s:_apply(current, arg)
+        let name = printf('%s/%s', a:current['name'], a:arg['name'])
+        let config = deepcopy(a:current['config'])
+        let config['type'] = a:current['name']
+        return {'name': name, 'config': a:arg.set_to(config)}
+    endfunction
+
+    function s:_tail(l)
+        return a:l[1:]
+    endfunction
+
+    function! s:_build_impl(current, args_list)
         let r = []
-        for a in a:a
-            for b in a
-                let n = a:c['name'].'/'.b['name']
-                let q = deepcopy(a:c.q)
-                let q['type'] = a:c.name
-                call b.extend_to(q)
-                let v = {'name': n, 'q': q}
+        let next = copy(a:args_list)
+        for args in a:args_list
+            let next = s:_tail(next)
+            for arg in args
+                let v = s:_apply(a:current, arg)
                 call add(r, v)
-                call extend(r, s:f(v, a:a[index(a:a, a)+1:]))
+                call extend(r, s:_build_impl(v, next))
             endfor
         endfor
         return r
     endfunction
 
-    function! s:a(l)
-        for v in a:l
-            let g:quickrun_config[v['name']] = v['q']
+    function! s:_set_quickrun_config(root, arg)
+        let built = s:_build_impl(a:root, a:arg)
+        for v in built
+            let g:quickrun_config[v['name']] = v['config']
         endfor
     endfunction
 
-    function! s:build_quickrun_config(c, a)
-        call s:a(s:f(a:c, a:a))
+    function! s:set_quickrun_configs()
+        if executable('g++')
+            call s:_set_quickrun_config({'name': 'cpp/g++', 'config': {}}, [s:cxxdst, s:cxxstd])
+        endif
+        if executable('clang++')
+            " TODO libcxx path
+            let clang_arg = isdirectory($HOME.'/local/llvm') ? [s:cxxdst, s:cxxstd, s:cxxlib] : [s:cxxdst, s:cxxstd]
+            call s:_set_quickrun_config({'name': 'cpp/clang++', 'config': {}}, clang_arg)
+        endif
     endfunction
-    if executable('g++')
-        call s:build_quickrun_config({'name': 'cpp/g++', 'q': {}}, [s:cxxdst, s:cxxstd])
-    endif
-    if executable('clang++')
-        call s:build_quickrun_config({'name': 'cpp/clang++', 'q': {}}, [s:cxxdst, s:cxxstd, s:cxxlib])
-    endif
+    call s:set_quickrun_configs()
 
     let g:quickrun_config['watchdogs_checker/_' ] = {}
     let g:quickrun_config['watchdogs_checker/_' ]['outputter/quickfix/open_cmd'] = ''
