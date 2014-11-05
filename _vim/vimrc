@@ -136,6 +136,74 @@ if 1
     endif
 
     let g:quickrun_config = {}
+
+    let s:pp = {'name': 'pp'}
+    function! s:pp.extend_to(q) dict
+        let a:q['cmdopt'] = get(a:q, 'cmdopt', '').' -E'
+        let a:q['exec'] = '%c %o %s'
+    endfunction
+
+    let s:asm = {'name': 'asm'}
+    function! s:asm.extend_to(q) dict
+        let a:q['cmdopt'] = get(a:q, 'cmdopt', '').' -S'
+        " TODO
+        let a:q['exec'] = ['%c %o %s -o -']
+    endfunction
+
+    function! s:cxxstd(q) dict
+        let a:q['cmdopt'] = get(a:q, 'cmdopt', '').' -std=c++'.self['name']
+    endfunction
+    let s:cxx03 = {'name': '03', 'extend_to': function('s:cxxstd')}
+    let s:cxx0x = {'name': '0x', 'extend_to': function('s:cxxstd')}
+    let s:cxx11 = {'name': '11', 'extend_to': function('s:cxxstd')}
+    let s:cxx1y = {'name': '1y', 'extend_to': function('s:cxxstd')}
+    let s:cxx14 = {'name': '14', 'extend_to': function('s:cxxstd')}
+
+    let s:libcxx = {'name': 'libcxx'}
+    function! s:libcxx.extend_to(q) dict
+        let a:q['cmdopt'] = get(a:q, 'cmdopt', '').' -stdlib=libc++'
+        if a:q['cmdopt'] !~# '\(^\|\s\+\)-[ES]\(\s\+\|$\)'
+            let a:q['cmdopt'] .= ' -L'.$HOME.'local/llvm/lib -lc++abi'
+        endif
+    endfunction
+
+    let s:cxxdst = [s:pp, s:asm]
+    let s:cxxstd = [s:cxx03, s:cxx0x, s:cxx11, s:cxx1y, s:cxx14]
+    let s:cxxlib = [s:libcxx]
+
+    " TODO function name
+    function! s:f(c, a)
+        let r = []
+        for a in a:a
+            for b in a
+                let n = a:c['name'].'/'.b['name']
+                let q = deepcopy(a:c.q)
+                let q['type'] = a:c.name
+                call b.extend_to(q)
+                let v = {'name': n, 'q': q}
+                call add(r, v)
+                call extend(r, s:f(v, a:a[index(a:a, a)+1:]))
+            endfor
+        endfor
+        return r
+    endfunction
+
+    function! s:a(l)
+        for v in a:l
+            let g:quickrun_config[v['name']] = v['q']
+        endfor
+    endfunction
+
+    function! s:build_quickrun_config(c, a)
+        call s:a(s:f(a:c, a:a))
+    endfunction
+    if executable('g++')
+        call s:build_quickrun_config({'name': 'cpp/g++', 'q': {}}, [s:cxxdst, s:cxxstd])
+    endif
+    if executable('clang++')
+        call s:build_quickrun_config({'name': 'cpp/clang++', 'q': {}}, [s:cxxdst, s:cxxstd, s:cxxlib])
+    endif
+
     let g:quickrun_config['watchdogs_checker/_' ] = {}
     let g:quickrun_config['watchdogs_checker/_' ]['outputter/quickfix/open_cmd'] = ''
     let g:quickrun_config['watchdogs_checker/_' ]['runner/vimproc/updatetime'] = 40
@@ -206,7 +274,8 @@ if 1
     NeoBundleLazy 'marijnh/tern_for_vim', {'autoload': {'filetypes': ['javascript', 'coffee']},'disabled': !has('python') || !executable('npm'), 'build': {'others': '[ -x npm ]; npm install -g'}}
     NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'mattn/webapi-vim'
-    NeoBundleLazy 'osyo-manga/unite-vimpatches', {'depends': 'Shougo/unite.vim', 'autoload': {'unite_source': 'vimpatches'}}
+    NeoBundleLazy 'osyo-manga/unite-vimpatches', {'autoload': {'unite_source': 'vimpatches'}}
+    NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'autoload': {'unite_source': 'quickrun_config'}}
     NeoBundleLazy 'osyo-manga/vim-marching', {'autoload': {'filetypes': ['cpp']}}
     NeoBundleLazy 'osyo-manga/vim-precious', {'depends': 'Shougo/context_filetype.vim', 'autoload': {'filetypes': ['vim', 'markdown']}}
     NeoBundleLazy 'othree/html5.vim', {'autoload': {'filetypes': ['html']}}
@@ -266,13 +335,6 @@ if 1
         call neobundle#untap()
     endif
 
-
-    " imap <C-H>
-    " imap <C-K>
-    " imap <C-Q>
-    " imap <C-Y>
-    " imap <C-Z>
-
     nnoremap j gj
     nnoremap gj j
 
@@ -308,6 +370,7 @@ if 1
     nnoremap <silent> [unite]fm :<C-u>Unite neomru/file<CR>
     nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create<CR>
     nnoremap <silent> [unite]l :<C-u>Unite line<CR>
+    nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
 
     nmap [prefix]vf [vimfiler]
     nnoremap [vimfiler] <Nop>
@@ -477,3 +540,4 @@ if 1
     endfunction
 
 endif
+
