@@ -139,7 +139,7 @@ if 1
 
     let s:pp = {'name': 'pp'}
     function! s:pp.extend_to(q) dict
-        let a:q['cmdopt'] = get(a:q, 'cmdopt', '').' -E'
+        let a:q['cmdopt'] = get(a:q, 'cmdopt', '').' -E -C'
         let a:q['exec'] = '%c %o %s'
     endfunction
 
