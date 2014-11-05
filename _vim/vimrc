@@ -290,8 +290,8 @@ if 1
     NeoBundleLazy 'marijnh/tern_for_vim', {'autoload': {'filetypes': ['javascript', 'coffee']},'disabled': !has('python') || !executable('npm'), 'build': {'others': '[ -x npm ]; npm install -g'}}
     NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'mattn/webapi-vim'
-    NeoBundleLazy 'osyo-manga/unite-vimpatches', {'autoload': {'unite_source': 'vimpatches'}}
     NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'autoload': {'unite_source': 'quickrun_config'}}
+    NeoBundleLazy 'osyo-manga/unite-vimpatches', {'autoload': {'unite_source': 'vimpatches'}}
     NeoBundleLazy 'osyo-manga/vim-marching', {'autoload': {'filetypes': ['cpp']}}
     NeoBundleLazy 'osyo-manga/vim-precious', {'depends': 'Shougo/context_filetype.vim', 'autoload': {'filetypes': ['vim', 'markdown']}}
     NeoBundleLazy 'othree/html5.vim', {'autoload': {'filetypes': ['html']}}
