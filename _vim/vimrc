@@ -183,7 +183,7 @@ if 1
         return {'name': name, 'config': a:arg.set_to(config)}
     endfunction
 
-    function s:_tail(l)
+    function! s:_tail(l)
         return a:l[1:]
     endfunction
 
@@ -262,6 +262,7 @@ if 1
     NeoBundle 'osyo-manga/vim-brightest'
     NeoBundle 'osyo-manga/vim-watchdogs', {'depends': [ 'thinca/vim-quickrun', 'Shougo/vimproc.vim', ]}
     NeoBundle 't9md/vim-textmanip'
+    NeoBundle 'thinca/vim-qfreplace'
     NeoBundle 'thinca/vim-quickrun'
     NeoBundle 'tpope/vim-surround'
     NeoBundle 'tyru/caw.vim'
