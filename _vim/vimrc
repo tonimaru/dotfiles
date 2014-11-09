@@ -11,6 +11,8 @@ if 1
 
     set nowrap
 
+    set hidden
+
     set keywordprg=
 
     set tabstop=4 shiftwidth=4 softtabstop=4
@@ -96,10 +98,10 @@ if 1
         endif
     endif
 
-    let g:unite_source_grep_max_candidates = 2000
+    let g:unite_source_grep_max_candidates = 10000
     if executable('ag')
         let g:unite_source_grep_command = 'ag'
-        let g:unite_source_grep_default_opts = '--line-numbers --nocolor --nogroup --hidden --ignore ''.git'' --ignore ''.hg'' --ignore ''.svn'''
+        let g:unite_source_grep_default_opts = '-a --line-numbers --nocolor --nogroup --hidden --ignore ''.git'' --ignore ''.hg'' --ignore ''.svn'''
         let g:unite_source_grep_recursive_opt = ''
     endif
 
@@ -136,6 +138,13 @@ if 1
     endif
 
     let g:quickrun_config = {}
+
+    let g:quickrun_config['_'] = {}
+    let g:quickrun_config['_']['runner'] = 'vimproc'
+    let g:quickrun_config['_']['runner/vimproc/updatetime'] = 40
+
+    let s:clang_exe = expand($HOME.'/local/llvm/bin/clang++')
+    let s:clang_exe = executable(s:clang_exe) ? s:clang_exe : 'clang++'
 
     let s:pp = {'name': 'pp'}
     function! s:pp.set_to(config) dict
@@ -215,7 +224,7 @@ if 1
         if executable('clang++')
             " TODO libcxx path
             let clang_arg = isdirectory($HOME.'/local/llvm') ? [s:cxxdst, s:cxxstd, s:cxxlib] : [s:cxxdst, s:cxxstd]
-            call s:_set_quickrun_config({'name': 'cpp/clang++', 'config': {}}, clang_arg)
+            call s:_set_quickrun_config({'name': 'cpp/clang++', 'config': {'command': s:clang_exe}}, clang_arg)
         endif
     endfunction
     call s:set_quickrun_configs()
@@ -252,6 +261,7 @@ if 1
     NeoBundle 'altercation/vim-colors-solarized'
     NeoBundle 'blueyed/vim-diminactive'
     NeoBundle 'cohama/vim-hier'
+    NeoBundle 'haya14busa/incsearch.vim'
     NeoBundle 'itchyny/lightline.vim'
     NeoBundle 'kana/vim-repeat'
     NeoBundle 'kana/vim-smartword'
@@ -277,7 +287,7 @@ if 1
     NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': 'Shougo/unite.vim'}
     NeoBundleLazy 'Shougo/vimproc.vim', {'build': {'others': 'make'}}
     NeoBundleLazy 'Shougo/vimshell.vim', {'depends': ['Shougo/vimproc.vim', 'Shougo/unite.vim']}
-    NeoBundleLazy 'clausreinke/typescript-tools', {'build': {'others': '[ -x npm ]; npm install -g'}}
+    NeoBundleLazy 'clausreinke/typescript-tools', {'autoload': {'filetypes': ['typescript']}, 'build': {'others': '[ -x npm ] && npm install -g'}}
     NeoBundleLazy 'cohama/agit.vim'
     NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'dag/vim2hs', {'autoload': {'filetypes': ['haskell']}}
@@ -288,7 +298,7 @@ if 1
     NeoBundleLazy 'kannokanno/vim-helpnew'
     NeoBundleLazy 'kchmck/vim-coffee-script', {'autoload': {'filetypes': ['coffee']}}
     NeoBundleLazy 'leafgarland/typescript-vim'
-    NeoBundleLazy 'marijnh/tern_for_vim', {'autoload': {'filetypes': ['javascript', 'coffee']},'disabled': !has('python') || !executable('npm'), 'build': {'others': '[ -x npm ]; npm install -g'}}
+    NeoBundleLazy 'marijnh/tern_for_vim', {'autoload': {'filetypes': ['javascript', 'coffee']}, 'disabled': !has('python') || !executable('npm'), 'build': {'others': '[ -x npm ] && npm install -g'}}
     NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'mattn/webapi-vim'
     NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'autoload': {'unite_source': 'quickrun_config'}}
@@ -307,8 +317,6 @@ if 1
 
     call neobundle#end()
 
-    NeoBundleCheck
-
     runtime macros/matchit.vim
 
     filetype plugin indent on
@@ -322,7 +330,7 @@ if 1
         endif
     endif
 
-    if neobundle#is_sourced('vim-colors-solarized')
+    if neobundle#is_installed('vim-colors-solarized') && neobundle#is_sourced('vim-colors-solarized')
         if !has('gui_running')
             let g:solarized_termcolors=&t_Co
         endif
@@ -491,6 +499,16 @@ if 1
 
     Au WinEnter * checktime
 
+    function! s:vimenter()
+        NeoBundleCheck
+        if !has('patch-7.4.414')
+            NeoBundleSource
+        endif
+    endfunction
+    Au VimEnter * call s:vimenter()
+    if !has('vim_starting')
+        call s:vimenter()
+    endif
 
 
 
