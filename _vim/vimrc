@@ -49,7 +49,7 @@ if 1
         set ambiwidth=double
     endif
 
-    if has('multi_byte') || has('xim')
+    if exists('+imdisable')
         set imdisable
     endif
 
@@ -65,12 +65,12 @@ if 1
             set guifontwide=Ricty\ Discord\ 12
         endif
 
-        if has('gui_gtk') && has('X11')
+        if exists('+guiheadroom')
             set guiheadroom=0
         endif
     endif
 
-    if has('gui_running') || has('xterm_clipboard')
+    if exists('+clipboard')
         set clipboard=unnamed
         if has('unnamedplus')
             set clipboard+=unnamedplus
@@ -101,7 +101,14 @@ if 1
     let g:unite_source_grep_max_candidates = 10000
     if executable('ag')
         let g:unite_source_grep_command = 'ag'
-        let g:unite_source_grep_default_opts = '-a --line-numbers --nocolor --nogroup --hidden --ignore ''.git'' --ignore ''.hg'' --ignore ''.svn'''
+        let g:unite_source_grep_default_opts = '-a'
+        let g:unite_source_grep_default_opts .= ' --line-numbers'
+        let g:unite_source_grep_default_opts .= ' --nocolor'
+        let g:unite_source_grep_default_opts .= ' --nogroup'
+        let g:unite_source_grep_default_opts .= ' --hidden'
+        let g:unite_source_grep_default_opts .= ' --ignore ''.git'''
+        let g:unite_source_grep_default_opts .= ' --ignore ''.hg'''
+        let g:unite_source_grep_default_opts .= ' --ignore ''.svn'''
         let g:unite_source_grep_recursive_opt = ''
     endif
 
@@ -279,9 +286,11 @@ if 1
     NeoBundle 'vim-jp/vimdoc-ja'
     NeoBundleFetch 'Shougo/neobundle.vim'
     NeoBundleLazy 'Shougo/context_filetype.vim'
+    NeoBundleLazy 'Shougo/junkfile.vim', {'autoload': {'unite_sources': ['junkfile', 'junkfile/new']}}
     NeoBundleLazy 'Shougo/neocomplcache.vim', {'disabled': has('lua'), 'autoload': {'insert': 1}}
     NeoBundleLazy 'Shougo/neocomplete.vim', {'disabled': !has('lua'), 'autoload': {'insert': 1}}
     NeoBundleLazy 'Shougo/neosnippet.vim', {'autoload': {'insert': 1}}
+    NeoBundleLazy 'Shougo/unite-outline', {'autoload': {'unite_sources': 'outline'}}
     NeoBundleLazy 'Shougo/unite.vim'
     NeoBundleLazy 'Shougo/vesting'
     NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': 'Shougo/unite.vim'}
@@ -301,8 +310,8 @@ if 1
     NeoBundleLazy 'marijnh/tern_for_vim', {'autoload': {'filetypes': ['javascript', 'coffee']}, 'disabled': !has('python') || !executable('npm'), 'build': {'others': '[ -x npm ] && npm install -g'}}
     NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'mattn/webapi-vim'
-    NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'autoload': {'unite_source': 'quickrun_config'}}
-    NeoBundleLazy 'osyo-manga/unite-vimpatches', {'autoload': {'unite_source': 'vimpatches'}}
+    NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'autoload': {'unite_sources': 'quickrun_config'}}
+    NeoBundleLazy 'osyo-manga/unite-vimpatches', {'autoload': {'unite_sources': 'vimpatches'}}
     NeoBundleLazy 'osyo-manga/vim-marching', {'autoload': {'filetypes': ['cpp']}}
     NeoBundleLazy 'osyo-manga/vim-precious', {'depends': 'Shougo/context_filetype.vim', 'autoload': {'filetypes': ['vim', 'markdown']}}
     NeoBundleLazy 'othree/html5.vim', {'autoload': {'filetypes': ['html']}}
@@ -362,9 +371,16 @@ if 1
 
     nnoremap j gj
     nnoremap gj j
-
     nnoremap k gk
     nnoremap gk k
+
+    nnoremap <Down> <C-w>j
+    nnoremap <Up> <C-w>k
+    nnoremap <Right> <C-w>l
+    nnoremap <Left> <C-w>h
+
+    nnoremap <S-Right> gt
+    nnoremap <S-Left> gT
 
     nnoremap ; q:
     vnoremap ; q:
@@ -398,6 +414,7 @@ if 1
     nnoremap <silent> [unite]bf :<C-u>Unite buffer<CR>
     nnoremap <silent> [unite]fm :<C-u>Unite neomru/file<CR>
     nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create<CR>
+    nnoremap <silent> [unite]ga :<C-u>Unite grep -no-quit -create -auto-preview -tab<CR>
     nnoremap <silent> [unite]l :<C-u>Unite line<CR>
     nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
 
@@ -437,7 +454,9 @@ if 1
 
     fu! s:operator_replace(type)
         let sel_save = &selection
+        let p_save = &paste
         let &selection = 'inclusive'
+        set paste
 
         let register = v:register != '' ? v:register : '"'
         if a:type =~# "^[vV]$"
@@ -446,6 +465,7 @@ if 1
             exe "normal! `[v`]\"_c\<C-r>".register
         en
 
+        let &paste = p_save
         let &selection = sel_save
     endf
     nnoremap <silent> s :<C-u>set opfunc=<SID>operator_replace<CR>g@
@@ -530,14 +550,12 @@ if 1
         execute "setl path=" . s:path
         let f = get(s:t, a:ft, {})
         if !empty(f)
-            let paths = get(f, 'cache' , [])
-            if empty(paths)
-                let f.cache = f.get_path()
-                let paths = f.cache
+            if !has_key(f, 'cache')
+                let f['cache'] = f.get_path()
             endif
-            for inc in paths
-                execute 'setl path^=' . inc
-            endfo
+            for inc in f['cache']
+                execute printf('setl path+=%s', inc)
+            endfor
         endif
     endfunction
 
@@ -549,7 +567,7 @@ if 1
         en
 
         let sep = has('unix') ? '|' : '\|'
-        let cmd = 'echo '.sep.' '.a:cmd.' '.a:opt.' -Wp,-v -x '.a:lang.' - -fsyntax-only'
+        let cmd = printf('echo %s %s %s -Wp,-v -x %s - -fsyntax-only', sep, a:cmd, a:opt, a:lang)
         let incl_paths = systemlist(cmd)
         if type(incl_paths) == type('') && incl_paths ==# ''
             echom 'error:'.cmd
