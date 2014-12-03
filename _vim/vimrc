@@ -1,5 +1,12 @@
 if 1
 
+    if has('multi_byte')
+        set encoding=utf-8
+        set fileencoding=utf-8
+        set fileencodings=utf-8,euc-jp,cp932
+        set ambiwidth=double
+    endif
+
     scriptencoding utf-8
 
     let s:is_mswin = has('win95') || has('win16') || has('win32') || has('win64')
@@ -17,7 +24,7 @@ if 1
 
     set tabstop=4 shiftwidth=4 softtabstop=4
     set expandtab smarttab
-    set autoindent 
+    set autoindent
 
     set ignorecase smartcase
 
@@ -40,13 +47,6 @@ if 1
 
     if has('smartindent')
         set smartindent
-    endif
-
-    if has('multi_byte')
-        set encoding=utf-8
-        set fileencoding=utf-8
-        set fileencodings=utf-8,euc-jp
-        set ambiwidth=double
     endif
 
     if exists('+imdisable')
@@ -84,7 +84,7 @@ if 1
         if !isdirectory(s:bundle_path)
             silent execute s:is_mswin ? 'md' : '!mkdir -p' s:bundle_path
         endif
-        silent execute '!git clone http://github.com/Shougo/neobundle.vim' s:neobundle_path 
+        silent execute '!git clone http://github.com/Shougo/neobundle.vim' s:neobundle_path
     endfunction
     function! s:neobundle_installed()
         return filereadable(expand(s:neobundle_path . '/README.md'))
@@ -296,18 +296,17 @@ if 1
     NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': 'Shougo/unite.vim'}
     NeoBundleLazy 'Shougo/vimproc.vim', {'build': {'others': 'make'}}
     NeoBundleLazy 'Shougo/vimshell.vim', {'depends': ['Shougo/vimproc.vim', 'Shougo/unite.vim']}
-    NeoBundleLazy 'clausreinke/typescript-tools', {'autoload': {'filetypes': ['typescript']}, 'build': {'others': '[ -x npm ] && npm install -g'}}
     NeoBundleLazy 'cohama/agit.vim'
     NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'dag/vim2hs', {'autoload': {'filetypes': ['haskell']}}
     NeoBundleLazy 'h1mesuke/vim-alignta'
     NeoBundleLazy 'hail2u/vim-css3-syntax', {'autoload': {'filetypes': ['css']}}
     NeoBundleLazy 'jelera/vim-javascript-syntax', {'autoload': {'filetypes': ['javascript']}}
-    NeoBundleLazy 'junegunn/vim-plug', {'disabled': 1}
+    NeoBundleLazy 'junegunn/vim-plug'
+    NeoBundleLazy 'kannokanno/previm'
     NeoBundleLazy 'kannokanno/vim-helpnew'
     NeoBundleLazy 'kchmck/vim-coffee-script', {'autoload': {'filetypes': ['coffee']}}
-    NeoBundleLazy 'leafgarland/typescript-vim'
-    NeoBundleLazy 'marijnh/tern_for_vim', {'autoload': {'filetypes': ['javascript', 'coffee']}, 'disabled': !has('python') || !executable('npm'), 'build': {'others': '[ -x npm ] && npm install -g'}}
+    NeoBundleLazy 'leafgarland/typescript-vim', {'autoload': {'filetypes': ['typescript']}}
     NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'mattn/webapi-vim'
     NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'autoload': {'unite_sources': 'quickrun_config'}}
@@ -416,6 +415,8 @@ if 1
     nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create<CR>
     nnoremap <silent> [unite]ga :<C-u>Unite grep -no-quit -create -auto-preview -tab<CR>
     nnoremap <silent> [unite]l :<C-u>Unite line<CR>
+    nnoremap <silent> [unite]jo :<C-u>Unite junkfile<CR>
+    nnoremap <silent> [unite]jn :<C-u>Unite junkfile/new<CR>
     nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
 
     nmap [prefix]vf [vimfiler]
@@ -596,5 +597,79 @@ if 1
         return s:include_paths(s:c_cmd, 'c++', '')
     endfunction
 
+
+
+    " http://qiita.com/takaakikasai/items/3d4f8a4867364a46dfa3
+	set diffexpr=MyDiff()
+	function MyDiff()
+       let v = s:my_diff(v:fname_in, v:fname_new)
+       call writefile(split(v, '\n'), v:fname_out)
+	endfunction
+
+    function! s:my_diff(path1, path2)
+        let diff_out = s:git_diff(a:path1, a:path2)
+        return s:convert(diff_out)
+    endfunction
+
+    function! s:git_diff(path1, path2)
+        let cmd = printf('git diff --histogram --no-index --no-color -U0 %s %s', a:path1, a:path2)
+        return system(cmd)
+    endfunction
+
+    function! s:action(bs, as)
+        if a:bs ==# '0'
+            return 'a'
+        elseif a:as ==# '0'
+            return 'd'
+        else
+            return 'c'
+        endif
+    endfunction
+
+    function! s:range_str(start, size)
+        let start = str2nr(a:start)
+        let size = str2nr(a:size)
+        if size == 0
+            return string(start)
+        else
+            return printf('%d,%d', start, start+size-1)
+        endif
+    endfunction
+
+    function! s:to_change_command(a1, a2, a3, a4)
+        let before_start = a:a1
+        let before_size = a:a2
+        let after_start = a:a3
+        let after_size = a:a4
+
+        let action = s:action(before_size, after_size)
+        let before = s:range_str(before_start, before_size)
+        let after = s:range_str(after_start, after_size)
+
+        return printf('%s%s%s', before, action, after)
+    endfunction
+
+    let s:pat = '@@ -\(\d\+\)\(,\(\d\+\)\)\? +\(\d\+\)\(,\(\d\+\)\)\? @@.\{-}\ze\n'
+    let s:sub = '\=s:to_change_command(submatch(1), submatch(3), submatch(4), submatch(6))'
+    function! s:convert(diff_out)
+        let out = a:diff_out
+        echom out
+        echom "====="
+        let out = substitute(out, '\%^\(.\|\n\)\{-}\ze@@', '', '')
+        let out = substitute(out, '\n\zs+', '> ', 'g')
+        let out = substitute(out, '\n\zs-', '< ', 'g')
+        echom out
+        echom "====="
+        let out = substitute(out, s:pat, s:sub, 'g')
+        let out = substitute(out, '<[^\n]\{-}\n\zs>', '---\n>', 'g')
+        echom out
+        echom "====="
+        return out
+    endfunction
+
+    let s:local_vimrc = expand(s:dotvim.'/local_vimrc')
+    if filereadable(s:local_vimrc)
+        execute 'source' s:local_vimrc
+    endif
 endif
 
