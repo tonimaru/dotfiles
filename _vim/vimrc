@@ -653,17 +653,11 @@ if 1
     let s:sub = '\=s:to_change_command(submatch(1), submatch(3), submatch(4), submatch(6))'
     function! s:convert(diff_out)
         let out = a:diff_out
-        echom out
-        echom "====="
         let out = substitute(out, '\%^\(.\|\n\)\{-}\ze@@', '', '')
         let out = substitute(out, '\n\zs+', '> ', 'g')
         let out = substitute(out, '\n\zs-', '< ', 'g')
-        echom out
-        echom "====="
         let out = substitute(out, s:pat, s:sub, 'g')
         let out = substitute(out, '<[^\n]\{-}\n\zs>', '---\n>', 'g')
-        echom out
-        echom "====="
         return out
     endfunction
 
