@@ -81,19 +81,26 @@ if 1
     let s:neobundle_path = expand(s:bundle_path . '/neobundle.vim')
     " TODO
     function! s:neobundle_install()
-        if !isdirectory(s:bundle_path)
-            silent execute s:is_mswin ? 'md' : '!mkdir -p' s:bundle_path
+        if confirm('install neobundle?', "yes\nno", 1) == 1
+            if !isdirectory(s:bundle_path)
+                silent execute s:is_mswin ? 'md' : '!mkdir -p' s:bundle_path
+            endif
+            silent execute '!git clone http://github.com/Shougo/neobundle.vim' s:neobundle_path
+            return 1
+        else
+            return 0
         endif
-        silent execute '!git clone http://github.com/Shougo/neobundle.vim' s:neobundle_path
     endfunction
     function! s:neobundle_installed()
         return filereadable(expand(s:neobundle_path . '/README.md'))
     endfunction
 
     if !s:neobundle_installed()
-        call s:neobundle_install()
+        if !s:neobundle_install()
+            finish
+        endif
         if !s:neobundle_installed()
-            echoerr 'neobundle install failed'
+            echo 'neobundle install failed'
             finish
         endif
     endif
