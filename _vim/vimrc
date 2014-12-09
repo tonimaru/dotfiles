@@ -290,6 +290,7 @@ if 1
     NeoBundle 'thinca/vim-quickrun'
     NeoBundle 'tpope/vim-surround'
     NeoBundle 'tyru/caw.vim'
+    NeoBundle 'tyru/open-browser.vim'
     NeoBundle 'vim-jp/vimdoc-ja'
     NeoBundleFetch 'Shougo/neobundle.vim'
     NeoBundleLazy 'Shougo/context_filetype.vim'
@@ -313,6 +314,7 @@ if 1
     NeoBundleLazy 'kannokanno/previm'
     NeoBundleLazy 'kannokanno/vim-helpnew'
     NeoBundleLazy 'kchmck/vim-coffee-script', {'autoload': {'filetypes': ['coffee']}}
+    NeoBundleLazy 'lambdalisue/vim-gista', {'autoload': {'commands': ['Gista'], 'mappings': '<Plug>(gista-', 'unite_sources': 'gista'}}
     NeoBundleLazy 'leafgarland/typescript-vim', {'autoload': {'filetypes': ['typescript']}}
     NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'mattn/webapi-vim'
@@ -359,6 +361,11 @@ if 1
 
     highlight qf_error_ucurl term=bold ctermfg=White ctermbg=Red gui=undercurl guisp=Red
     highlight qf_warning_ucurl term=bold ctermfg=Black ctermbg=Yellow gui=undercurl guisp=Yellow
+
+    highlight DiffAdd term=bold ctermfg=Green ctermbg=DarkGreen guifg=Green
+    highlight DiffChange term=bold ctermfg=Blue ctermbg=DarkBlue guifg=Blue
+    highlight DiffDelete term=bold ctermfg=Magenta ctermbg=DarkRed guifg=Red
+    highlight DiffText term=bold ctermfg=Cyan ctermbg=DarkCyan guifg=White
 
     if neobundle#tap('unite.vim')
         function! neobundle#tapped.hooks.on_source(bundle)
