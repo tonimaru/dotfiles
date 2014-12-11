@@ -157,6 +157,9 @@ if 1
     let g:quickrun_config['_']['runner'] = 'vimproc'
     let g:quickrun_config['_']['runner/vimproc/updatetime'] = 40
 
+    let g:quickrun_config['json'] = {'type': executable('jq') ? 'json/jq' : ''}
+    let g:quickrun_config['json/jq'] = {'command': 'jq', 'exec': '%c "." %s'}
+
     let s:clang_exe = expand($HOME.'/local/llvm/bin/clang++')
     let s:clang_exe = executable(s:clang_exe) ? s:clang_exe : 'clang++'
 
@@ -265,6 +268,10 @@ if 1
         let g:marching_backend = 'sywnc_wandbox'
     endif
 
+    let g:rogue#japanese = 1
+
+    let g:vim_json_syntax_conceal = 0
+
     if has('vim_starting')
         execute 'set runtimepath+='.s:neobundle_path
     endif
@@ -307,12 +314,14 @@ if 1
     NeoBundleLazy 'cohama/agit.vim'
     NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'dag/vim2hs', {'autoload': {'filetypes': ['haskell']}}
+    NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': ['json']}}
     NeoBundleLazy 'h1mesuke/vim-alignta'
     NeoBundleLazy 'hail2u/vim-css3-syntax', {'autoload': {'filetypes': ['css']}}
     NeoBundleLazy 'jelera/vim-javascript-syntax', {'autoload': {'filetypes': ['javascript']}}
     NeoBundleLazy 'junegunn/vim-plug'
     NeoBundleLazy 'kannokanno/previm'
     NeoBundleLazy 'kannokanno/vim-helpnew'
+    NeoBundleLazy 'katono/rogue.vim'
     NeoBundleLazy 'kchmck/vim-coffee-script', {'autoload': {'filetypes': ['coffee']}}
     NeoBundleLazy 'lambdalisue/vim-gista', {'autoload': {'commands': ['Gista'], 'mappings': '<Plug>(gista-', 'unite_sources': 'gista'}}
     NeoBundleLazy 'leafgarland/typescript-vim', {'autoload': {'filetypes': ['typescript']}}
