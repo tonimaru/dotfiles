@@ -147,7 +147,7 @@ if 1
 
         call system('ps x | grep google-ime-skk | grep -v grep')
         if v:shell_error
-            call system('google-ime-skk &')
+            silent! !google-ime-skk &
         endif
     endif
 
@@ -293,8 +293,10 @@ if 1
     NeoBundle 'osyo-manga/vim-brightest'
     NeoBundle 'osyo-manga/vim-watchdogs', {'depends': [ 'thinca/vim-quickrun', 'Shougo/vimproc.vim', ]}
     NeoBundle 't9md/vim-textmanip'
+    NeoBundle 'thinca/vim-prettyprint'
     NeoBundle 'thinca/vim-qfreplace'
     NeoBundle 'thinca/vim-quickrun'
+    NeoBundle 'tpope/vim-fugitive'
     NeoBundle 'tpope/vim-surround'
     NeoBundle 'tyru/caw.vim'
     NeoBundle 'tyru/open-browser.vim'
