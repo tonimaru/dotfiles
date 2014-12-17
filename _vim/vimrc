@@ -258,7 +258,14 @@ if 1
     let g:quickrun_config['watchdogs_checker/_' ]['outputter/quickfix/open_cmd'] = ''
     let g:quickrun_config['watchdogs_checker/_' ]['runner/vimproc/updatetime'] = 40
 
-    let g:watchdogs_check_BufWritePost_enables = { 'cpp': 1, 'javascript': 1, }
+    if executable('vint')
+        let g:quickrun_config['vim/watchdogs_checker'] = {'type': 'watchdogs_checker/vint'}
+        let g:quickrun_config['watchdogs_checker/vint'] = {}
+        let g:quickrun_config['watchdogs_checker/vint']['command'] = 'vint'
+        let g:quickrun_config['watchdogs_checker/vint']['exec'] = '%c %s:p'
+    endif
+
+    let g:watchdogs_check_BufWritePost_enables = { 'cpp': 1, 'javascript': 1, 'vim': 1, }
 
     let g:haskell_conceal = 0
 
@@ -494,9 +501,9 @@ if 1
 
         let register = v:register !=# '' ? v:register : '"'
         if a:type =~# '^[vV]$'
-            execute printf('normal! `<%s`>\"_c%s%s', a:type, "\<C-r>", register)
+            execute printf('normal! `<%s`>"_c%s%s', a:type, "\<C-r>", register)
         else
-            execute printf('normal! `[v`]\"_c%s%s', "\<C-r>", register)
+            execute printf('normal! `[v`]"_c%s%s', "\<C-r>", register)
         endif
 
         let &paste = p_save
