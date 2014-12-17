@@ -138,8 +138,8 @@ if 1
     if !exists('g:neocomplete#force_omni_input_patterns')
         let g:neocomplete#force_omni_input_patterns = {}
     endif
-    let g:neocomplete#force_omni_input_patterns['c'] = '\%(\<\h\w*\>\|\]\|)\|^\)\zs\s*\%\(\.\|->\)'
-    let g:neocomplete#force_omni_input_patterns['cpp'] = '\%(\%(\<\h\w*\>\|\]\|)\|^\)\s*\)\zs\%\(\.\|->\)\|\%(\%(\<\h\w*\>\|^\|[;,()<>]\)\s*\)\zs::'
+    let g:neocomplete#force_omni_input_patterns['c'] = '\v%(<\h\w*>|]|\)|^)\zs\s*%(\.|-\>)'
+    let g:neocomplete#force_omni_input_patterns['cpp'] = '\v%(%(<\h\w*>|]|\)|^)\s*)\zs%(\.|-\>)|%(%(<\h\w*>|^|[;,()<>])\s*)\zs::'
 
     let g:neosnippet#disable_runtime_snippets = { '_': 1, }
     let g:neosnippet#snippets_directory = expand(s:dotvim . '/snippets')
