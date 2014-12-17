@@ -500,7 +500,7 @@ if 1
         set paste
 
         let register = v:register !=# '' ? v:register : '"'
-        if a:type =~# '^[vV]$'
+        if a:type =~# '\v^[vV]$'
             execute printf('normal! `<%s`>"_c%s%s', a:type, "\<C-r>", register)
         else
             execute printf('normal! `[v`]"_c%s%s', "\<C-r>", register)
