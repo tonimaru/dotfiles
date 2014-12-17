@@ -58,7 +58,15 @@ if 1
     endif
 
     if has('gui_running')
-        set go-=a go-=P go-=A go+=c go-=e go-=f go-=i go-=m go+=M go-=g go-=t go-=T go-=r go-=R go-=l go-=L go-=b go-=h go-=v go-=p go-=F
+        function! s:set_go()
+            for v in split('aPAefimgtTrRlLbhvpF', '\zs')
+                execute printf('set guioptions-=%s', v)
+            endfor
+            for v in split('cM', '\zs')
+                execute printf('set guioptions+=%s', v)
+            endfor
+        endfunction
+        call s:set_go()
 
         if filereadable(expand(s:home . '/.fonts/RictyDiscord-Regular.ttf'))
             set guifont=Ricty\ Discord\ 12
@@ -262,7 +270,7 @@ if 1
     let g:brightest#highlight['group'] = 'VimrcBrightest'
     let g:brightest#highlight['format'] = '\(^\|\W\zs\)%s\(\ze\W\|$\)'
 
-    let g:marching_clang_command_option = "-std=c++1y"
+    let g:marching_clang_command_option = '-std=c++1y'
     let g:marching_enable_neocomplete = 1
     if !executable('clang')
         let g:marching_backend = 'sywnc_wandbox'
@@ -478,22 +486,22 @@ if 1
     cmap <C-X>j <Plug>(eskk:toggle)
     cmap <C-X><C-J> <Plug>(eskk:toggle)
 
-    fu! s:operator_replace(type)
+    function! s:operator_replace(type)
         let sel_save = &selection
         let p_save = &paste
         let &selection = 'inclusive'
         set paste
 
-        let register = v:register != '' ? v:register : '"'
-        if a:type =~# "^[vV]$"
-            exe "normal! `<".a:type."`>\"_c\<C-r>".register
-        el
-            exe "normal! `[v`]\"_c\<C-r>".register
-        en
+        let register = v:register !=# '' ? v:register : '"'
+        if a:type =~# '^[vV]$'
+            execute printf('normal! `<%s`>\"_c%s%s', a:type, "\<C-r>", register)
+        else
+            execute printf('normal! `[v`]\"_c%s%s', "\<C-r>", register)
+        endif
 
         let &paste = p_save
         let &selection = sel_save
-    endf
+    endfunction
     nnoremap <silent> s :<C-u>set opfunc=<SID>operator_replace<CR>g@
     vnoremap <silent> s :<C-u>call <SID>operator_replace(visualmode())<CR>
 
@@ -529,10 +537,10 @@ if 1
     Au FileType vimfiler call s:ft_vimfiler()
     function! s:vimfiler_key_wrap(plug)
         if empty(vimfiler#get_marked_files())
-            call feedkeys("\<Plug>(vimfiler_toggle_mark_current_line)", "m")
-            call feedkeys(a:plug, "m")
+            call feedkeys("\<Plug>(vimfiler_toggle_mark_current_line)", 'm')
+            call feedkeys(a:plug, 'm')
         else
-            call feedkeys(a:plug, "m")
+            call feedkeys(a:plug, 'm')
         endif
     endfunction
 
@@ -573,7 +581,7 @@ if 1
     let s:t = {}
 
     function! s:set_path(ft)
-        execute "setl path=" . s:path
+        execute printf('setl path=%s', s:path)
         let f = get(s:t, a:ft, {})
         if !empty(f)
             if !has_key(f, 'cache')
@@ -590,7 +598,7 @@ if 1
     function! s:include_paths(cmd, lang, opt)
         if !executable('echo') || !executable(a:cmd)
             return []
-        en
+        endif
 
         let sep = has('unix') ? '|' : '\|'
         let cmd = printf('echo %s %s %s -Wp,-v -x %s - -fsyntax-only', sep, a:cmd, a:opt, a:lang)
@@ -598,16 +606,16 @@ if 1
         if type(incl_paths) == type('') && incl_paths ==# ''
             echom 'error:'.cmd
             return []
-        en
+        endif
 
         let incl_start_idx = index(incl_paths,  '#include <...> search starts here:') + 1
         let incl_end_idx = index(incl_paths,  'End of search list.') - 1
         if incl_start_idx < incl_end_idx
             let result = incl_paths[incl_start_idx : incl_end_idx]
             return map(result, 'fnameescape(substitute(v:val, ''^\s\+\|\s\+$'', "", "g"))')
-        el
+        else
             return []
-        en
+        endif
     endfunction
 
     let s:c_cmd = executable('gcc') ? 'gcc' : executable('clang') ? 'clang' :  ''
@@ -639,7 +647,7 @@ if 1
         endfunction
 
         function! s:git_diff(path1, path2)
-            let opt = &diffopt =~# "iwhite" ? "-b" : ""
+            let opt = &diffopt =~# 'iwhite' ? '-b' : ''
             let cmd = printf('git diff --histogram --no-index --no-color -U0 %s %s %s', opt, a:path1, a:path2)
             return system(cmd)
         endfunction
