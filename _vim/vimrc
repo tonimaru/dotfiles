@@ -138,8 +138,8 @@ if 1
     if !exists('g:neocomplete#force_omni_input_patterns')
         let g:neocomplete#force_omni_input_patterns = {}
     endif
-    let g:neocomplete#force_omni_input_patterns['c'] = '\v%(<\h\w*>|]|\)|^)\zs\s*%(\.|-\>)'
-    let g:neocomplete#force_omni_input_patterns['cpp'] = '\v%(%(<\h\w*>|]|\)|^)\s*)\zs%(\.|-\>)|%(%(<\h\w*>|^|[;,()<>])\s*)\zs::'
+    let g:neocomplete#force_omni_input_patterns['c'] = '\v\C%(<\h\w*>|]|\)|^)\zs\s*%(\.|-\>)'
+    let g:neocomplete#force_omni_input_patterns['cpp'] = '\v\C%(%(<\h\w*>|]|\)|^)\s*)\zs%(\.|-\>)|%(%(<\h\w*>|^|[;,()<>])\s*)\zs::'
 
     let g:neosnippet#disable_runtime_snippets = { '_': 1, }
     let g:neosnippet#snippets_directory = expand(s:dotvim . '/snippets')
@@ -200,7 +200,7 @@ if 1
     function! s:libcxx.set_to(config) dict
         let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -stdlib=libc++'
 
-        if a:config['cmdopt'] !~# '\v(^|\s+)-[ES](\s+|$)'
+        if a:config['cmdopt'] !~# '\v\C(^|\s+)-[ES](\s+|$)'
             let a:config['cmdopt'] .= ' -L'.$HOME.'local/llvm/lib -lc++abi'
         endif
         return a:config
@@ -275,7 +275,7 @@ if 1
     let g:brightest#pattern = '\w\+'
     let g:brightest#highlight = {}
     let g:brightest#highlight['group'] = 'VimrcBrightest'
-    let g:brightest#highlight['format'] = '\v(^|\W\zs)%s(\ze\W|$)'
+    let g:brightest#highlight['format'] = '\v\C(^|\W\zs)%s(\ze\W|$)'
 
     let g:marching_clang_command_option = '-std=c++1y'
     let g:marching_enable_neocomplete = 1
@@ -500,7 +500,7 @@ if 1
         set paste
 
         let register = v:register !=# '' ? v:register : '"'
-        if a:type =~# '\v^[vV]$'
+        if a:type =~# '\v\C^[vV]$'
             execute printf('normal! `<%s`>"_c%s%s', a:type, "\<C-r>", register)
         else
             execute printf('normal! `[v`]"_c%s%s', "\<C-r>", register)
@@ -619,7 +619,7 @@ if 1
         let incl_end_idx = index(incl_paths,  'End of search list.') - 1
         if incl_start_idx < incl_end_idx
             let result = incl_paths[incl_start_idx : incl_end_idx]
-            return map(result, 'fnameescape(substitute(v:val, ''\v^\s+|\s+$'', "", "g"))')
+            return map(result, 'fnameescape(substitute(v:val, ''\v\C^\s+|\s+$'', "", "g"))')
         else
             return []
         endif
@@ -692,15 +692,15 @@ if 1
             return printf('%s%s%s', before, action, after)
         endfunction
 
-        let s:pat = '\v\@\@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? \@\@[^\n]{-}'
+        let s:pat = '\v\C\@\@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? \@\@[^\n]{-}'
         let s:sub = '\=s:to_ed_change_command(submatch(1), submatch(3), submatch(4), submatch(6))'
         function! s:to_ed_format(diff_out)
             let out = a:diff_out
-            let out = substitute(out, '\v%^\_.{-}\ze\@\@', '', '')
-            let out = substitute(out, '\M\n\zs+', '> ', 'g')
-            let out = substitute(out, '\M\n\zs-', '< ', 'g')
+            let out = substitute(out, '\v\C%^\_.{-}\ze\@\@', '', '')
+            let out = substitute(out, '\M\C\n\zs+', '> ', 'g')
+            let out = substitute(out, '\M\C\n\zs-', '< ', 'g')
             let out = substitute(out, s:pat, s:sub, 'g')
-            let out = substitute(out, '\M<[^\n]\{-}\n\zs>', '---\n>', 'g')
+            let out = substitute(out, '\M\C<[^\n]\{-}\n\zs>', '---\n>', 'g')
             return out
         endfunction
     endif
