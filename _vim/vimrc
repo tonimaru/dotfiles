@@ -302,6 +302,9 @@ if 1
     let g:diminactive_use_colorcolumn = 0
     let g:diminactive_use_syntax = 1
 
+    let g:solarized_contrast = 'high'
+    let g:solarized_visibility = 'low'
+
     let g:brightest#pattern = '\w\+'
     let g:brightest#highlight = {}
     let g:brightest#highlight['group'] = 'VimrcBrightest'
@@ -640,8 +643,7 @@ if 1
         call s:vimenter()
     endif
 
-
-
+    Au BufWritePre * :%s/\v\\@<!(\s|\t|　)+$//e
 
     " TODO
     if has('vim_starting')
@@ -683,7 +685,7 @@ if 1
         let incl_end_idx = index(incl_paths,  'End of search list.') - 1
         if incl_start_idx < incl_end_idx
             let result = incl_paths[incl_start_idx : incl_end_idx]
-            return map(result, 'fnameescape(substitute(v:val, ''\v\C^\s+|\s+$'', "", "g"))')
+            return map(result, "fnameescape(substitute(v:val, '\v\C^\s+|\s+$', '', 'g'))")
         else
             return []
         endif
@@ -700,7 +702,6 @@ if 1
     function! s:t.cpp.get_path()
         return s:include_paths(s:c_cmd, 'c++', '')
     endfunction
-
 
 
     " http://qiita.com/takaakikasai/items/3d4f8a4867364a46dfa3
