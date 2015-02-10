@@ -50,6 +50,9 @@ if 1
 
     set keywordprg=
 
+    set list
+    set listchars=eol:$,tab:>-,trail:_,extends:>,precedes:>
+
     set tabstop=4 shiftwidth=4 softtabstop=4
     set expandtab smarttab
     set autoindent
