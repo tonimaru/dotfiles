@@ -3,4 +3,5 @@
 !.gitignore
 
 !install.sh
-!_vim
+!scripts/
+!_*

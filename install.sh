@@ -1,5 +1,5 @@
-#/bin/sh
+#!/bin/sh
 
-current_path="$(cd -P "$(dirname "${BASH_SOURCE:-$0}")" && pwd)"
+sh scripts/install_font.sh
+sh scripts/link.sh
 
-ln -sfn ${current_path}/_vim ~/.vim
