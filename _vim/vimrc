@@ -288,8 +288,8 @@ if 1
     call s:set_quickrun_configs()
 
     let g:quickrun_config['watchdogs_checker/_' ] = {}
-    let g:quickrun_config['watchdogs_checker/_' ]['outputter/quickfix/open_cmd'] = ''
     let g:quickrun_config['watchdogs_checker/_' ]['runner/vimproc/updatetime'] = 40
+    let g:quickrun_config['watchdogs_checker/_' ]['hook/copen/enable_exist_data'] = 1
 
     if executable('vint')
         let g:quickrun_config['vim/watchdogs_checker'] = {'type': 'watchdogs_checker/vint'}
@@ -298,7 +298,7 @@ if 1
         let g:quickrun_config['watchdogs_checker/vint']['exec'] = '%c %s'
     endif
 
-    let g:watchdogs_check_BufWritePost_enables = { 'cpp': 1, 'javascript': 1, 'vim': 1, }
+    let g:watchdogs_check_BufWritePost_enable = 1
 
     let g:haskell_conceal = 0
 
@@ -381,7 +381,7 @@ if 1
     NeoBundleLazy 'kannokanno/vim-helpnew'
     NeoBundleLazy 'katono/rogue.vim'
     NeoBundleLazy 'kchmck/vim-coffee-script', {'autoload': {'filetypes': ['coffee']}}
-    NeoBundleLazy 'lambdalisue/vim-gista', {'autoload': {'commands': ['Gista'], 'mappings': '<Plug>(gista-', 'unite_sources': 'gista'}}
+    NeoBundleLazy 'lambdalisue/vim-gista', {'autoload': {'commands': ['Gista'], 'unite_sources': 'gista'}}
     NeoBundleLazy 'leafgarland/typescript-vim', {'autoload': {'filetypes': ['typescript']}}
     NeoBundleLazy 'marijnh/tern_for_vim'
     NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
