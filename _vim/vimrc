@@ -453,7 +453,7 @@ if 1
         colorscheme solarized
     endif
 
-    highlight VimrcBrightest term=bold cterm=bold ctermfg=3* gui=bold guifg=#ffd4c9
+    highlight VimrcBrightest term=bold cterm=bold ctermfg=224 gui=bold guifg=#ffd4c9
 
     let g:hier_highlight_group_qf  = 'qf_error_ucurl'
     let g:hier_highlight_group_qfw = 'qf_warning_ucurl'
