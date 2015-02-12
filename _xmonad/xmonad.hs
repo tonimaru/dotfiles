@@ -12,11 +12,14 @@ myKeys = [ ("M-S-;", spawn "gvim")
          , ("M-d", sendMessage MirrorShrink)
          , ("M-u", sendMessage MirrorExpand) ]
 
+myManageHook = composeAll [ title =? "Firefox Preferences" --> doFloat ]
+
 main = xmonad $ defaultConfig
     { borderWidth = 1
     , normalBorderColor = "#222222"
     , focusedBorderColor = "#dddddd"
     , layoutHook = myLayouts
+    , manageHook = myManageHook
     }
     `additionalKeysP` myKeys
 
