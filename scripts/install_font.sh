@@ -1,36 +1,67 @@
 #!/bin/sh
 
-# TODO tmp dir
+get_work_dir () {
+    local wd
+    if [ -x "$(which tempfile)" ]; then
+        wd="$(tempfile)"
+    elif [ -x "$(which mktemp)" ]; then
+        wd="$(mktemp /tmp/XXXXXX)"
+    else
+        wd="/tmp/install_font"
+    fi
+    if [ ! -d "$wd" ]; then
+        mkdir -p $wd
+    fi
+    echo $wd
+}
 
-work_dir=/tmp/_install_font
+insfont_exit() {
+    cd ~
+    rm -rf $work_dir
+    exit $1
+}
 
-migu_url="http://sourceforge.jp/frs/redir.php?m=iij&f=%2Fmix-mplus-ipa%2F59022%2Fmigu-1m-20130617.zip"
-migu_zip=$work_dir/migu.zip
+insfont_error() {
+    echo $1
+    insfont_exit 1
+}
 
-inconsolata_url="http://levien.com/type/myfonts/Inconsolata.otf"
-inconsolata_out=~/.fonts/Inconsolata.otf
-
-if [ ! -x "`which git`" ]; then
-    echo git not found.
-    exit 1
-fi
-if [ ! -x "`which curl`" -a ! -x "`which wget`" ]; then
-    echo curl and wget not found.
-    exit 1
-fi
-
+font_dir=
 ubuntu() {
     sudo aptitude install fontforge
+    font_dir="$HOME/.fonts"
+}
+
+darwin() {
+    brew install fontforge automeke pkg-config
+    font_dir="$HOME/Library/Fonts"
 }
 
 os_name=`uname -v`
 case "$os_name" in
     *Ubuntu*) ubuntu ;;
-    *) echo "unknown os"; exit 1 ;;
+    *Darwin*) darwin ;;
+    *) insfont_error "unknown os" ;;
 esac
 
-mkdir -p $work_dir
+if [ ! -x "`which git`" ]; then
+    insfont_error "git not found."
+fi
+if [ ! -x "`which curl`" -a ! -x "`which wget`" ]; then
+    insfont_error "curl and wget not found."
+fi
+
+work_dir=$(get_work_dir)
+
+migu_url="http://sourceforge.jp/frs/redir.php?m=iij&f=%2Fmix-mplus-ipa%2F59022%2Fmigu-1m-20130617.zip"
+migu_zip=$work_dir/migu.zip
+
+inconsolata_url="http://levien.com/type/myfonts/Inconsolata.otf"
+inconsolata_out=$work_dir/Ricty/Inconsolata.otf
+
 cd $work_dir
+
+git clone https://github.com/yascentur/Ricty.git
 
 if [ -x "`which curl`" ]; then
     curl -L "$migu_url" > $migu_zip
@@ -41,18 +72,15 @@ else
 fi
 
 unzip -o $migu_zip
+cp -vf ./migu*/*.ttf $work_dir/Ricty/
 
-mkdir -vp ~/.fonts
+cd $work_dir/Ricty
 
-cp -vf ./migu*/*.ttf ~/.fonts/
+./ricty_generator.sh Inconsolata.otf migu-1m-regular.ttf migu-1m-bold.ttf
 
-git clone https://github.com/yascentur/Ricty.git
-cd Ricty
+if [ ! -d "$font_dir" ]; then
+    mkdir -vp $font_dir
+fi
+cp -vf Ricty*.ttf $font_dir/
 
-./ricty_generator.sh auto
-
-cp -vf *.ttf ~/.fonts/
-
-cd /tmp
-rm -rf $work_dir
-
+insfont_exit 0
