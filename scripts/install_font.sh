@@ -2,16 +2,13 @@
 
 get_work_dir () {
     local wd
-    if [ -x "$(which tempfile)" ]; then
-        wd="$(tempfile)"
-    elif [ -x "$(which mktemp)" ]; then
-        wd="$(mktemp /tmp/XXXXXX)"
+
+    if [ -x "$(which mktemp)" ]; then
+        wd="$(mktemp -d /tmp/XXXXXX)"
     else
         wd="/tmp/install_font"
     fi
-    if [ ! -d "$wd" ]; then
-        mkdir -p $wd
-    fi
+    if [ ! -d "$wd" ]; then mkdir -p $wd; fi
     echo $wd
 }
 
@@ -37,19 +34,15 @@ darwin() {
     font_dir="$HOME/Library/Fonts"
 }
 
-os_name=`uname -v`
+os_name=$(uname -v)
 case "$os_name" in
     *Ubuntu*) ubuntu ;;
     *Darwin*) darwin ;;
     *) insfont_error "unknown os" ;;
 esac
 
-if [ ! -x "`which git`" ]; then
-    insfont_error "git not found."
-fi
-if [ ! -x "`which curl`" -a ! -x "`which wget`" ]; then
-    insfont_error "curl and wget not found."
-fi
+if [ ! -x "$(which git)" ]; then insfont_error "git not found."; fi
+if [ ! -x "$(which curl)" -a ! -x "$(which wget)" ]; then insfont_error "curl and wget not found."; fi
 
 work_dir=$(get_work_dir)
 
@@ -63,7 +56,7 @@ cd $work_dir
 
 git clone https://github.com/yascentur/Ricty.git
 
-if [ -x "`which curl`" ]; then
+if [ -x "$(which curl)" ]; then
     curl -L "$migu_url" > $migu_zip
     curl "$inconsolata_url" > $inconsolata_out
 else
@@ -84,3 +77,4 @@ fi
 cp -vf Ricty*.ttf $font_dir/
 
 insfont_exit 0
+
