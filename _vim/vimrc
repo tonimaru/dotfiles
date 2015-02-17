@@ -289,7 +289,7 @@ if 1
 
     let g:quickrun_config['watchdogs_checker/_' ] = {}
     let g:quickrun_config['watchdogs_checker/_' ]['runner/vimproc/updatetime'] = 40
-    let g:quickrun_config['watchdogs_checker/_' ]['hook/copen/enable_exist_data'] = 1
+    let g:quickrun_config['watchdogs_checker/_' ]['outputter/quickfix/open_cmd'] = ''
 
     if executable('vint')
         let g:quickrun_config['vim/watchdogs_checker'] = {'type': 'watchdogs_checker/vint'}
@@ -323,8 +323,6 @@ if 1
 
     let g:vim_json_syntax_conceal = 0
 
-    let g:config_Beautifier = {'js': {'indent_size': 2}}
-
     if has('vim_starting')
         execute 'set runtimepath+='.s:neobundle_path
     endif
@@ -340,15 +338,10 @@ if 1
     NeoBundle 'kana/vim-textobj-entire', {'depends': 'kana/vim-textobj-user'}
     NeoBundle 'kana/vim-textobj-line', {'depends': 'kana/vim-textobj-user'}
     NeoBundle 'kana/vim-textobj-user'
-    NeoBundle 'maksimr/vim-jsbeautify'
-    NeoBundle 'osyo-manga/shabadou.vim'
-    NeoBundle 'osyo-manga/unite-quickfix'
     NeoBundle 'osyo-manga/vim-brightest'
     NeoBundle 'osyo-manga/vim-snowdrop'
-    NeoBundle 'osyo-manga/vim-watchdogs', {'depends': [ 'thinca/vim-quickrun', 'Shougo/vimproc.vim', ]}
     NeoBundle 'thinca/vim-prettyprint'
     NeoBundle 'thinca/vim-qfreplace'
-    NeoBundle 'thinca/vim-quickrun'
     NeoBundle 'tpope/vim-fugitive'
     NeoBundle 'tpope/vim-surround'
     NeoBundle 'tyru/caw.vim'
@@ -366,6 +359,7 @@ if 1
     NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': 'Shougo/unite.vim'}
     NeoBundleLazy 'Shougo/vimproc.vim', {'build': {'others': 'make'}}
     NeoBundleLazy 'Shougo/vimshell.vim', {'depends': ['Shougo/vimproc.vim', 'Shougo/unite.vim']}
+    NeoBundleLazy 'alpaca-tc/beautify.vim'
     NeoBundleLazy 'cohama/agit.vim'
     NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'dag/vim2hs', {'autoload': {'filetypes': ['haskell']}}
@@ -386,14 +380,18 @@ if 1
     NeoBundleLazy 'marijnh/tern_for_vim'
     NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'mattn/webapi-vim'
-    NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'autoload': {'unite_sources': 'quickrun_config'}}
+    NeoBundleLazy 'osyo-manga/shabadou.vim', {'depends': 'thinca/vim-quickrun'}
+    NeoBundleLazy 'osyo-manga/unite-quickfix', {'autoload': {'unite_sources': 'quickfix'}}
+    NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'depends': 'thinca/vim-quickrun', 'autoload': {'unite_sources': 'quickrun_config'}}
     NeoBundleLazy 'osyo-manga/unite-vimpatches', {'autoload': {'unite_sources': 'vimpatches'}}
     NeoBundleLazy 'osyo-manga/vim-marching', {'autoload': {'filetypes': ['cpp']}}
     NeoBundleLazy 'osyo-manga/vim-precious', {'depends': 'Shougo/context_filetype.vim', 'autoload': {'filetypes': ['vim', 'markdown']}}
+    NeoBundleLazy 'osyo-manga/vim-watchdogs', {'depends': [ 'thinca/vim-quickrun', 'osyo-manga/shabadou.vim', 'Shougo/vimproc.vim', ], 'autoload': {'filetypes': 'all'}}
     NeoBundleLazy 'othree/html5.vim', {'autoload': {'filetypes': ['html']}}
     NeoBundleLazy 'pangloss/vim-javascript', {'autoload': {'on_source': ['vim-javascript-syntax']}}
     NeoBundleLazy 'syngan/vim-vimlint'
     NeoBundleLazy 't9md/vim-textmanip', {'autoload': {'mappings': '<Plug>(textmanip'}}
+    NeoBundleLazy 'thinca/vim-quickrun'
     NeoBundleLazy 'thinca/vim-ref'
     NeoBundleLazy 'thinca/vim-scouter'
     NeoBundleLazy 'tyru/eskk.vim', {'autoload': {'insert': 1}}
@@ -509,14 +507,16 @@ if 1
 
     nmap [prefix]u [unite]
     nnoremap [unite] <Nop>
-    nnoremap <silent> [unite]bu :<C-u>Unite neobundle/update:all<CR>
     nnoremap <silent> [unite]bf :<C-u>Unite buffer<CR>
+    nnoremap <silent> [unite]bu :<C-u>Unite neobundle/update:all<CR>
+    nnoremap <silent> [unite]c :<C-u>Unite quickfix<CR>
     nnoremap <silent> [unite]fm :<C-u>Unite neomru/file<CR>
-    nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create<CR>
     nnoremap <silent> [unite]ga :<C-u>Unite grep -no-quit -create -auto-preview -tab<CR>
+    nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create<CR>
+    nnoremap <silent> [unite]gv :<C-u>Unite vimgrep -no-quit -create -tab<CR>
+    nnoremap <silent> [unite]gc :<C-u>Unite vimgrep:% -no-quit -create -tab<CR>
     nnoremap <silent> [unite]l :<C-u>Unite line<CR>
-    nnoremap <silent> [unite]jo :<C-u>Unite junkfile<CR>
-    nnoremap <silent> [unite]jn :<C-u>Unite junkfile/new<CR>
+    nnoremap <silent> [unite]j :<C-u>Unite junkfile/new junkfile<CR>
     nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
 
     nmap [prefix]vf [vimfiler]
@@ -533,10 +533,15 @@ if 1
     nnoremap <silent> [vimshell]+ :<C-u>VimShell -create<CR>
 
     nmap [prefix]g [fugitive]
+    nnoremap [fugitive] <Nop>
     nnoremap [fugitive]s :<C-u>Gstatus<CR>
     nnoremap [fugitive]d :<C-u>Gdiff<CR>
+    nnoremap [fugitive]c :<C-u>Gcommit -a -m ""<Left>
 
     nmap [prefix]q <Plug>(quickrun)
+
+    nnoremap [prefix]b :<C-u>Beautify<CR>
+    vnoremap [prefix]b :Beautify<CR>
 
     nnoremap <silent> [prefix]res :Restart<CR>
 
@@ -624,13 +629,6 @@ if 1
         map <buffer><nowait> q <Plug>(vimfiler_hide)
 
         let b:vimfiler.is_visible_ignore_files = 1
-    endfunction
-
-    Au FileType javascript call s:ft_javascript()
-
-    function! s:ft_javascript()
-        nnoremap <buffer> [prefix]bf :<C-u>call JsBeautify()<CR>
-        vnoremap <buffer> [prefix]bf :call RangeJsBeautify()<CR>
     endfunction
 
     Au WinEnter * checktime
