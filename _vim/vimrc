@@ -276,6 +276,9 @@ if 1
     endfunction
 
     function! s:set_quickrun_configs()
+        if executable('gcc')
+            call s:_set_quickrun_config({'name': 'c/gcc', 'config': {}}, [s:cxxdst])
+        endif
         if executable('g++')
             call s:_set_quickrun_config({'name': 'cpp/g++', 'config': {}}, [s:cxxdst, s:cxxstd])
         endif
@@ -381,6 +384,7 @@ if 1
     NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'mattn/webapi-vim'
     NeoBundleLazy 'osyo-manga/shabadou.vim', {'depends': 'thinca/vim-quickrun'}
+    NeoBundleLazy 'osyo-manga/quickrun-outputter-replace_region'
     NeoBundleLazy 'osyo-manga/unite-quickfix', {'autoload': {'unite_sources': 'quickfix'}}
     NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'depends': 'thinca/vim-quickrun', 'autoload': {'unite_sources': 'quickrun_config'}}
     NeoBundleLazy 'osyo-manga/unite-vimpatches', {'autoload': {'unite_sources': 'vimpatches'}}
@@ -391,7 +395,7 @@ if 1
     NeoBundleLazy 'pangloss/vim-javascript', {'autoload': {'on_source': ['vim-javascript-syntax']}}
     NeoBundleLazy 'syngan/vim-vimlint'
     NeoBundleLazy 't9md/vim-textmanip', {'autoload': {'mappings': '<Plug>(textmanip'}}
-    NeoBundleLazy 'thinca/vim-quickrun'
+    NeoBundleLazy 'thinca/vim-quickrun', {'complete' : 'customlist,quickrun#complete', 'depends': 'osyo-manga/quickrun-outputter-replace_region'}
     NeoBundleLazy 'thinca/vim-ref'
     NeoBundleLazy 'thinca/vim-scouter'
     NeoBundleLazy 'tyru/eskk.vim', {'autoload': {'insert': 1}}
@@ -511,10 +515,10 @@ if 1
     nnoremap <silent> [unite]bu :<C-u>Unite neobundle/update:all<CR>
     nnoremap <silent> [unite]c :<C-u>Unite quickfix<CR>
     nnoremap <silent> [unite]fm :<C-u>Unite neomru/file<CR>
-    nnoremap <silent> [unite]ga :<C-u>Unite grep -no-quit -create -auto-preview -tab<CR>
-    nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create<CR>
-    nnoremap <silent> [unite]gv :<C-u>Unite vimgrep -no-quit -create -tab<CR>
-    nnoremap <silent> [unite]gc :<C-u>Unite vimgrep:% -no-quit -create -tab<CR>
+    nnoremap <silent> [unite]ga :<C-u>Unite grep -no-quit -create -auto-preview -tab -no-empty<CR>
+    nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create -no-empty<CR>
+    nnoremap <silent> [unite]gv :<C-u>Unite vimgrep -no-quit -create -tab -no-empty<CR>
+    nnoremap <silent> [unite]gc :<C-u>Unite vimgrep:% -no-quit -create -tab -no-empty<CR>
     nnoremap <silent> [unite]l :<C-u>Unite line<CR>
     nnoremap <silent> [unite]j :<C-u>Unite junkfile/new junkfile<CR>
     nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
@@ -552,10 +556,10 @@ if 1
     imap <C-J> <Plug>(neosnippet_jump_or_expand)
     smap <C-J> <Plug>(neosnippet_jump_or_expand)
 
-    xmap <C-n> <Plug>(textmanip-move-down)
-    xmap <C-p> <Plug>(textmanip-move-up)
-    xmap < <Plug>(textmanip-move-left)
-    xmap > <Plug>(textmanip-move-right)
+    xmap <C-j> <Plug>(textmanip-move-down)
+    xmap <C-k> <Plug>(textmanip-move-up)
+    xmap <C-h> <Plug>(textmanip-move-left)
+    xmap <C-l> <Plug>(textmanip-move-right)
 
     imap <C-X>j <Plug>(eskk:toggle)
     imap <C-X><C-J> <Plug>(eskk:toggle)
