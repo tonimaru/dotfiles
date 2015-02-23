@@ -332,7 +332,6 @@ if 1
 
     call neobundle#begin(s:bundle_path)
 
-    NeoBundle 'Shougo/neomru.vim'
     NeoBundle 'altercation/vim-colors-solarized'
     NeoBundle 'blueyed/vim-diminactive'
     NeoBundle 'cohama/vim-hier'
@@ -343,6 +342,7 @@ if 1
     NeoBundle 'kana/vim-textobj-user'
     NeoBundle 'osyo-manga/vim-brightest'
     NeoBundle 'osyo-manga/vim-snowdrop'
+    NeoBundle 'Shougo/neomru.vim'
     NeoBundle 'thinca/vim-prettyprint'
     NeoBundle 'thinca/vim-qfreplace'
     NeoBundle 'tpope/vim-fugitive'
@@ -351,17 +351,6 @@ if 1
     NeoBundle 'tyru/open-browser.vim'
     NeoBundle 'vim-jp/vimdoc-ja'
     NeoBundleFetch 'Shougo/neobundle.vim'
-    NeoBundleLazy 'Shougo/context_filetype.vim'
-    NeoBundleLazy 'Shougo/junkfile.vim', {'autoload': {'unite_sources': ['junkfile', 'junkfile/new']}}
-    NeoBundleLazy 'Shougo/neocomplcache.vim', {'disabled': has('lua'), 'autoload': {'insert': 1}}
-    NeoBundleLazy 'Shougo/neocomplete.vim', {'disabled': !has('lua'), 'autoload': {'insert': 1}}
-    NeoBundleLazy 'Shougo/neosnippet.vim', {'autoload': {'insert': 1}}
-    NeoBundleLazy 'Shougo/unite-outline', {'autoload': {'unite_sources': 'outline'}}
-    NeoBundleLazy 'Shougo/unite.vim'
-    NeoBundleLazy 'Shougo/vesting'
-    NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': 'Shougo/unite.vim'}
-    NeoBundleLazy 'Shougo/vimproc.vim', {'build': {'others': 'make'}}
-    NeoBundleLazy 'Shougo/vimshell.vim', {'depends': ['Shougo/vimproc.vim', 'Shougo/unite.vim']}
     NeoBundleLazy 'alpaca-tc/beautify.vim'
     NeoBundleLazy 'cohama/agit.vim'
     NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
@@ -383,8 +372,8 @@ if 1
     NeoBundleLazy 'marijnh/tern_for_vim'
     NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'mattn/webapi-vim'
-    NeoBundleLazy 'osyo-manga/shabadou.vim', {'depends': 'thinca/vim-quickrun'}
     NeoBundleLazy 'osyo-manga/quickrun-outputter-replace_region'
+    NeoBundleLazy 'osyo-manga/shabadou.vim', {'depends': 'thinca/vim-quickrun'}
     NeoBundleLazy 'osyo-manga/unite-quickfix', {'autoload': {'unite_sources': 'quickfix'}}
     NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'depends': 'thinca/vim-quickrun', 'autoload': {'unite_sources': 'quickrun_config'}}
     NeoBundleLazy 'osyo-manga/unite-vimpatches', {'autoload': {'unite_sources': 'vimpatches'}}
@@ -393,6 +382,17 @@ if 1
     NeoBundleLazy 'osyo-manga/vim-watchdogs', {'depends': [ 'thinca/vim-quickrun', 'osyo-manga/shabadou.vim', 'Shougo/vimproc.vim', ], 'autoload': {'filetypes': 'all'}}
     NeoBundleLazy 'othree/html5.vim', {'autoload': {'filetypes': ['html']}}
     NeoBundleLazy 'pangloss/vim-javascript', {'autoload': {'on_source': ['vim-javascript-syntax']}}
+    NeoBundleLazy 'Shougo/context_filetype.vim'
+    NeoBundleLazy 'Shougo/junkfile.vim', {'autoload': {'unite_sources': ['junkfile', 'junkfile/new']}}
+    NeoBundleLazy 'Shougo/neocomplcache.vim', {'disabled': has('lua'), 'autoload': {'insert': 1}}
+    NeoBundleLazy 'Shougo/neocomplete.vim', {'disabled': !has('lua'), 'autoload': {'insert': 1}}
+    NeoBundleLazy 'Shougo/neosnippet.vim', {'autoload': {'insert': 1}}
+    NeoBundleLazy 'Shougo/unite-outline', {'autoload': {'unite_sources': 'outline'}}
+    NeoBundleLazy 'Shougo/unite.vim'
+    NeoBundleLazy 'Shougo/vesting'
+    NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': 'Shougo/unite.vim'}
+    NeoBundleLazy 'Shougo/vimproc.vim', {'build': {'others': 'make'}}
+    NeoBundleLazy 'Shougo/vimshell.vim', {'depends': ['Shougo/vimproc.vim', 'Shougo/unite.vim']}
     NeoBundleLazy 'syngan/vim-vimlint'
     NeoBundleLazy 't9md/vim-textmanip', {'autoload': {'mappings': '<Plug>(textmanip'}}
     NeoBundleLazy 'thinca/vim-quickrun', {'complete' : 'customlist,quickrun#complete', 'depends': 'osyo-manga/quickrun-outputter-replace_region'}
