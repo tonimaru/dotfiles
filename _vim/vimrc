@@ -170,7 +170,11 @@ if 1
     endif
     let g:neocomplete#force_omni_input_patterns['c'] = '\v\C%(<\h\w*>|]|\)|^)\zs\s*%(\.|-\>)'
     let g:neocomplete#force_omni_input_patterns['cpp'] = '\v%(<\h\w*>|^|[;,()<>])\s*((::|\.|-\>)(<\h\w*>)?)+|^\s*<\h\w*>'
-    let g:neocomplete#force_omni_input_patterns['javascript'] = '[^. \t]\.\w*'
+
+    if executable('npm')
+        let g:neocomplete#force_omni_input_patterns['javascript'] = '[^. \t]\.\w*'
+        let g:neocomplete#force_omni_input_patterns['coffee'] = '[^. \t]\.\w*'
+    endif
 
     let g:neosnippet#disable_runtime_snippets = { '_': 1, }
     let g:neosnippet#snippets_directory = s:vimdir('snippets')
@@ -389,6 +393,7 @@ if 1
     NeoBundle 'tyru/caw.vim'
     NeoBundle 'tyru/open-browser.vim'
     NeoBundle 'vim-jp/vimdoc-ja'
+    NeoBundle 'Yggdroot/indentLine'
     NeoBundleFetch 'Shougo/neobundle.vim'
     NeoBundleLazy 'alpaca-tc/beautify.vim'
     NeoBundleLazy 'cohama/agit.vim'
@@ -412,7 +417,6 @@ if 1
     NeoBundleLazy 'kchmck/vim-coffee-script', {'autoload': {'filetypes': ['coffee']}}
     NeoBundleLazy 'lambdalisue/vim-gista', {'autoload': {'commands': ['Gista'], 'unite_sources': 'gista'}}
     NeoBundleLazy 'leafgarland/typescript-vim', {'autoload': {'filetypes': ['typescript']}}
-    NeoBundleLazy 'marijnh/tern_for_vim'
     NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'mattn/webapi-vim'
     NeoBundleLazy 'osyo-manga/quickrun-outputter-replace_region'
@@ -424,11 +428,12 @@ if 1
     NeoBundleLazy 'osyo-manga/vim-precious', {'depends': 'Shougo/context_filetype.vim', 'autoload': {'filetypes': ['vim', 'markdown']}}
     NeoBundleLazy 'osyo-manga/vim-watchdogs', {'depends': [ 'thinca/vim-quickrun', 'osyo-manga/shabadou.vim', 'Shougo/vimproc.vim', ], 'autoload': {'filetypes': 'all'}}
     NeoBundleLazy 'othree/html5.vim', {'autoload': {'filetypes': ['html']}}
+    NeoBundleLazy 'othree/javascript-libraries-syntax.vim', {'filetypes': ['javascript', 'coffee', 'typescript']}
     NeoBundleLazy 'pangloss/vim-javascript', {'autoload': {'on_source': ['vim-javascript-syntax']}}
     NeoBundleLazy 'Shougo/context_filetype.vim'
     NeoBundleLazy 'Shougo/junkfile.vim', {'autoload': {'unite_sources': ['junkfile', 'junkfile/new']}}
-    NeoBundleLazy 'Shougo/neocomplcache.vim', {'disabled': has('lua'), 'autoload': {'insert': 1}}
-    NeoBundleLazy 'Shougo/neocomplete.vim', {'disabled': !has('lua'), 'autoload': {'insert': 1}}
+    NeoBundleLazy 'Shougo/neocomplcache.vim', {'autoload': has('lua') ? {} : {'insert': 1}}
+    NeoBundleLazy 'Shougo/neocomplete.vim', {'vim_version' : '7.3.885', 'autoload': has('lua') ? {'insert': 1} : {}}
     NeoBundleLazy 'Shougo/neosnippet.vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'Shougo/unite-outline', {'autoload': {'unite_sources': 'outline'}}
     NeoBundleLazy 'Shougo/unite.vim'
@@ -442,15 +447,12 @@ if 1
     NeoBundleLazy 'thinca/vim-ref'
     NeoBundleLazy 'thinca/vim-scouter'
     NeoBundleLazy 'tyru/eskk.vim', {'autoload': {'insert': 1}}
-    NeoBundleLazy 'tyru/restart.vim'
+    NeoBundleLazy 'tyru/restart.vim', {'gui': 1}
     NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': ['cpp']}}
     NeoBundleLazy 'vim-jp/vital.vim'
-
-    if neobundle#tap('vimfiler.vim')
-        function! neobundle#tapped.hooks.on_source(bundle)
-            NeoBundleSource vimshell.vim
-        endfunction
-        call neobundle#untap()
+    if executable('npm')
+        NeoBundleLazy 'marijnh/tern_for_vim', {'build': {'others': 'npm install && npm install tern-coffee'}, 'autoload': {'filetypes': ['javascript', 'coffee']}}
+        NeoBundleLazy 'othree/tern_for_vim_coffee', {'autoload': {'on_source': 'tern_for_vim'}}
     endif
 
     if neobundle#tap('unite.vim')
@@ -468,11 +470,10 @@ if 1
         call neobundle#untap()
     endif
 
-    if neobundle#tap('tern_for_vim')
-        if executable('npm')
-            call neobundle#config({'build': {'others': 'npm install'}})
-            call neobundle#config({'autoload': {'filetypes': ['javascript']}})
-        endif
+    if neobundle#tap('vimfiler.vim')
+        function! neobundle#tapped.hooks.on_source(bundle)
+            NeoBundleSource vimshell.vim
+        endfunction
         call neobundle#untap()
     endif
 
@@ -666,6 +667,8 @@ if 1
             call feedkeys(a:plug, 'm')
         endif
     endfunction
+
+    Au FileType javascript,coffee set tabstop=2 shiftwidth=2
 
     function! s:ft_vimfiler()
         nmap <buffer><expr><nowait> c <SID>vimfiler_key_wrap("\<Plug>(vimfiler_copy_file)")
