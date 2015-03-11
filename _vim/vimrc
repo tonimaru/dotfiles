@@ -65,6 +65,8 @@ if 1
 
     set foldlevel=100
 
+    execute printf('set verbosefile=%s', s:vimdir('verbosefile'))
+
     if has('extra_search')
         set incsearch
         if has('vim_starting')
