@@ -409,8 +409,6 @@ if 1
     NeoBundleLazy 'hail2u/vim-css3-syntax', {'autoload': {'filetypes': ['css']}}
     NeoBundleLazy 'haya14busa/incsearch.vim', {'autoload': {'mappings': '<Plug>(incsearch'}}
     NeoBundleLazy 'jelera/vim-javascript-syntax', {'autoload': {'filetypes': ['javascript']}}
-    NeoBundleLazy 'junegunn/vim-easy-align'
-    NeoBundleLazy 'junegunn/vim-plug'
     NeoBundleLazy 'kana/vim-smartword', {'autoload': {'mappings': '<Plug>(smartword'}}
     NeoBundleLazy 'kannokanno/previm'
     NeoBundleLazy 'kannokanno/vim-helpnew'
@@ -421,11 +419,9 @@ if 1
     NeoBundleLazy 'leafgarland/typescript-vim', {'autoload': {'filetypes': ['typescript']}}
     NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
     NeoBundleLazy 'mattn/webapi-vim'
-    NeoBundleLazy 'osyo-manga/quickrun-outputter-replace_region'
     NeoBundleLazy 'osyo-manga/shabadou.vim', {'depends': 'thinca/vim-quickrun'}
     NeoBundleLazy 'osyo-manga/unite-quickfix', {'autoload': {'unite_sources': 'quickfix'}}
     NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'depends': 'thinca/vim-quickrun', 'autoload': {'unite_sources': 'quickrun_config'}}
-    NeoBundleLazy 'osyo-manga/unite-vimpatches', {'autoload': {'unite_sources': 'vimpatches'}}
     NeoBundleLazy 'osyo-manga/vim-marching', {'autoload': {'filetypes': ['cpp']}}
     NeoBundleLazy 'osyo-manga/vim-precious', {'depends': 'Shougo/context_filetype.vim', 'autoload': {'filetypes': ['vim', 'markdown']}}
     NeoBundleLazy 'osyo-manga/vim-watchdogs', {'depends': [ 'thinca/vim-quickrun', 'osyo-manga/shabadou.vim', 'Shougo/vimproc.vim', ], 'autoload': {'filetypes': 'all'}}
@@ -435,9 +431,7 @@ if 1
     NeoBundleLazy 'Shougo/context_filetype.vim'
     NeoBundleLazy 'Shougo/junkfile.vim', {'autoload': {'unite_sources': ['junkfile', 'junkfile/new']}}
     NeoBundleLazy 'Shougo/neosnippet.vim', {'autoload': {'insert': 1}}
-    NeoBundleLazy 'Shougo/unite-outline', {'autoload': {'unite_sources': 'outline'}}
     NeoBundleLazy 'Shougo/unite.vim'
-    NeoBundleLazy 'Shougo/vesting'
     NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': 'Shougo/unite.vim'}
     NeoBundleLazy 'Shougo/vimproc.vim', {'build': {'others': 'make'}}
     NeoBundleLazy 'Shougo/vimshell.vim', {'depends': ['Shougo/vimproc.vim', 'Shougo/unite.vim']}
