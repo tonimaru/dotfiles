@@ -587,6 +587,7 @@ if 1
   nnoremap [fugitive]s :<C-u>Gstatus<CR>
   nnoremap [fugitive]d :<C-u>Gdiff<CR>
   nnoremap [fugitive]c :<C-u>Gcommit -a -m ""<Left>
+  nnoremap [fugitive]p :<C-u>Gpush origin master
 
   nmap [prefix]q <Plug>(quickrun)
 
