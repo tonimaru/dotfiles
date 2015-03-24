@@ -1,831 +1,831 @@
 if 1
 
-    if has('multi_byte')
-        set encoding=utf-8
-        set fileencoding=utf-8
-        set fileencodings=utf-8,euc-jp,cp932
-        set ambiwidth=double
+  if has('multi_byte')
+    set encoding=utf-8
+    set fileencoding=utf-8
+    set fileencodings=utf-8,euc-jp,cp932
+    set ambiwidth=double
+  endif
+
+  scriptencoding utf-8
+
+  let s:is_mswin = has('win95') || has('win16') || has('win32') || has('win64')
+
+  function! s:mkdir(path)
+    if !isdirectory(a:path)
+      silent execute s:is_mswin ? 'md' : '!mkdir -p' a:path
     endif
+  endfunction
 
-    scriptencoding utf-8
+  let s:home = expand('~')
+  let s:vimfiles_name = s:is_mswin ? 'vimfiles' : '.vim'
+  let s:vimfiles = expand(printf('%s/%s', s:home, s:vimfiles_name))
 
-    let s:is_mswin = has('win95') || has('win16') || has('win32') || has('win64')
+  function! s:vimdir(dir)
+    return expand(printf('%s/%s', s:vimfiles, a:dir))
+  endfunction
 
-    function! s:mkdir(path)
-        if !isdirectory(a:path)
-            silent execute s:is_mswin ? 'md' : '!mkdir -p' a:path
-        endif
+  set swapfile
+  let s:swap_dir = s:vimdir('swap')
+  call s:mkdir(s:swap_dir)
+  execute printf('set directory=%s', s:swap_dir)
+
+  set backup
+  let s:backup_dir = s:vimdir('backup')
+  call s:mkdir(s:backup_dir)
+  execute printf('set backupdir=%s', s:backup_dir)
+
+  if has('persistent_undo')
+    set undofile
+    let s:undo_dir = s:vimdir('undo')
+    call s:mkdir(s:undo_dir)
+    execute printf('set undodir=%s', s:undo_dir)
+  endif
+
+  set number
+
+  set nowrap
+
+  set hidden
+
+  set keywordprg=
+
+  set list
+  set listchars=eol:$,tab:>-,trail:_,extends:>,precedes:>
+
+  set tabstop=2 shiftwidth=2 softtabstop=2
+  set expandtab smarttab
+  set autoindent
+
+  set ignorecase smartcase
+
+  set laststatus=2
+
+  set backspace=indent,eol,start
+
+  set foldlevel=100
+
+  execute printf('set verbosefile=%s', s:vimdir('verbosefile'))
+
+  if has('extra_search')
+    set incsearch
+    if has('vim_starting')
+      set hlsearch
+    endif
+  endif
+
+  if has('insert_expand')
+    set completeopt-=preview
+  endif
+
+  if has('smartindent')
+    set smartindent
+  endif
+
+  if exists('+imdisable')
+    set imdisable
+  endif
+
+  if has('multi_lang')
+    set helplang=ja,en
+  endif
+
+  if has('gui_running')
+    function! s:set_go()
+      for v in split('aPAefimgtTrRlLbhvpF', '\zs')
+        execute printf('set guioptions-=%s', v)
+      endfor
+      for v in split('cM', '\zs')
+        execute printf('set guioptions+=%s', v)
+      endfor
     endfunction
+    call s:set_go()
 
-    let s:home = expand('~')
-    let s:vimfiles_name = s:is_mswin ? 'vimfiles' : '.vim'
-    let s:vimfiles = expand(printf('%s/%s', s:home, s:vimfiles_name))
-
-    function! s:vimdir(dir)
-        return expand(printf('%s/%s', s:vimfiles, a:dir))
-    endfunction
-
-    set swapfile
-    let s:swap_dir = s:vimdir('swap')
-    call s:mkdir(s:swap_dir)
-    execute printf('set directory=%s', s:swap_dir)
-
-    set backup
-    let s:backup_dir = s:vimdir('backup')
-    call s:mkdir(s:backup_dir)
-    execute printf('set backupdir=%s', s:backup_dir)
-
-    if has('persistent_undo')
-        set undofile
-        let s:undo_dir = s:vimdir('undo')
-        call s:mkdir(s:undo_dir)
-        execute printf('set undodir=%s', s:undo_dir)
+    if filereadable(expand(s:home . '/.fonts/RictyDiscord-Regular.ttf'))
+      set guifont=Ricty\ Discord\ 12
+      set guifontwide=Ricty\ Discord\ 12
     endif
 
-    set number
-
-    set nowrap
-
-    set hidden
-
-    set keywordprg=
-
-    set list
-    set listchars=eol:$,tab:>-,trail:_,extends:>,precedes:>
-
-    set tabstop=4 shiftwidth=4 softtabstop=4
-    set expandtab smarttab
-    set autoindent
-
-    set ignorecase smartcase
-
-    set laststatus=2
-
-    set backspace=indent,eol,start
-
-    set foldlevel=100
-
-    execute printf('set verbosefile=%s', s:vimdir('verbosefile'))
-
-    if has('extra_search')
-        set incsearch
-        if has('vim_starting')
-            set hlsearch
-        endif
+    if exists('+guiheadroom')
+      set guiheadroom=0
     endif
+  endif
 
-    if has('insert_expand')
-        set completeopt-=preview
+  if exists('+clipboard')
+    set clipboard=unnamed
+    if has('unnamedplus')
+      set clipboard+=unnamedplus
     endif
+  endif
 
-    if has('smartindent')
-        set smartindent
+  let s:bundle_path = s:vimdir('bundle')
+  let s:neobundle_path = expand(printf('%s/%s', s:bundle_path, 'neobundle.vim'))
+  " TODO
+  function! s:neobundle_install()
+    if confirm('install neobundle?', "yes\nno", 1) == 1
+      call s:mkdir(s:bundle_path)
+      silent execute '!git clone http://github.com/Shougo/neobundle.vim' s:neobundle_path
+      return 1
+    else
+      return 0
     endif
+  endfunction
+  function! s:neobundle_installed()
+    return filereadable(expand(s:neobundle_path . '/README.md'))
+  endfunction
 
-    if exists('+imdisable')
-        set imdisable
+  if !s:neobundle_installed()
+    if !s:neobundle_install()
+      finish
     endif
-
-    if has('multi_lang')
-        set helplang=ja,en
-    endif
-
-    if has('gui_running')
-        function! s:set_go()
-            for v in split('aPAefimgtTrRlLbhvpF', '\zs')
-                execute printf('set guioptions-=%s', v)
-            endfor
-            for v in split('cM', '\zs')
-                execute printf('set guioptions+=%s', v)
-            endfor
-        endfunction
-        call s:set_go()
-
-        if filereadable(expand(s:home . '/.fonts/RictyDiscord-Regular.ttf'))
-            set guifont=Ricty\ Discord\ 12
-            set guifontwide=Ricty\ Discord\ 12
-        endif
-
-        if exists('+guiheadroom')
-            set guiheadroom=0
-        endif
-    endif
-
-    if exists('+clipboard')
-        set clipboard=unnamed
-        if has('unnamedplus')
-            set clipboard+=unnamedplus
-        endif
-    endif
-
-    let s:bundle_path = s:vimdir('bundle')
-    let s:neobundle_path = expand(printf('%s/%s', s:bundle_path, 'neobundle.vim'))
-    " TODO
-    function! s:neobundle_install()
-        if confirm('install neobundle?', "yes\nno", 1) == 1
-            call s:mkdir(s:bundle_path)
-            silent execute '!git clone http://github.com/Shougo/neobundle.vim' s:neobundle_path
-            return 1
-        else
-            return 0
-        endif
-    endfunction
-    function! s:neobundle_installed()
-        return filereadable(expand(s:neobundle_path . '/README.md'))
-    endfunction
-
     if !s:neobundle_installed()
-        if !s:neobundle_install()
-            finish
-        endif
-        if !s:neobundle_installed()
-            echo 'neobundle install failed'
-            finish
-        endif
+      echo 'neobundle install failed'
+      finish
     endif
+  endif
 
-    let g:unite_source_grep_max_candidates = 10000
-    if executable('ag')
-        let g:unite_source_grep_command = 'ag'
-        let g:unite_source_grep_default_opts = ''
-        let g:unite_source_grep_default_opts .= ' -a'
-        let g:unite_source_grep_default_opts .= ' --line-numbers'
-        let g:unite_source_grep_default_opts .= ' --nocolor'
-        let g:unite_source_grep_default_opts .= ' --nogroup'
-        let g:unite_source_grep_default_opts .= ' --hidden'
-        let g:unite_source_grep_default_opts .= ' --ignore ''.git'''
-        let g:unite_source_grep_default_opts .= ' --ignore ''.hg'''
-        let g:unite_source_grep_default_opts .= ' --ignore ''.svn'''
-        let g:unite_source_grep_recursive_opt = ''
+  let g:unite_source_grep_max_candidates = 10000
+  if executable('ag')
+    let g:unite_source_grep_command = 'ag'
+    let g:unite_source_grep_default_opts = ''
+    let g:unite_source_grep_default_opts .= ' -a'
+    let g:unite_source_grep_default_opts .= ' --line-numbers'
+    let g:unite_source_grep_default_opts .= ' --nocolor'
+    let g:unite_source_grep_default_opts .= ' --nogroup'
+    let g:unite_source_grep_default_opts .= ' --hidden'
+    let g:unite_source_grep_default_opts .= ' --ignore ''.git'''
+    let g:unite_source_grep_default_opts .= ' --ignore ''.hg'''
+    let g:unite_source_grep_default_opts .= ' --ignore ''.svn'''
+    let g:unite_source_grep_recursive_opt = ''
+  endif
+
+  let g:unite_source_find_max_candidates = 2000
+
+  let g:vimfiler_safe_mode_by_default = 0
+  let g:vimfiler_enable_auto_cd       = 1
+
+  let g:neocomplete#enable_at_startup = 1
+  let g:neocomplete#enable_auto_select = 0
+
+  if !exists('g:neocomplete#force_omni_input_patterns')
+    let g:neocomplete#force_omni_input_patterns = {}
+  endif
+  let g:neocomplete#force_omni_input_patterns['c'] = '\v\C%(<\h\w*>|]|\)|^)\zs\s*%(\.|-\>)'
+  let g:neocomplete#force_omni_input_patterns['cpp'] = '\v%(<\h\w*>|^|[;,()<>])\s*((::|\.|-\>)(<\h\w*>)?)+|^\s*<\h\w*>'
+
+  if executable('npm')
+    let g:neocomplete#force_omni_input_patterns['javascript'] = '[^. \t]\.\w*'
+    let g:neocomplete#force_omni_input_patterns['coffee'] = '[^. \t]\.\w*'
+  endif
+
+  let g:neosnippet#disable_runtime_snippets = { '_': 1, }
+  let g:neosnippet#snippets_directory = s:vimdir('snippets')
+
+  let g:eskk#no_default_mappings = 1
+  let g:eskk#enable_completion = 1
+  let g:eskk#max_candidates = 100
+  let g:eskk#start_completion_length = 2
+  let g:eskk#auto_save_dictionary_at_exit = 0
+
+  if executable('google-ime-skk')
+    let g:eskk#server = { 'host': 'localhost', 'port': 55100, }
+
+    call system('ps ax | grep google-ime-skk | grep -v grep')
+    if v:shell_error
+      silent! !google-ime-skk &
     endif
+  endif
 
-    let g:unite_source_find_max_candidates = 2000
+  let g:quickrun_config = {}
 
-    let g:vimfiler_safe_mode_by_default = 0
-    let g:vimfiler_enable_auto_cd       = 1
+  let g:quickrun_config['_'] = {}
+  let g:quickrun_config['_']['runner'] = 'vimproc'
+  let g:quickrun_config['_']['runner/vimproc/updatetime'] = 40
 
-    let g:neocomplete#enable_at_startup = 1
-    let g:neocomplete#enable_auto_select = 0
+  let g:quickrun_config['json'] = {'type': executable('jq') ? 'json/jq' : ''}
+  let g:quickrun_config['json/jq'] = {'command': 'jq', 'exec': '%c "." %s'}
 
-    if !exists('g:neocomplete#force_omni_input_patterns')
-        let g:neocomplete#force_omni_input_patterns = {}
+  let g:quickrun_config['scala'] = {'type': executable('scala') ? 'scala/process_manager' : ''}
+
+  let s:clang_exe = expand($HOME.'/local/llvm/bin/clang++')
+  let s:clang_exe = executable(s:clang_exe) ? s:clang_exe : 'clang++'
+
+  let s:pp = {'name': 'pp'}
+  function! s:pp.set_to(config) dict
+    let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -E'
+    let a:config['exec'] = '%c %o %s'
+    return a:config
+  endfunction
+
+  let s:asm = {'name': 'asm'}
+  function! s:asm.set_to(config) dict
+    let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -S'
+    let a:config['exec'] = ['%c %o %s -o -']
+    return a:config
+  endfunction
+
+  function! s:std(config) dict
+    let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -std='.self['name']
+    return a:config
+  endfunction
+
+  let s:c11             = {'name': 'c11', 'set_to': function('s:std')}
+  let s:c1x             = {'name': 'c1x', 'set_to': function('s:std')}
+  let s:c89             = {'name': 'c89', 'set_to': function('s:std')}
+  let s:c90             = {'name': 'c90', 'set_to': function('s:std')}
+  let s:c99             = {'name': 'c99', 'set_to': function('s:std')}
+  let s:c9x             = {'name': 'c9x', 'set_to': function('s:std')}
+  let s:gnu11           = {'name': 'gnu11', 'set_to': function('s:std')}
+  let s:gnu1x           = {'name': 'gnu1x', 'set_to': function('s:std')}
+  let s:gnu89           = {'name': 'gnu89', 'set_to': function('s:std')}
+  let s:gnu90           = {'name': 'gnu90', 'set_to': function('s:std')}
+  let s:gnu99           = {'name': 'gnu99', 'set_to': function('s:std')}
+  let s:gnu9x           = {'name': 'gnu9x', 'set_to': function('s:std')}
+  let s:iso9899_1990    = {'name': 'iso9899:1990', 'set_to': function('s:std')}
+  let s:iso9899_199409  = {'name': 'iso9899:199409', 'set_to': function('s:std')}
+  let s:iso9899_1999    = {'name': 'iso9899:1999', 'set_to': function('s:std')}
+  let s:iso9899_199x    = {'name': 'iso9899:199x', 'set_to': function('s:std')}
+  let s:iso9899_2011    = {'name': 'iso9899:2011', 'set_to': function('s:std')}
+
+  let s:cxx03    = {'name': 'c++03', 'set_to': function('s:std')}
+  let s:cxx0x    = {'name': 'c++0x', 'set_to': function('s:std')}
+  let s:cxx11    = {'name': 'c++11', 'set_to': function('s:std')}
+  let s:cxx14    = {'name': 'c++14', 'set_to': function('s:std')}
+  let s:cxx1y    = {'name': 'c++1y', 'set_to': function('s:std')}
+  let s:cxx1z    = {'name': 'c++1z', 'set_to': function('s:std')}
+  let s:cxx98    = {'name': 'c++98', 'set_to': function('s:std')}
+  let s:gnuxx03  = {'name': 'gnu++03', 'set_to': function('s:std')}
+  let s:gnuxx0x  = {'name': 'gnu++0x', 'set_to': function('s:std')}
+  let s:gnuxx11  = {'name': 'gnu++11', 'set_to': function('s:std')}
+  let s:gnuxx14  = {'name': 'gnu++14', 'set_to': function('s:std')}
+  let s:gnuxx1y  = {'name': 'gnu++1y', 'set_to': function('s:std')}
+  let s:gnuxx1z  = {'name': 'gnu++1z', 'set_to': function('s:std')}
+  let s:gnuxx98  = {'name': 'gnu++98', 'set_to': function('s:std')}
+
+  " TODO libcxx path
+  let s:libcxx = {'name': 'libcxx'}
+  function! s:libcxx.set_to(config) dict
+    let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -stdlib=libc++'
+
+    if a:config['cmdopt'] !~# '\v\C(^|\s+)-[ES](\s+|$)'
+      let a:config['cmdopt'] .= ' -L'.$HOME.'local/llvm/lib -lc++abi'
     endif
-    let g:neocomplete#force_omni_input_patterns['c'] = '\v\C%(<\h\w*>|]|\)|^)\zs\s*%(\.|-\>)'
-    let g:neocomplete#force_omni_input_patterns['cpp'] = '\v%(<\h\w*>|^|[;,()<>])\s*((::|\.|-\>)(<\h\w*>)?)+|^\s*<\h\w*>'
+    return a:config
+  endfunction
 
-    if executable('npm')
-        let g:neocomplete#force_omni_input_patterns['javascript'] = '[^. \t]\.\w*'
-        let g:neocomplete#force_omni_input_patterns['coffee'] = '[^. \t]\.\w*'
+  let s:cdst = [s:pp, s:asm]
+  let s:cstd = [s:c11, s:c1x, s:c89, s:c90, s:c99, s:c9x, s:gnu11, s:gnu1x, s:gnu89, s:gnu90, s:gnu99, s:gnu9x, s:iso9899_1990, s:iso9899_199409, s:iso9899_1999, s:iso9899_199x, s:iso9899_2011]
+
+  let s:cxxdst = [s:pp, s:asm]
+  let s:cxxstd = [s:cxx03, s:cxx0x, s:cxx11, s:cxx14, s:cxx1y, s:cxx1z, s:cxx98, s:gnuxx03, s:gnuxx0x, s:gnuxx11, s:gnuxx14, s:gnuxx1y, s:gnuxx1z, s:gnuxx98]
+  let s:cxxlib = [s:libcxx]
+
+  function! s:_apply(current, arg)
+    let name = printf('%s/%s', a:current['name'], a:arg['name'])
+    let config = deepcopy(a:current['config'])
+    let config['type'] = a:current['name']
+    return {'name': name, 'config': a:arg.set_to(config)}
+  endfunction
+
+  function! s:_tail(l)
+    return a:l[1:]
+  endfunction
+
+  function! s:_build_impl(current, args_list)
+    let r = []
+    let next = copy(a:args_list)
+    for args in a:args_list
+      let next = s:_tail(next)
+      for arg in args
+        let v = s:_apply(a:current, arg)
+        call add(r, v)
+        call extend(r, s:_build_impl(v, next))
+      endfor
+    endfor
+    return r
+  endfunction
+
+  function! s:_set_quickrun_config(root, arg)
+    let built = s:_build_impl(a:root, a:arg)
+    for v in built
+      let g:quickrun_config[v['name']] = v['config']
+    endfor
+  endfunction
+
+  function! s:set_quickrun_configs()
+    if executable('gcc')
+      call s:_set_quickrun_config({'name': 'c/gcc', 'config': {}}, [s:cdst, s:cstd])
     endif
-
-    let g:neosnippet#disable_runtime_snippets = { '_': 1, }
-    let g:neosnippet#snippets_directory = s:vimdir('snippets')
-
-    let g:eskk#no_default_mappings = 1
-    let g:eskk#enable_completion = 1
-    let g:eskk#max_candidates = 100
-    let g:eskk#start_completion_length = 2
-    let g:eskk#auto_save_dictionary_at_exit = 0
-
-    if executable('google-ime-skk')
-        let g:eskk#server = { 'host': 'localhost', 'port': 55100, }
-
-        call system('ps ax | grep google-ime-skk | grep -v grep')
-        if v:shell_error
-            silent! !google-ime-skk &
-        endif
+    if executable('g++')
+      call s:_set_quickrun_config({'name': 'cpp/g++', 'config': {}}, [s:cxxdst, s:cxxstd])
     endif
+    if executable(s:clang_exe)
+      " TODO libcxx path
+      let clang_arg = isdirectory($HOME.'/local/llvm') ? [s:cxxdst, s:cxxstd, s:cxxlib] : [s:cxxdst, s:cxxstd]
+      call s:_set_quickrun_config({'name': 'cpp/clang++', 'config': {'command': s:clang_exe}}, clang_arg)
+    endif
+  endfunction
+  call s:set_quickrun_configs()
 
-    let g:quickrun_config = {}
+  let g:quickrun_config['watchdogs_checker/_' ] = {}
+  let g:quickrun_config['watchdogs_checker/_' ]['runner/vimproc/updatetime'] = 40
+  let g:quickrun_config['watchdogs_checker/_' ]['outputter/quickfix/open_cmd'] = ''
 
-    let g:quickrun_config['_'] = {}
-    let g:quickrun_config['_']['runner'] = 'vimproc'
-    let g:quickrun_config['_']['runner/vimproc/updatetime'] = 40
+  let g:quickrun_config['watchdogs_checker/_' ]['hook/qfsigns_update/enable_exit'] = 1
 
-    let g:quickrun_config['json'] = {'type': executable('jq') ? 'json/jq' : ''}
-    let g:quickrun_config['json/jq'] = {'command': 'jq', 'exec': '%c "." %s'}
+  let g:quickrun_config['c/watchdogs_checker'] = { 'type' : executable('clang') ? 'watchdogs_checker/clang' : executable('gcc')   ? 'watchdogs_checker/gcc' : '' }
 
-    let g:quickrun_config['scala'] = {'type': executable('scala') ? 'scala/process_manager' : ''}
+  if executable('vint')
+    let g:quickrun_config['vim/watchdogs_checker'] = {'type': 'watchdogs_checker/vint'}
+    let g:quickrun_config['watchdogs_checker/vint'] = {}
+    let g:quickrun_config['watchdogs_checker/vint']['command'] = 'vint'
+    let g:quickrun_config['watchdogs_checker/vint']['exec'] = '%c %s'
+  endif
 
-    let s:clang_exe = expand($HOME.'/local/llvm/bin/clang++')
-    let s:clang_exe = executable(s:clang_exe) ? s:clang_exe : 'clang++'
+  let g:watchdogs_check_BufWritePost_enable = 1
 
-    let s:pp = {'name': 'pp'}
-    function! s:pp.set_to(config) dict
-        let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -E'
-        let a:config['exec'] = '%c %o %s'
-        return a:config
+  let g:haskell_conceal = 0
+
+  let g:diminactive_use_colorcolumn = 0
+  let g:diminactive_use_syntax = 1
+
+  let g:solarized_contrast = 'high'
+  let g:solarized_visibility = 'low'
+
+  let g:brightest#pattern = '\w\+'
+  let g:brightest#highlight = {}
+  let g:brightest#highlight['group'] = 'VimrcBrightest'
+  let g:brightest#highlight['format'] = '\v\C(^|\W\zs)%s(\ze\W|$)'
+
+  let g:marching_clang_command_option = '-std=c++1y'
+  let g:marching_enable_neocomplete = 1
+  if !executable('clang')
+    let g:marching_backend = 'sywnc_wandbox'
+  endif
+
+  " TODO path
+  if !filereadable('libclang.so') && filereadable(expand($HOME.'/local/llvm/lib/libclang.so'))
+    let g:snowdrop#libclang_directory = expand($HOME.'/local/llvm/lib')
+  endif
+
+  let g:rogue#japanese = 1
+
+  let g:vim_json_syntax_conceal = 0
+
+  if has('vim_starting')
+    execute 'set runtimepath+='.s:neobundle_path
+  endif
+
+  call neobundle#begin(s:bundle_path)
+
+  NeoBundle 'altercation/vim-colors-solarized'
+  NeoBundle 'blueyed/vim-diminactive'
+  NeoBundle 'itchyny/lightline.vim'
+  NeoBundle 'kana/vim-repeat'
+  NeoBundle 'kana/vim-textobj-entire', {'depends': 'kana/vim-textobj-user'}
+  NeoBundle 'kana/vim-textobj-line', {'depends': 'kana/vim-textobj-user'}
+  NeoBundle 'kana/vim-textobj-user'
+  NeoBundle 'osyo-manga/vim-brightest'
+  NeoBundle 'osyo-manga/vim-snowdrop'
+  NeoBundle 'Shougo/neomru.vim'
+  NeoBundle 'thinca/vim-prettyprint'
+  NeoBundle 'thinca/vim-qfreplace'
+  NeoBundle 'tpope/vim-fugitive'
+  NeoBundle 'tpope/vim-surround'
+  NeoBundle 'tyru/caw.vim'
+  NeoBundle 'tyru/open-browser.vim'
+  NeoBundle 'vim-jp/vimdoc-ja'
+  NeoBundle 'Yggdroot/indentLine'
+  NeoBundleFetch 'Shougo/neobundle.vim'
+  NeoBundleLazy 'alpaca-tc/beautify.vim'
+  NeoBundleLazy 'cohama/agit.vim'
+  NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
+  NeoBundleLazy 'cohama/vim-hier', {'autoload': {'on_source': 'vim-watchdogs'}}
+  NeoBundleLazy 'dag/vim2hs', {'autoload': {'filetypes': ['haskell']}}
+  NeoBundleLazy 'dannyob/quickfixstatus', {'autoload': {'on_source': 'vim-watchdogs'}}
+  NeoBundleLazy 'deris/vim-rengbang'
+  NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': ['json']}}
+  NeoBundleLazy 'h1mesuke/vim-alignta'
+  NeoBundleLazy 'hail2u/vim-css3-syntax', {'autoload': {'filetypes': ['css']}}
+  NeoBundleLazy 'haya14busa/incsearch.vim', {'autoload': {'mappings': '<Plug>(incsearch'}}
+  NeoBundleLazy 'jelera/vim-javascript-syntax', {'autoload': {'filetypes': ['javascript']}}
+  NeoBundleLazy 'kana/vim-smartword', {'autoload': {'mappings': '<Plug>(smartword'}}
+  NeoBundleLazy 'kannokanno/previm'
+  NeoBundleLazy 'kannokanno/vim-helpnew'
+  NeoBundleLazy 'katono/rogue.vim'
+  NeoBundleLazy 'KazuakiM/vim-qfsigns', {'autoload': {'on_source': 'vim-watchdogs'}}
+  NeoBundleLazy 'kchmck/vim-coffee-script', {'autoload': {'filetypes': ['coffee']}}
+  NeoBundleLazy 'lambdalisue/vim-gista', {'autoload': {'commands': ['Gista'], 'unite_sources': 'gista'}}
+  NeoBundleLazy 'leafgarland/typescript-vim', {'autoload': {'filetypes': ['typescript']}}
+  NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
+  NeoBundleLazy 'mattn/webapi-vim'
+  NeoBundleLazy 'osyo-manga/shabadou.vim', {'depends': 'thinca/vim-quickrun'}
+  NeoBundleLazy 'osyo-manga/unite-quickfix', {'autoload': {'unite_sources': 'quickfix'}}
+  NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'depends': 'thinca/vim-quickrun', 'autoload': {'unite_sources': 'quickrun_config'}}
+  NeoBundleLazy 'osyo-manga/vim-marching', {'autoload': {'filetypes': ['cpp']}}
+  NeoBundleLazy 'osyo-manga/vim-precious', {'depends': 'Shougo/context_filetype.vim', 'autoload': {'filetypes': ['vim', 'markdown']}}
+  NeoBundleLazy 'osyo-manga/vim-watchdogs', {'depends': [ 'thinca/vim-quickrun', 'osyo-manga/shabadou.vim', 'Shougo/vimproc.vim', ], 'autoload': {'filetypes': 'all'}}
+  NeoBundleLazy 'othree/html5.vim', {'autoload': {'filetypes': ['html']}}
+  NeoBundleLazy 'othree/javascript-libraries-syntax.vim', {'filetypes': ['javascript', 'coffee', 'typescript']}
+  NeoBundleLazy 'pangloss/vim-javascript', {'autoload': {'on_source': ['vim-javascript-syntax']}}
+  NeoBundleLazy 'Shougo/context_filetype.vim'
+  NeoBundleLazy 'Shougo/junkfile.vim', {'autoload': {'unite_sources': ['junkfile', 'junkfile/new']}}
+  NeoBundleLazy 'Shougo/neosnippet.vim', {'autoload': {'insert': 1}}
+  NeoBundleLazy 'Shougo/unite.vim'
+  NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': 'Shougo/unite.vim'}
+  NeoBundleLazy 'Shougo/vimproc.vim', {'build': {'others': 'make'}}
+  NeoBundleLazy 'Shougo/vimshell.vim', {'depends': ['Shougo/vimproc.vim', 'Shougo/unite.vim']}
+  NeoBundleLazy 'syngan/vim-vimlint'
+  NeoBundleLazy 't9md/vim-textmanip', {'autoload': {'mappings': '<Plug>(textmanip'}}
+  NeoBundleLazy 'thinca/vim-quickrun', {'complete' : 'customlist,quickrun#complete', 'depends': 'osyo-manga/quickrun-outputter-replace_region'}
+  NeoBundleLazy 'thinca/vim-ref'
+  NeoBundleLazy 'thinca/vim-scouter'
+  NeoBundleLazy 'tyru/eskk.vim', {'autoload': {'insert': 1}}
+  NeoBundleLazy 'tyru/restart.vim', {'gui': 1}
+  NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': ['cpp']}}
+  NeoBundleLazy 'vim-jp/vital.vim'
+
+  if has('lua') && ((v:version > 703) || (v:version == 703 && has('patch885')))
+    NeoBundleLazy 'Shougo/neocomplete.vim', {'autoload': {'insert': 1}}
+  else
+    NeoBundleLazy 'Shougo/neocomplcache.vim', {'autoload': {'insert': 1}}
+  endif
+
+  if executable('npm')
+    NeoBundleLazy 'marijnh/tern_for_vim', {'build': {'others': 'npm install && npm install tern-coffee'}, 'autoload': {'filetypes': ['javascript', 'coffee']}}
+    NeoBundleLazy 'othree/tern_for_vim_coffee', {'autoload': {'on_source': 'tern_for_vim'}}
+  endif
+
+  if neobundle#tap('unite.vim')
+    function! neobundle#tapped.hooks.on_source(bundle)
+      call unite#custom#profile('default', 'context', { 'start_insert': 1, })
+      call unite#custom#profile('source/neobundle/update', 'context', { 'start_insert': 0, })
     endfunction
+    call neobundle#untap()
+  endif
 
-    let s:asm = {'name': 'asm'}
-    function! s:asm.set_to(config) dict
-        let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -S'
-        let a:config['exec'] = ['%c %o %s -o -']
-        return a:config
+  if neobundle#tap('vim-watchdogs')
+    function! neobundle#tapped.hooks.on_source(bundle)
+      call watchdogs#setup(g:quickrun_config)
     endfunction
+    call neobundle#untap()
+  endif
 
-    function! s:std(config) dict
-        let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -std='.self['name']
-        return a:config
+  if neobundle#tap('vimfiler.vim')
+    function! neobundle#tapped.hooks.on_source(bundle)
+      NeoBundleSource vimshell.vim
     endfunction
+    call neobundle#untap()
+  endif
 
-    let s:c11             = {'name': 'c11', 'set_to': function('s:std')}
-    let s:c1x             = {'name': 'c1x', 'set_to': function('s:std')}
-    let s:c89             = {'name': 'c89', 'set_to': function('s:std')}
-    let s:c90             = {'name': 'c90', 'set_to': function('s:std')}
-    let s:c99             = {'name': 'c99', 'set_to': function('s:std')}
-    let s:c9x             = {'name': 'c9x', 'set_to': function('s:std')}
-    let s:gnu11           = {'name': 'gnu11', 'set_to': function('s:std')}
-    let s:gnu1x           = {'name': 'gnu1x', 'set_to': function('s:std')}
-    let s:gnu89           = {'name': 'gnu89', 'set_to': function('s:std')}
-    let s:gnu90           = {'name': 'gnu90', 'set_to': function('s:std')}
-    let s:gnu99           = {'name': 'gnu99', 'set_to': function('s:std')}
-    let s:gnu9x           = {'name': 'gnu9x', 'set_to': function('s:std')}
-    let s:iso9899_1990    = {'name': 'iso9899:1990', 'set_to': function('s:std')}
-    let s:iso9899_199409  = {'name': 'iso9899:199409', 'set_to': function('s:std')}
-    let s:iso9899_1999    = {'name': 'iso9899:1999', 'set_to': function('s:std')}
-    let s:iso9899_199x    = {'name': 'iso9899:199x', 'set_to': function('s:std')}
-    let s:iso9899_2011    = {'name': 'iso9899:2011', 'set_to': function('s:std')}
+  call neobundle#end()
 
-    let s:cxx03    = {'name': 'c++03', 'set_to': function('s:std')}
-    let s:cxx0x    = {'name': 'c++0x', 'set_to': function('s:std')}
-    let s:cxx11    = {'name': 'c++11', 'set_to': function('s:std')}
-    let s:cxx14    = {'name': 'c++14', 'set_to': function('s:std')}
-    let s:cxx1y    = {'name': 'c++1y', 'set_to': function('s:std')}
-    let s:cxx1z    = {'name': 'c++1z', 'set_to': function('s:std')}
-    let s:cxx98    = {'name': 'c++98', 'set_to': function('s:std')}
-    let s:gnuxx03  = {'name': 'gnu++03', 'set_to': function('s:std')}
-    let s:gnuxx0x  = {'name': 'gnu++0x', 'set_to': function('s:std')}
-    let s:gnuxx11  = {'name': 'gnu++11', 'set_to': function('s:std')}
-    let s:gnuxx14  = {'name': 'gnu++14', 'set_to': function('s:std')}
-    let s:gnuxx1y  = {'name': 'gnu++1y', 'set_to': function('s:std')}
-    let s:gnuxx1z  = {'name': 'gnu++1z', 'set_to': function('s:std')}
-    let s:gnuxx98  = {'name': 'gnu++98', 'set_to': function('s:std')}
+  runtime macros/matchit.vim
 
-    " TODO libcxx path
-    let s:libcxx = {'name': 'libcxx'}
-    function! s:libcxx.set_to(config) dict
-        let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -stdlib=libc++'
+  filetype plugin indent on
 
-        if a:config['cmdopt'] !~# '\v\C(^|\s+)-[ES](\s+|$)'
-            let a:config['cmdopt'] .= ' -L'.$HOME.'local/llvm/lib -lc++abi'
-        endif
-        return a:config
-    endfunction
+  set synmaxcol=210
+  syntax on
+  set background=dark
 
-    let s:cdst = [s:pp, s:asm]
-    let s:cstd = [s:c11, s:c1x, s:c89, s:c90, s:c99, s:c9x, s:gnu11, s:gnu1x, s:gnu89, s:gnu90, s:gnu99, s:gnu9x, s:iso9899_1990, s:iso9899_199409, s:iso9899_1999, s:iso9899_199x, s:iso9899_2011]
-
-    let s:cxxdst = [s:pp, s:asm]
-    let s:cxxstd = [s:cxx03, s:cxx0x, s:cxx11, s:cxx14, s:cxx1y, s:cxx1z, s:cxx98, s:gnuxx03, s:gnuxx0x, s:gnuxx11, s:gnuxx14, s:gnuxx1y, s:gnuxx1z, s:gnuxx98]
-    let s:cxxlib = [s:libcxx]
-
-    function! s:_apply(current, arg)
-        let name = printf('%s/%s', a:current['name'], a:arg['name'])
-        let config = deepcopy(a:current['config'])
-        let config['type'] = a:current['name']
-        return {'name': name, 'config': a:arg.set_to(config)}
-    endfunction
-
-    function! s:_tail(l)
-        return a:l[1:]
-    endfunction
-
-    function! s:_build_impl(current, args_list)
-        let r = []
-        let next = copy(a:args_list)
-        for args in a:args_list
-            let next = s:_tail(next)
-            for arg in args
-                let v = s:_apply(a:current, arg)
-                call add(r, v)
-                call extend(r, s:_build_impl(v, next))
-            endfor
-        endfor
-        return r
-    endfunction
-
-    function! s:_set_quickrun_config(root, arg)
-        let built = s:_build_impl(a:root, a:arg)
-        for v in built
-            let g:quickrun_config[v['name']] = v['config']
-        endfor
-    endfunction
-
-    function! s:set_quickrun_configs()
-        if executable('gcc')
-            call s:_set_quickrun_config({'name': 'c/gcc', 'config': {}}, [s:cdst, s:cstd])
-        endif
-        if executable('g++')
-            call s:_set_quickrun_config({'name': 'cpp/g++', 'config': {}}, [s:cxxdst, s:cxxstd])
-        endif
-        if executable(s:clang_exe)
-            " TODO libcxx path
-            let clang_arg = isdirectory($HOME.'/local/llvm') ? [s:cxxdst, s:cxxstd, s:cxxlib] : [s:cxxdst, s:cxxstd]
-            call s:_set_quickrun_config({'name': 'cpp/clang++', 'config': {'command': s:clang_exe}}, clang_arg)
-        endif
-    endfunction
-    call s:set_quickrun_configs()
-
-    let g:quickrun_config['watchdogs_checker/_' ] = {}
-    let g:quickrun_config['watchdogs_checker/_' ]['runner/vimproc/updatetime'] = 40
-    let g:quickrun_config['watchdogs_checker/_' ]['outputter/quickfix/open_cmd'] = ''
-
-    let g:quickrun_config['watchdogs_checker/_' ]['hook/qfsigns_update/enable_exit'] = 1
-
-    let g:quickrun_config['c/watchdogs_checker'] = { 'type' : executable('clang') ? 'watchdogs_checker/clang' : executable('gcc')   ? 'watchdogs_checker/gcc' : '' }
-
-    if executable('vint')
-        let g:quickrun_config['vim/watchdogs_checker'] = {'type': 'watchdogs_checker/vint'}
-        let g:quickrun_config['watchdogs_checker/vint'] = {}
-        let g:quickrun_config['watchdogs_checker/vint']['command'] = 'vint'
-        let g:quickrun_config['watchdogs_checker/vint']['exec'] = '%c %s'
+  if !has('gui_running')
+    if $COLORTERM ==# 'gnome-terminal'
+      set t_Co=256
     endif
+  endif
 
-    let g:watchdogs_check_BufWritePost_enable = 1
-
-    let g:haskell_conceal = 0
-
-    let g:diminactive_use_colorcolumn = 0
-    let g:diminactive_use_syntax = 1
-
-    let g:solarized_contrast = 'high'
-    let g:solarized_visibility = 'low'
-
-    let g:brightest#pattern = '\w\+'
-    let g:brightest#highlight = {}
-    let g:brightest#highlight['group'] = 'VimrcBrightest'
-    let g:brightest#highlight['format'] = '\v\C(^|\W\zs)%s(\ze\W|$)'
-
-    let g:marching_clang_command_option = '-std=c++1y'
-    let g:marching_enable_neocomplete = 1
-    if !executable('clang')
-        let g:marching_backend = 'sywnc_wandbox'
-    endif
-
-    " TODO path
-    if !filereadable('libclang.so') && filereadable(expand($HOME.'/local/llvm/lib/libclang.so'))
-        let g:snowdrop#libclang_directory = expand($HOME.'/local/llvm/lib')
-    endif
-
-    let g:rogue#japanese = 1
-
-    let g:vim_json_syntax_conceal = 0
-
-    if has('vim_starting')
-        execute 'set runtimepath+='.s:neobundle_path
-    endif
-
-    call neobundle#begin(s:bundle_path)
-
-    NeoBundle 'altercation/vim-colors-solarized'
-    NeoBundle 'blueyed/vim-diminactive'
-    NeoBundle 'itchyny/lightline.vim'
-    NeoBundle 'kana/vim-repeat'
-    NeoBundle 'kana/vim-textobj-entire', {'depends': 'kana/vim-textobj-user'}
-    NeoBundle 'kana/vim-textobj-line', {'depends': 'kana/vim-textobj-user'}
-    NeoBundle 'kana/vim-textobj-user'
-    NeoBundle 'osyo-manga/vim-brightest'
-    NeoBundle 'osyo-manga/vim-snowdrop'
-    NeoBundle 'Shougo/neomru.vim'
-    NeoBundle 'thinca/vim-prettyprint'
-    NeoBundle 'thinca/vim-qfreplace'
-    NeoBundle 'tpope/vim-fugitive'
-    NeoBundle 'tpope/vim-surround'
-    NeoBundle 'tyru/caw.vim'
-    NeoBundle 'tyru/open-browser.vim'
-    NeoBundle 'vim-jp/vimdoc-ja'
-    NeoBundle 'Yggdroot/indentLine'
-    NeoBundleFetch 'Shougo/neobundle.vim'
-    NeoBundleLazy 'alpaca-tc/beautify.vim'
-    NeoBundleLazy 'cohama/agit.vim'
-    NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
-    NeoBundleLazy 'cohama/vim-hier', {'autoload': {'on_source': 'vim-watchdogs'}}
-    NeoBundleLazy 'dag/vim2hs', {'autoload': {'filetypes': ['haskell']}}
-    NeoBundleLazy 'dannyob/quickfixstatus', {'autoload': {'on_source': 'vim-watchdogs'}}
-    NeoBundleLazy 'deris/vim-rengbang'
-    NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': ['json']}}
-    NeoBundleLazy 'h1mesuke/vim-alignta'
-    NeoBundleLazy 'hail2u/vim-css3-syntax', {'autoload': {'filetypes': ['css']}}
-    NeoBundleLazy 'haya14busa/incsearch.vim', {'autoload': {'mappings': '<Plug>(incsearch'}}
-    NeoBundleLazy 'jelera/vim-javascript-syntax', {'autoload': {'filetypes': ['javascript']}}
-    NeoBundleLazy 'kana/vim-smartword', {'autoload': {'mappings': '<Plug>(smartword'}}
-    NeoBundleLazy 'kannokanno/previm'
-    NeoBundleLazy 'kannokanno/vim-helpnew'
-    NeoBundleLazy 'katono/rogue.vim'
-    NeoBundleLazy 'KazuakiM/vim-qfsigns', {'autoload': {'on_source': 'vim-watchdogs'}}
-    NeoBundleLazy 'kchmck/vim-coffee-script', {'autoload': {'filetypes': ['coffee']}}
-    NeoBundleLazy 'lambdalisue/vim-gista', {'autoload': {'commands': ['Gista'], 'unite_sources': 'gista'}}
-    NeoBundleLazy 'leafgarland/typescript-vim', {'autoload': {'filetypes': ['typescript']}}
-    NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
-    NeoBundleLazy 'mattn/webapi-vim'
-    NeoBundleLazy 'osyo-manga/shabadou.vim', {'depends': 'thinca/vim-quickrun'}
-    NeoBundleLazy 'osyo-manga/unite-quickfix', {'autoload': {'unite_sources': 'quickfix'}}
-    NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'depends': 'thinca/vim-quickrun', 'autoload': {'unite_sources': 'quickrun_config'}}
-    NeoBundleLazy 'osyo-manga/vim-marching', {'autoload': {'filetypes': ['cpp']}}
-    NeoBundleLazy 'osyo-manga/vim-precious', {'depends': 'Shougo/context_filetype.vim', 'autoload': {'filetypes': ['vim', 'markdown']}}
-    NeoBundleLazy 'osyo-manga/vim-watchdogs', {'depends': [ 'thinca/vim-quickrun', 'osyo-manga/shabadou.vim', 'Shougo/vimproc.vim', ], 'autoload': {'filetypes': 'all'}}
-    NeoBundleLazy 'othree/html5.vim', {'autoload': {'filetypes': ['html']}}
-    NeoBundleLazy 'othree/javascript-libraries-syntax.vim', {'filetypes': ['javascript', 'coffee', 'typescript']}
-    NeoBundleLazy 'pangloss/vim-javascript', {'autoload': {'on_source': ['vim-javascript-syntax']}}
-    NeoBundleLazy 'Shougo/context_filetype.vim'
-    NeoBundleLazy 'Shougo/junkfile.vim', {'autoload': {'unite_sources': ['junkfile', 'junkfile/new']}}
-    NeoBundleLazy 'Shougo/neosnippet.vim', {'autoload': {'insert': 1}}
-    NeoBundleLazy 'Shougo/unite.vim'
-    NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': 'Shougo/unite.vim'}
-    NeoBundleLazy 'Shougo/vimproc.vim', {'build': {'others': 'make'}}
-    NeoBundleLazy 'Shougo/vimshell.vim', {'depends': ['Shougo/vimproc.vim', 'Shougo/unite.vim']}
-    NeoBundleLazy 'syngan/vim-vimlint'
-    NeoBundleLazy 't9md/vim-textmanip', {'autoload': {'mappings': '<Plug>(textmanip'}}
-    NeoBundleLazy 'thinca/vim-quickrun', {'complete' : 'customlist,quickrun#complete', 'depends': 'osyo-manga/quickrun-outputter-replace_region'}
-    NeoBundleLazy 'thinca/vim-ref'
-    NeoBundleLazy 'thinca/vim-scouter'
-    NeoBundleLazy 'tyru/eskk.vim', {'autoload': {'insert': 1}}
-    NeoBundleLazy 'tyru/restart.vim', {'gui': 1}
-    NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': ['cpp']}}
-    NeoBundleLazy 'vim-jp/vital.vim'
-
-    if has('lua') && ((v:version > 703) || (v:version == 703 && has('patch885')))
-        NeoBundleLazy 'Shougo/neocomplete.vim', {'autoload': {'insert': 1}}
-    else
-        NeoBundleLazy 'Shougo/neocomplcache.vim', {'autoload': {'insert': 1}}
-    endif
-
-    if executable('npm')
-        NeoBundleLazy 'marijnh/tern_for_vim', {'build': {'others': 'npm install && npm install tern-coffee'}, 'autoload': {'filetypes': ['javascript', 'coffee']}}
-        NeoBundleLazy 'othree/tern_for_vim_coffee', {'autoload': {'on_source': 'tern_for_vim'}}
-    endif
-
-    if neobundle#tap('unite.vim')
-        function! neobundle#tapped.hooks.on_source(bundle)
-            call unite#custom#profile('default', 'context', { 'start_insert': 1, })
-            call unite#custom#profile('source/neobundle/update', 'context', { 'start_insert': 0, })
-        endfunction
-        call neobundle#untap()
-    endif
-
-    if neobundle#tap('vim-watchdogs')
-        function! neobundle#tapped.hooks.on_source(bundle)
-            call watchdogs#setup(g:quickrun_config)
-        endfunction
-        call neobundle#untap()
-    endif
-
-    if neobundle#tap('vimfiler.vim')
-        function! neobundle#tapped.hooks.on_source(bundle)
-            NeoBundleSource vimshell.vim
-        endfunction
-        call neobundle#untap()
-    endif
-
-    call neobundle#end()
-
-    runtime macros/matchit.vim
-
-    filetype plugin indent on
-
-    set synmaxcol=210
-    syntax on
-    set background=dark
-
+  if neobundle#is_installed('vim-colors-solarized') && neobundle#is_sourced('vim-colors-solarized')
     if !has('gui_running')
-        if $COLORTERM ==# 'gnome-terminal'
-            set t_Co=256
-        endif
+      let g:solarized_termcolors=&t_Co
     endif
+    colorscheme solarized
+  endif
 
-    if neobundle#is_installed('vim-colors-solarized') && neobundle#is_sourced('vim-colors-solarized')
-        if !has('gui_running')
-            let g:solarized_termcolors=&t_Co
-        endif
-        colorscheme solarized
-    endif
+  highlight VimrcBrightest term=bold cterm=bold ctermfg=224 gui=bold guifg=#ffd4c9
 
-    highlight VimrcBrightest term=bold cterm=bold ctermfg=224 gui=bold guifg=#ffd4c9
+  let g:hier_highlight_group_qf  = 'qf_error_ucurl'
+  let g:hier_highlight_group_qfw = 'qf_warning_ucurl'
 
-    let g:hier_highlight_group_qf  = 'qf_error_ucurl'
-    let g:hier_highlight_group_qfw = 'qf_warning_ucurl'
+  highlight qf_error_ucurl term=bold ctermfg=White ctermbg=Red gui=undercurl guisp=Red
+  highlight qf_warning_ucurl term=bold ctermfg=Black ctermbg=Yellow gui=undercurl guisp=Yellow
 
-    highlight qf_error_ucurl term=bold ctermfg=White ctermbg=Red gui=undercurl guisp=Red
-    highlight qf_warning_ucurl term=bold ctermfg=Black ctermbg=Yellow gui=undercurl guisp=Yellow
+  highlight DiffAdd term=bold ctermfg=Green ctermbg=DarkGreen guifg=Green
+  highlight DiffChange term=bold ctermfg=Blue ctermbg=DarkBlue guifg=Blue
+  highlight DiffDelete term=bold ctermfg=Magenta ctermbg=DarkRed guifg=Red
+  highlight DiffText term=bold ctermfg=Cyan ctermbg=DarkCyan guifg=White
 
-    highlight DiffAdd term=bold ctermfg=Green ctermbg=DarkGreen guifg=Green
-    highlight DiffChange term=bold ctermfg=Blue ctermbg=DarkBlue guifg=Blue
-    highlight DiffDelete term=bold ctermfg=Magenta ctermbg=DarkRed guifg=Red
-    highlight DiffText term=bold ctermfg=Cyan ctermbg=DarkCyan guifg=White
+  inoremap <C-k> <ESC>
 
-    inoremap <C-k> <ESC>
+  nnoremap j gj
+  nnoremap gj j
+  nnoremap k gk
+  nnoremap gk k
 
-    nnoremap j gj
-    nnoremap gj j
-    nnoremap k gk
-    nnoremap gk k
+  nnoremap <Down> <C-w>j
+  nnoremap <Up> <C-w>k
+  nnoremap <Right> <C-w>l
+  nnoremap <Left> <C-w>h
 
-    nnoremap <Down> <C-w>j
-    nnoremap <Up> <C-w>k
-    nnoremap <Right> <C-w>l
-    nnoremap <Left> <C-w>h
+  nnoremap <S-Right> gt
+  nnoremap <S-Left> gT
 
-    nnoremap <S-Right> gt
-    nnoremap <S-Left> gT
+  nnoremap ; q:
+  vnoremap ; q:
+  nnoremap : ;
+  vnoremap : ;
+  nnoremap q; :
+  vnoremap q; :
+  nnoremap q: <Nop>
+  vnoremap q: <Nop>
 
-    nnoremap ; q:
-    vnoremap ; q:
-    nnoremap : ;
-    vnoremap : ;
-    nnoremap q; :
-    vnoremap q; :
-    nnoremap q: <Nop>
-    vnoremap q: <Nop>
+  nnoremap <silent> <Esc><Esc> :nohls<CR>
 
-    nnoremap <silent> <Esc><Esc> :nohls<CR>
+  map /  <Plug>(incsearch-forward)
+  map ?  <Plug>(incsearch-backward)
+  map g/ <Plug>(incsearch-stay)
 
-    map /  <Plug>(incsearch-forward)
-    map ?  <Plug>(incsearch-backward)
-    map g/ <Plug>(incsearch-stay)
+  map w  <Plug>(smartword-w)
+  map b  <Plug>(smartword-b)
+  map e  <Plug>(smartword-e)
+  map ge  <Plug>(smartword-ge)
 
-    map w  <Plug>(smartword-w)
-    map b  <Plug>(smartword-b)
-    map e  <Plug>(smartword-e)
-    map ge  <Plug>(smartword-ge)
+  map <Space> [prefix]
+  noremap [prefix] <Nop>
 
-    map <Space> [prefix]
-    noremap [prefix] <Nop>
+  nnoremap <silent> [prefix]ee :<C-u>e $MYVIMRC<CR>
+  nnoremap <silent> [prefix]er :<C-u>so $MYVIMRC<CR>
 
-    nnoremap <silent> [prefix]ee :<C-u>e $MYVIMRC<CR>
-    nnoremap <silent> [prefix]er :<C-u>so $MYVIMRC<CR>
+  nmap [prefix]u [unite]
+  nnoremap [unite] <Nop>
+  nnoremap <silent> [unite]bf :<C-u>Unite buffer<CR>
+  nnoremap <silent> [unite]bu :<C-u>Unite neobundle/update:all<CR>
+  nnoremap <silent> [unite]c :<C-u>Unite quickfix<CR>
+  nnoremap <silent> [unite]fm :<C-u>Unite neomru/file<CR>
+  nnoremap <silent> [unite]ga :<C-u>Unite grep -no-quit -create -auto-preview -tab -no-empty<CR>
+  nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create -no-empty<CR>
+  nnoremap <silent> [unite]gv :<C-u>Unite vimgrep -no-quit -create -tab -no-empty<CR>
+  nnoremap <silent> [unite]gc :<C-u>Unite vimgrep:% -no-quit -create -tab -no-empty<CR>
+  nnoremap <silent> [unite]l :<C-u>Unite line<CR>
+  nnoremap <silent> [unite]j :<C-u>Unite junkfile/new junkfile<CR>
+  nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
 
-    nmap [prefix]u [unite]
-    nnoremap [unite] <Nop>
-    nnoremap <silent> [unite]bf :<C-u>Unite buffer<CR>
-    nnoremap <silent> [unite]bu :<C-u>Unite neobundle/update:all<CR>
-    nnoremap <silent> [unite]c :<C-u>Unite quickfix<CR>
-    nnoremap <silent> [unite]fm :<C-u>Unite neomru/file<CR>
-    nnoremap <silent> [unite]ga :<C-u>Unite grep -no-quit -create -auto-preview -tab -no-empty<CR>
-    nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create -no-empty<CR>
-    nnoremap <silent> [unite]gv :<C-u>Unite vimgrep -no-quit -create -tab -no-empty<CR>
-    nnoremap <silent> [unite]gc :<C-u>Unite vimgrep:% -no-quit -create -tab -no-empty<CR>
-    nnoremap <silent> [unite]l :<C-u>Unite line<CR>
-    nnoremap <silent> [unite]j :<C-u>Unite junkfile/new junkfile<CR>
-    nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
+  nmap [prefix]vf [vimfiler]
+  nnoremap [vimfiler] <Nop>
+  nnoremap <silent> [vimfiler]; :<C-u>VimFiler<CR>
+  nnoremap <silent> [vimfiler]+ :<C-u>VimFiler -create<CR>
+  nnoremap <silent> [vimfiler]p :<C-u>VimFiler -split<CR>
+  nnoremap <silent> [vimfiler]P :<C-u>VimFiler -create -split<CR>
+  nnoremap <silent> [vimfiler]j :<C-u>VimFilerExplorer<CR>
 
-    nmap [prefix]vf [vimfiler]
-    nnoremap [vimfiler] <Nop>
-    nnoremap <silent> [vimfiler]; :<C-u>VimFiler<CR>
-    nnoremap <silent> [vimfiler]+ :<C-u>VimFiler -create<CR>
-    nnoremap <silent> [vimfiler]p :<C-u>VimFiler -split<CR>
-    nnoremap <silent> [vimfiler]P :<C-u>VimFiler -create -split<CR>
-    nnoremap <silent> [vimfiler]j :<C-u>VimFilerExplorer<CR>
+  nmap [prefix]vs [vimshell]
+  nnoremap [vimshell] <Nop>
+  nnoremap <silent> [vimshell]; :<C-u>VimShell<CR>
+  nnoremap <silent> [vimshell]+ :<C-u>VimShell -create<CR>
 
-    nmap [prefix]vs [vimshell]
-    nnoremap [vimshell] <Nop>
-    nnoremap <silent> [vimshell]; :<C-u>VimShell<CR>
-    nnoremap <silent> [vimshell]+ :<C-u>VimShell -create<CR>
+  nmap [prefix]g [fugitive]
+  nnoremap [fugitive] <Nop>
+  nnoremap [fugitive]s :<C-u>Gstatus<CR>
+  nnoremap [fugitive]d :<C-u>Gdiff<CR>
+  nnoremap [fugitive]c :<C-u>Gcommit -a -m ""<Left>
 
-    nmap [prefix]g [fugitive]
-    nnoremap [fugitive] <Nop>
-    nnoremap [fugitive]s :<C-u>Gstatus<CR>
-    nnoremap [fugitive]d :<C-u>Gdiff<CR>
-    nnoremap [fugitive]c :<C-u>Gcommit -a -m ""<Left>
+  nmap [prefix]q <Plug>(quickrun)
 
-    nmap [prefix]q <Plug>(quickrun)
+  nnoremap [prefix]b :<C-u>Beautify<CR>
+  vnoremap [prefix]b :Beautify<CR>
 
-    nnoremap [prefix]b :<C-u>Beautify<CR>
-    vnoremap [prefix]b :Beautify<CR>
+  nnoremap <silent> [prefix]res :Restart<CR>
 
-    nnoremap <silent> [prefix]res :Restart<CR>
+  inoremap <expr> <C-L> neocomplete#complete_common_string()
 
-    inoremap <expr> <C-L> neocomplete#complete_common_string()
+  imap <C-E> <Plug>(neosnippet_expand_or_jump)
+  smap <C-E> <Plug>(neosnippet_expand_or_jump)
+  imap <C-J> <Plug>(neosnippet_jump_or_expand)
+  smap <C-J> <Plug>(neosnippet_jump_or_expand)
 
-    imap <C-E> <Plug>(neosnippet_expand_or_jump)
-    smap <C-E> <Plug>(neosnippet_expand_or_jump)
-    imap <C-J> <Plug>(neosnippet_jump_or_expand)
-    smap <C-J> <Plug>(neosnippet_jump_or_expand)
+  xmap <C-j> <Plug>(textmanip-move-down)
+  xmap <C-k> <Plug>(textmanip-move-up)
+  xmap <C-h> <Plug>(textmanip-move-left)
+  xmap <C-l> <Plug>(textmanip-move-right)
 
-    xmap <C-j> <Plug>(textmanip-move-down)
-    xmap <C-k> <Plug>(textmanip-move-up)
-    xmap <C-h> <Plug>(textmanip-move-left)
-    xmap <C-l> <Plug>(textmanip-move-right)
+  imap <C-X>j <Plug>(eskk:toggle)
+  imap <C-X><C-J> <Plug>(eskk:toggle)
+  cmap <C-X>j <Plug>(eskk:toggle)
+  cmap <C-X><C-J> <Plug>(eskk:toggle)
 
-    imap <C-X>j <Plug>(eskk:toggle)
-    imap <C-X><C-J> <Plug>(eskk:toggle)
-    cmap <C-X>j <Plug>(eskk:toggle)
-    cmap <C-X><C-J> <Plug>(eskk:toggle)
+  function! s:operator_replace(type)
+    let sel_save = &selection
+    let p_save = &paste
+    let &selection = 'inclusive'
+    set paste
 
-    function! s:operator_replace(type)
-        let sel_save = &selection
-        let p_save = &paste
-        let &selection = 'inclusive'
-        set paste
-
-        let register = v:register !=# '' ? v:register : '"'
-        if a:type =~# '\v\C^[vV]$'
-            execute printf('normal! `<%s`>"_c%s%s', a:type, "\<C-r>", register)
-        else
-            execute printf('normal! `[v`]"_c%s%s', "\<C-r>", register)
-        endif
-
-        let &paste = p_save
-        let &selection = sel_save
-    endfunction
-    nnoremap <silent> s :<C-u>set opfunc=<SID>operator_replace<CR>g@
-    vnoremap <silent> s :<C-u>call <SID>operator_replace(visualmode())<CR>
-
-    if has('autocmd')
-        augroup my_vimrc
-            autocmd!
-        augroup END
-        command! -bang -nargs=* Au autocmd<bang> my_vimrc <args>
+    let register = v:register !=# '' ? v:register : '"'
+    if a:type =~# '\v\C^[vV]$'
+      execute printf('normal! `<%s`>"_c%s%s', a:type, "\<C-r>", register)
     else
-        command! -bang -nargs=* Au
+      execute printf('normal! `[v`]"_c%s%s', "\<C-r>", register)
     endif
 
-    Au CmdWinEnter * call s:init_cmdwin()
-    function! s:init_cmdwin()
-        nnoremap <buffer><silent><nowait> <ESC> <C-w>c
-        vnoremap <buffer><silent><nowait> <ESC> <C-w>c
-        nnoremap <buffer><silent><nowait> q <C-w>c
-        vnoremap <buffer><silent><nowait> q <C-w>c
-        startinsert!
-    endfunction
+    let &paste = p_save
+    let &selection = sel_save
+  endfunction
+  nnoremap <silent> s :<C-u>set opfunc=<SID>operator_replace<CR>g@
+  vnoremap <silent> s :<C-u>call <SID>operator_replace(visualmode())<CR>
 
-    Au FileType help noremap <buffer><nowait> q <C-w>c
+  if has('autocmd')
+    augroup my_vimrc
+      autocmd!
+    augroup END
+    command! -bang -nargs=* Au autocmd<bang> my_vimrc <args>
+  else
+    command! -bang -nargs=* Au
+  endif
 
-    Au FileType unite call s:ft_unite()
-    function! s:ft_unite()
-        map <buffer><nowait> q <Plug>(unite_exit)
-        map <buffer><nowait> <C-g> <Plug>(unite_exit)
+  Au CmdWinEnter * call s:init_cmdwin()
+  function! s:init_cmdwin()
+    nnoremap <buffer><silent><nowait> <ESC> <C-w>c
+    vnoremap <buffer><silent><nowait> <ESC> <C-w>c
+    nnoremap <buffer><silent><nowait> q <C-w>c
+    vnoremap <buffer><silent><nowait> q <C-w>c
+    startinsert!
+  endfunction
 
-        map <buffer><nowait> Q <Plug>(unite_all_exit)|
-        map <buffer><nowait> g<C-g> <Plug>(unite_all_exit)|
-    endfunction
+  Au FileType help noremap <buffer><nowait> q <C-w>c
 
-    Au FileType vimfiler call s:ft_vimfiler()
-    function! s:vimfiler_key_wrap(plug)
-        if empty(vimfiler#get_marked_files())
-            call feedkeys("\<Plug>(vimfiler_toggle_mark_current_line)", 'm')
-            call feedkeys(a:plug, 'm')
-        else
-            call feedkeys(a:plug, 'm')
-        endif
-    endfunction
+  Au FileType unite call s:ft_unite()
+  function! s:ft_unite()
+    map <buffer><nowait> q <Plug>(unite_exit)
+    map <buffer><nowait> <C-g> <Plug>(unite_exit)
 
-    Au FileType javascript,coffee set tabstop=2 shiftwidth=2
+    map <buffer><nowait> Q <Plug>(unite_all_exit)|
+    map <buffer><nowait> g<C-g> <Plug>(unite_all_exit)|
+  endfunction
 
-    function! s:ft_vimfiler()
-        nmap <buffer><expr><nowait> c <SID>vimfiler_key_wrap("\<Plug>(vimfiler_copy_file)")
-        nmap <buffer><expr><nowait> m <SID>vimfiler_key_wrap("\<Plug>(vimfiler_move_file)")
-        nmap <buffer><expr><nowait> d <SID>vimfiler_key_wrap("\<Plug>(vimfiler_delete_file)")
-        nmap <buffer><expr><nowait> r <SID>vimfiler_key_wrap("\<Plug>(vimfiler_rename_file)")
+  Au FileType vimfiler call s:ft_vimfiler()
+  function! s:vimfiler_key_wrap(plug)
+    if empty(vimfiler#get_marked_files())
+      call feedkeys("\<Plug>(vimfiler_toggle_mark_current_line)", 'm')
+      call feedkeys(a:plug, 'm')
+    else
+      call feedkeys(a:plug, 'm')
+    endif
+  endfunction
 
-        map <buffer><nowait> q <Plug>(vimfiler_hide)
+  Au FileType javascript,coffee set tabstop=2 shiftwidth=2
 
-        let b:vimfiler.is_visible_ignore_files = 1
-    endfunction
+  function! s:ft_vimfiler()
+    nmap <buffer><expr><nowait> c <SID>vimfiler_key_wrap("\<Plug>(vimfiler_copy_file)")
+    nmap <buffer><expr><nowait> m <SID>vimfiler_key_wrap("\<Plug>(vimfiler_move_file)")
+    nmap <buffer><expr><nowait> d <SID>vimfiler_key_wrap("\<Plug>(vimfiler_delete_file)")
+    nmap <buffer><expr><nowait> r <SID>vimfiler_key_wrap("\<Plug>(vimfiler_rename_file)")
 
-    Au WinEnter * checktime
+    map <buffer><nowait> q <Plug>(vimfiler_hide)
 
-    function! s:vimenter()
-        NeoBundleCheck
-        if !has('patch-7.4.414')
-            NeoBundleSource
-        endif
-    endfunction
-    Au VimEnter * call s:vimenter()
-    if !has('vim_starting')
-        call s:vimenter()
+    let b:vimfiler.is_visible_ignore_files = 1
+  endfunction
+
+  Au WinEnter * checktime
+
+  function! s:vimenter()
+    NeoBundleCheck
+    if !has('patch-7.4.414')
+      NeoBundleSource
+    endif
+  endfunction
+  Au VimEnter * call s:vimenter()
+  if !has('vim_starting')
+    call s:vimenter()
+  endif
+
+  Au BufWritePre * :%s/\v\\@<!(\s|\t|　)+$//e
+
+  " TODO
+  if has('vim_starting')
+    set path-=,
+    let s:path = &path
+  endif
+
+  let s:t = {}
+
+  function! s:set_path(ft)
+    execute printf('setl path=%s', s:path)
+    let f = get(s:t, a:ft, {})
+    if !empty(f)
+      if !has_key(f, 'cache')
+        let f['cache'] = f.get_path()
+      endif
+      for inc in f['cache']
+        execute printf('setl path+=%s', inc)
+      endfor
+    endif
+  endfunction
+
+  Au FileType * call s:set_path(expand('<amatch>'))
+
+  function! s:include_paths(cmd, lang, opt)
+    if !executable('echo') || !executable(a:cmd)
+      return []
     endif
 
-    Au BufWritePre * :%s/\v\\@<!(\s|\t|　)+$//e
-
-    " TODO
-    if has('vim_starting')
-        set path-=,
-        let s:path = &path
+    let sep = has('unix') ? '|' : '\|'
+    let cmd = printf('echo %s %s %s -Wp,-v -x %s - -fsyntax-only', sep, a:cmd, a:opt, a:lang)
+    let incl_paths = systemlist(cmd)
+    if type(incl_paths) == type('') && incl_paths ==# ''
+      echom 'error:'.cmd
+      return []
     endif
 
-    let s:t = {}
-
-    function! s:set_path(ft)
-        execute printf('setl path=%s', s:path)
-        let f = get(s:t, a:ft, {})
-        if !empty(f)
-            if !has_key(f, 'cache')
-                let f['cache'] = f.get_path()
-            endif
-            for inc in f['cache']
-                execute printf('setl path+=%s', inc)
-            endfor
-        endif
-    endfunction
-
-    Au FileType * call s:set_path(expand('<amatch>'))
-
-    function! s:include_paths(cmd, lang, opt)
-        if !executable('echo') || !executable(a:cmd)
-            return []
-        endif
-
-        let sep = has('unix') ? '|' : '\|'
-        let cmd = printf('echo %s %s %s -Wp,-v -x %s - -fsyntax-only', sep, a:cmd, a:opt, a:lang)
-        let incl_paths = systemlist(cmd)
-        if type(incl_paths) == type('') && incl_paths ==# ''
-            echom 'error:'.cmd
-            return []
-        endif
-
-        let incl_start_idx = index(incl_paths,  '#include <...> search starts here:') + 1
-        let incl_end_idx = index(incl_paths,  'End of search list.') - 1
-        if incl_start_idx < incl_end_idx
-            let result = incl_paths[incl_start_idx : incl_end_idx]
-            return map(result, "fnameescape(substitute(v:val, '\v\C^\s+|\s+$', '', 'g'))")
-        else
-            return []
-        endif
-    endfunction
-
-    let s:c_cmd = executable('gcc') ? 'gcc' : executable('clang') ? 'clang' :  ''
-
-    let s:t.c = {}
-    function! s:t.c.get_path()
-        return s:include_paths(s:c_cmd, 'c', '')
-    endfunction
-
-    let s:t.cpp = {}
-    function! s:t.cpp.get_path()
-        return s:include_paths(s:c_cmd, 'c++', '')
-    endfunction
-
-
-    " http://qiita.com/takaakikasai/items/3d4f8a4867364a46dfa3
-    if executable('git')
-        set diffexpr=MyDiff()
-
-        function! MyDiff()
-            let v = s:my_diff(v:fname_in, v:fname_new)
-            call writefile(split(v, '\n'), v:fname_out)
-        endfunction
-
-        function! s:my_diff(path1, path2)
-            let diff_out = s:git_diff(a:path1, a:path2)
-            return s:to_ed_format(diff_out)
-        endfunction
-
-        function! s:git_diff(path1, path2)
-            let opt = &diffopt =~# 'iwhite' ? '-b' : ''
-            let cmd = printf('git diff --histogram --no-index --no-color -U0 %s %s %s', opt, a:path1, a:path2)
-            return system(cmd)
-        endfunction
-
-        function! s:action(bs, as)
-            if a:bs ==# '0'
-                return 'a'
-            elseif a:as ==# '0'
-                return 'd'
-            else
-                return 'c'
-            endif
-        endfunction
-
-        function! s:range_str(start, size)
-            let start = str2nr(a:start)
-            let size = str2nr(a:size)
-            if size == 0
-                return string(start)
-            else
-                return printf('%d,%d', start, start+size-1)
-            endif
-        endfunction
-
-        function! s:to_ed_change_command(a1, a2, a3, a4)
-            let before_start = a:a1
-            let before_size = a:a2
-            let after_start = a:a3
-            let after_size = a:a4
-
-            let action = s:action(before_size, after_size)
-            let before = s:range_str(before_start, before_size)
-            let after = s:range_str(after_start, after_size)
-
-            return printf('%s%s%s', before, action, after)
-        endfunction
-
-        let s:pat = '\v\C\@\@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? \@\@[^\n]{-}'
-        let s:sub = '\=s:to_ed_change_command(submatch(1), submatch(3), submatch(4), submatch(6))'
-        function! s:to_ed_format(diff_out)
-            let out = a:diff_out
-            let out = substitute(out, '\v\C%^\_.{-}\ze\@\@', '', '')
-            let out = substitute(out, '\M\C\n\zs+', '> ', 'g')
-            let out = substitute(out, '\M\C\n\zs-', '< ', 'g')
-            let out = substitute(out, s:pat, s:sub, 'g')
-            let out = substitute(out, '\M\C<[^\n]\{-}\n\zs>', '---\n>', 'g')
-            return out
-        endfunction
+    let incl_start_idx = index(incl_paths,  '#include <...> search starts here:') + 1
+    let incl_end_idx = index(incl_paths,  'End of search list.') - 1
+    if incl_start_idx < incl_end_idx
+      let result = incl_paths[incl_start_idx : incl_end_idx]
+      return map(result, "fnameescape(substitute(v:val, '\v\C^\s+|\s+$', '', 'g'))")
+    else
+      return []
     endif
+  endfunction
 
-    let s:local_vimrc = s:vimdir('local_vimrc')
-    if filereadable(s:local_vimrc)
-        execute 'source' s:local_vimrc
-    endif
+  let s:c_cmd = executable('gcc') ? 'gcc' : executable('clang') ? 'clang' :  ''
+
+  let s:t.c = {}
+  function! s:t.c.get_path()
+    return s:include_paths(s:c_cmd, 'c', '')
+  endfunction
+
+  let s:t.cpp = {}
+  function! s:t.cpp.get_path()
+    return s:include_paths(s:c_cmd, 'c++', '')
+  endfunction
+
+
+  " http://qiita.com/takaakikasai/items/3d4f8a4867364a46dfa3
+  if executable('git')
+    set diffexpr=MyDiff()
+
+    function! MyDiff()
+      let v = s:my_diff(v:fname_in, v:fname_new)
+      call writefile(split(v, '\n'), v:fname_out)
+    endfunction
+
+    function! s:my_diff(path1, path2)
+      let diff_out = s:git_diff(a:path1, a:path2)
+      return s:to_ed_format(diff_out)
+    endfunction
+
+    function! s:git_diff(path1, path2)
+      let opt = &diffopt =~# 'iwhite' ? '-b' : ''
+      let cmd = printf('git diff --histogram --no-index --no-color -U0 %s %s %s', opt, a:path1, a:path2)
+      return system(cmd)
+    endfunction
+
+    function! s:action(bs, as)
+      if a:bs ==# '0'
+        return 'a'
+      elseif a:as ==# '0'
+        return 'd'
+      else
+        return 'c'
+      endif
+    endfunction
+
+    function! s:range_str(start, size)
+      let start = str2nr(a:start)
+      let size = str2nr(a:size)
+      if size == 0
+        return string(start)
+      else
+        return printf('%d,%d', start, start+size-1)
+      endif
+    endfunction
+
+    function! s:to_ed_change_command(a1, a2, a3, a4)
+      let before_start = a:a1
+      let before_size = a:a2
+      let after_start = a:a3
+      let after_size = a:a4
+
+      let action = s:action(before_size, after_size)
+      let before = s:range_str(before_start, before_size)
+      let after = s:range_str(after_start, after_size)
+
+      return printf('%s%s%s', before, action, after)
+    endfunction
+
+    let s:pat = '\v\C\@\@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? \@\@[^\n]{-}'
+    let s:sub = '\=s:to_ed_change_command(submatch(1), submatch(3), submatch(4), submatch(6))'
+    function! s:to_ed_format(diff_out)
+      let out = a:diff_out
+      let out = substitute(out, '\v\C%^\_.{-}\ze\@\@', '', '')
+      let out = substitute(out, '\M\C\n\zs+', '> ', 'g')
+      let out = substitute(out, '\M\C\n\zs-', '< ', 'g')
+      let out = substitute(out, s:pat, s:sub, 'g')
+      let out = substitute(out, '\M\C<[^\n]\{-}\n\zs>', '---\n>', 'g')
+      return out
+    endfunction
+  endif
+
+  let s:local_vimrc = s:vimdir('local_vimrc')
+  if filereadable(s:local_vimrc)
+    execute 'source' s:local_vimrc
+  endif
 endif
 
