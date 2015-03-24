@@ -484,6 +484,7 @@ if 1
 
     filetype plugin indent on
 
+    set synmaxcol=210
     syntax on
     set background=dark
 
