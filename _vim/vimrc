@@ -148,11 +148,7 @@ if 1
   if executable('ag')
     let g:unite_source_grep_command = 'ag'
     let g:unite_source_grep_default_opts = ''
-    let g:unite_source_grep_default_opts .= ' -a'
-    let g:unite_source_grep_default_opts .= ' --line-numbers'
-    let g:unite_source_grep_default_opts .= ' --nocolor'
-    let g:unite_source_grep_default_opts .= ' --nogroup'
-    let g:unite_source_grep_default_opts .= ' --hidden'
+    let g:unite_source_grep_default_opts .= ' --vimgrep'
     let g:unite_source_grep_default_opts .= ' --ignore ''.git'''
     let g:unite_source_grep_default_opts .= ' --ignore ''.hg'''
     let g:unite_source_grep_default_opts .= ' --ignore ''.svn'''
@@ -381,6 +377,7 @@ if 1
   NeoBundle 'altercation/vim-colors-solarized'
   NeoBundle 'blueyed/vim-diminactive'
   NeoBundle 'itchyny/lightline.vim'
+  NeoBundle 'kana/vim-operator-user'
   NeoBundle 'kana/vim-repeat'
   NeoBundle 'kana/vim-textobj-entire', {'depends': 'kana/vim-textobj-user'}
   NeoBundle 'kana/vim-textobj-line', {'depends': 'kana/vim-textobj-user'}
@@ -391,7 +388,6 @@ if 1
   NeoBundle 'thinca/vim-prettyprint'
   NeoBundle 'thinca/vim-qfreplace'
   NeoBundle 'tpope/vim-fugitive'
-  NeoBundle 'tpope/vim-surround'
   NeoBundle 'tyru/caw.vim'
   NeoBundle 'tyru/open-browser.vim'
   NeoBundle 'vim-jp/vimdoc-ja'
@@ -428,6 +424,7 @@ if 1
   NeoBundleLazy 'othree/html5.vim', {'autoload': {'filetypes': ['html']}}
   NeoBundleLazy 'othree/javascript-libraries-syntax.vim', {'filetypes': ['javascript', 'coffee', 'typescript']}
   NeoBundleLazy 'pangloss/vim-javascript', {'autoload': {'on_source': ['vim-javascript-syntax']}}
+  NeoBundleLazy 'rhysd/vim-operator-surround', {'depends': 'kana/vim-operator-user', 'autoload': {'mappings': '<Plug>(operator-surround'}}
   NeoBundleLazy 'Shougo/context_filetype.vim'
   NeoBundleLazy 'Shougo/junkfile.vim', {'autoload': {'unite_sources': ['junkfile', 'junkfile/new']}}
   NeoBundleLazy 'Shougo/neosnippet.vim', {'autoload': {'insert': 1}}
@@ -631,6 +628,13 @@ if 1
   endfunction
   nnoremap <silent> s :<C-u>set opfunc=<SID>operator_replace<CR>g@
   vnoremap <silent> s :<C-u>call <SID>operator_replace(visualmode())<CR>
+
+  nmap <silent>ys <Plug>(operator-surround-append)
+  nmap <silent>ds <Plug>(operator-surround-delete)
+  nmap <silent>cs <Plug>(operator-surround-replace)
+  xmap <silent>S <Plug>(operator-surround-append)
+  xmap <silent>D <Plug>(operator-surround-delete)
+  xmap <silent>C <Plug>(operator-surround-replace)
 
   if has('autocmd')
     augroup my_vimrc
