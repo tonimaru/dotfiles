@@ -339,6 +339,7 @@ if 1
   endif
 
   let g:watchdogs_check_BufWritePost_enable = 1
+  let g:watchdogs_check_BufWritePost_enable_on_wq = 0
 
   let g:haskell_conceal = 0
 
