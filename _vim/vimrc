@@ -343,9 +343,6 @@ if 1
 
   let g:haskell_conceal = 0
 
-  let g:diminactive_use_colorcolumn = 0
-  let g:diminactive_use_syntax = 1
-
   let g:solarized_contrast = 'high'
   let g:solarized_visibility = 'low'
 
@@ -376,7 +373,6 @@ if 1
   call neobundle#begin(s:bundle_path)
 
   NeoBundle 'altercation/vim-colors-solarized'
-  NeoBundle 'blueyed/vim-diminactive'
   NeoBundle 'itchyny/lightline.vim'
   NeoBundle 'kana/vim-operator-user'
   NeoBundle 'kana/vim-repeat'
@@ -401,6 +397,7 @@ if 1
   NeoBundleLazy 'dag/vim2hs', {'autoload': {'filetypes': ['haskell']}}
   NeoBundleLazy 'dannyob/quickfixstatus', {'autoload': {'on_source': 'vim-watchdogs'}}
   NeoBundleLazy 'deris/vim-rengbang'
+  NeoBundleLazy 'digitaltoad/vim-jade', {'autoload': {'filetypes': ['jade']}}
   NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': ['json']}}
   NeoBundleLazy 'h1mesuke/vim-alignta'
   NeoBundleLazy 'hail2u/vim-css3-syntax', {'autoload': {'filetypes': ['css']}}
@@ -685,8 +682,6 @@ if 1
     nmap <buffer><expr><nowait> r <SID>vimfiler_key_wrap("\<Plug>(vimfiler_rename_file)")
 
     map <buffer><nowait> q <Plug>(vimfiler_hide)
-
-    let b:vimfiler.is_visible_ignore_files = 1
   endfunction
 
   Au WinEnter * checktime
