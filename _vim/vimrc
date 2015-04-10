@@ -348,7 +348,7 @@ if 1
 
   let g:brightest#pattern = '\w\+'
   let g:brightest#highlight = {}
-  let g:brightest#highlight['group'] = 'VimrcBrightest'
+  let g:brightest#highlight['group'] = 'VimrcKeywordHighlight'
   let g:brightest#highlight['format'] = '\v\C(^|\W\zs)%s(\ze\W|$)'
 
   let g:marching_clang_command_option = '-std=c++1y'
@@ -365,6 +365,9 @@ if 1
   let g:rogue#japanese = 1
 
   let g:vim_json_syntax_conceal = 0
+
+  let g:hl_matchit_enable_on_vim_startup = 1
+  let g:hl_matchit_hl_groupname = 'VimrcKeywordHighlight'
 
   if has('vim_starting')
     execute 'set runtimepath+='.s:neobundle_path
@@ -401,8 +404,8 @@ if 1
   NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': ['json']}}
   NeoBundleLazy 'h1mesuke/vim-alignta'
   NeoBundleLazy 'hail2u/vim-css3-syntax', {'autoload': {'filetypes': ['css']}}
-  NeoBundleLazy 'haya14busa/vim-asterisk', {'autoload': {'mappings': '<Plug>(asterisk'}}
   NeoBundleLazy 'haya14busa/incsearch.vim', {'autoload': {'mappings': '<Plug>(incsearch'}}
+  NeoBundleLazy 'haya14busa/vim-asterisk', {'autoload': {'mappings': '<Plug>(asterisk'}}
   NeoBundleLazy 'jelera/vim-javascript-syntax', {'autoload': {'filetypes': ['javascript']}}
   NeoBundleLazy 'kana/vim-smartword', {'autoload': {'mappings': '<Plug>(smartword'}}
   NeoBundleLazy 'kannokanno/previm'
@@ -440,6 +443,7 @@ if 1
   NeoBundleLazy 'tyru/restart.vim', {'gui': 1}
   NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': ['cpp']}}
   NeoBundleLazy 'vim-jp/vital.vim'
+  NeoBundleLazy 'vimtaku/hl_matchit.vim', {'autoload': {'filetypes': ['html', 'vim']}}
 
   if has('lua') && ((v:version > 703) || (v:version == 703 && has('patch885')))
     NeoBundleLazy 'Shougo/neocomplete.vim', {'autoload': {'insert': 1}}
@@ -497,7 +501,7 @@ if 1
     colorscheme solarized
   endif
 
-  highlight VimrcBrightest term=bold cterm=bold ctermfg=224 gui=bold guifg=#ffd4c9
+  highlight VimrcKeywordHighlight term=bold cterm=bold ctermfg=224 gui=bold guifg=#ffd4c9
 
   let g:hier_highlight_group_qf  = 'qf_error_ucurl'
   let g:hier_highlight_group_qfw = 'qf_warning_ucurl'
