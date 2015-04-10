@@ -401,6 +401,7 @@ if 1
   NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': ['json']}}
   NeoBundleLazy 'h1mesuke/vim-alignta'
   NeoBundleLazy 'hail2u/vim-css3-syntax', {'autoload': {'filetypes': ['css']}}
+  NeoBundleLazy 'haya14busa/vim-asterisk', {'autoload': {'mappings': '<Plug>(asterisk'}}
   NeoBundleLazy 'haya14busa/incsearch.vim', {'autoload': {'mappings': '<Plug>(incsearch'}}
   NeoBundleLazy 'jelera/vim-javascript-syntax', {'autoload': {'filetypes': ['javascript']}}
   NeoBundleLazy 'kana/vim-smartword', {'autoload': {'mappings': '<Plug>(smartword'}}
@@ -538,6 +539,15 @@ if 1
   map /  <Plug>(incsearch-forward)
   map ?  <Plug>(incsearch-backward)
   map g/ <Plug>(incsearch-stay)
+
+  map *   <Plug>(asterisk-z*)
+  map #   <Plug>(asterisk-z#)
+  map g*  <Plug>(asterisk-gz*)
+  map g#  <Plug>(asterisk-gz#)
+  map z*  <Plug>(asterisk-*)
+  map z#  <Plug>(asterisk-#)
+  map gz* <Plug>(asterisk-g*)
+  map gz# <Plug>(asterisk-g#)
 
   map w  <Plug>(smartword-w)
   map b  <Plug>(smartword-b)
