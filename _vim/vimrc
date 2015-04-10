@@ -369,6 +369,8 @@ if 1
   let g:hl_matchit_enable_on_vim_startup = 1
   let g:hl_matchit_hl_groupname = 'VimrcKeywordHighlight'
 
+	let g:anzu_enable_CursorMoved_AnzuUpdateSearchStatus = 1
+
   if has('vim_starting')
     execute 'set runtimepath+='.s:neobundle_path
   endif
@@ -417,6 +419,7 @@ if 1
   NeoBundleLazy 'leafgarland/typescript-vim', {'autoload': {'filetypes': ['typescript']}}
   NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
   NeoBundleLazy 'mattn/webapi-vim'
+  NeoBundleLazy 'osyo-manga/vim-anzu', {'autoload': {'mappings': '<Plug>(anzu'}}
   NeoBundleLazy 'osyo-manga/shabadou.vim', {'depends': 'thinca/vim-quickrun'}
   NeoBundleLazy 'osyo-manga/unite-quickfix', {'autoload': {'unite_sources': 'quickfix'}}
   NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'depends': 'thinca/vim-quickrun', 'autoload': {'unite_sources': 'quickrun_config'}}
@@ -544,14 +547,14 @@ if 1
   map ?  <Plug>(incsearch-backward)
   map g/ <Plug>(incsearch-stay)
 
-  map *   <Plug>(asterisk-z*)
-  map #   <Plug>(asterisk-z#)
-  map g*  <Plug>(asterisk-gz*)
-  map g#  <Plug>(asterisk-gz#)
-  map z*  <Plug>(asterisk-*)
-  map z#  <Plug>(asterisk-#)
-  map gz* <Plug>(asterisk-g*)
-  map gz# <Plug>(asterisk-g#)
+  map *   <Plug>(asterisk-z*)<Plug>(anzu-echo-search-status)
+  map #   <Plug>(asterisk-z#)<Plug>(anzu-echo-search-status)
+  map g*  <Plug>(asterisk-gz*)<Plug>(anzu-echo-search-status)
+  map g#  <Plug>(asterisk-gz#)<Plug>(anzu-echo-search-status)
+  map z*  <Plug>(asterisk-*)<Plug>(anzu-echo-search-status)
+  map z#  <Plug>(asterisk-#)<Plug>(anzu-echo-search-status)
+  map gz* <Plug>(asterisk-g*)<Plug>(anzu-echo-search-status)
+  map gz# <Plug>(asterisk-g#)<Plug>(anzu-echo-search-status)
 
   map w  <Plug>(smartword-w)
   map b  <Plug>(smartword-b)
