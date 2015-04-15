@@ -379,6 +379,7 @@ if 1
 
   NeoBundle 'altercation/vim-colors-solarized'
   NeoBundle 'itchyny/lightline.vim'
+  NeoBundle 'kana/vim-niceblock'
   NeoBundle 'kana/vim-operator-user'
   NeoBundle 'kana/vim-repeat'
   NeoBundle 'kana/vim-textobj-entire', {'depends': 'kana/vim-textobj-user'}
