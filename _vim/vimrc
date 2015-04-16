@@ -555,10 +555,6 @@ if 1
   map #   <Plug>(asterisk-z#)<Plug>(anzu-echo-search-status)
   map g*  <Plug>(asterisk-gz*)<Plug>(anzu-echo-search-status)
   map g#  <Plug>(asterisk-gz#)<Plug>(anzu-echo-search-status)
-  map z*  <Plug>(asterisk-*)<Plug>(anzu-echo-search-status)
-  map z#  <Plug>(asterisk-#)<Plug>(anzu-echo-search-status)
-  map gz* <Plug>(asterisk-g*)<Plug>(anzu-echo-search-status)
-  map gz# <Plug>(asterisk-g#)<Plug>(anzu-echo-search-status)
 
   map w  <Plug>(smartword-w)
   map b  <Plug>(smartword-b)
