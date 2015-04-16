@@ -714,7 +714,13 @@ if 1
     call s:vimenter()
   endif
 
-  Au BufWritePre * :%s/\v\\@<!(\s|\t|　)+$//e
+  " https://github.com/bronson/vim-trailing-whitespace
+  function! s:fix_traillng_whitespace()
+    let save_pos = getpos('.')
+    execute '%s/\v\\@<!(\s|\t|　)+$//e'
+    call setpos('.', save_pos)
+  endfunction
+  Au BufWritePre * call s:fix_traillng_whitespace()
 
   " TODO
   if has('vim_starting')
