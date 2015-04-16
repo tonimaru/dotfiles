@@ -464,6 +464,12 @@ if 1
     NeoBundleLazy 'othree/tern_for_vim_coffee', {'autoload': {'on_source': 'tern_for_vim'}}
   endif
 
+  function! s:neco_lexima_on_sourced()
+    if neobundle#is_installed('neocomplete.vim') && neobundle#is_installed('lexima.vim') && neobundle#is_sourced('neocomplete.vim') && neobundle#is_sourced('lexima.vim')
+      call lexima#insmode#map_hook('before', '<CR>', "\<C-r>=neocomplete#close_popup()\<CR>")
+    endif
+  endfunction
+
   if neobundle#tap('unite.vim')
     function! neobundle#tapped.hooks.on_source(bundle)
       call unite#custom#profile('default', 'context', { 'start_insert': 1, })
@@ -482,6 +488,20 @@ if 1
   if neobundle#tap('vimfiler.vim')
     function! neobundle#tapped.hooks.on_source(bundle)
       NeoBundleSource vimshell.vim
+    endfunction
+    call neobundle#untap()
+  endif
+
+  if neobundle#tap('neocomplete.vim')
+    function! neobundle#tapped.hooks.on_source(bundle)
+      call s:neco_lexima_on_sourced()
+    endfunction
+    call neobundle#untap()
+  endif
+
+  if neobundle#tap('lexima.vim')
+    function! neobundle#tapped.hooks.on_source(bundle)
+      call s:neco_lexima_on_sourced()
     endfunction
     call neobundle#untap()
   endif
