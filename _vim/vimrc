@@ -371,6 +371,7 @@ if 1
   let g:hl_matchit_enable_on_vim_startup = 1
   let g:hl_matchit_hl_groupname = 'VimrcKeywordHighlight'
 
+  let g:anzu_status_format = '%p(%i/%l)'
 	let g:anzu_enable_CursorMoved_AnzuUpdateSearchStatus = 1
 
   if has('vim_starting')
