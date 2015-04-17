@@ -393,7 +393,6 @@ if 1
   NeoBundle 'wavded/vim-stylus'
   NeoBundle 'Yggdroot/indentLine'
   NeoBundleFetch 'Shougo/neobundle.vim'
-  NeoBundleLazy 'alpaca-tc/beautify.vim'
   NeoBundleLazy 'cohama/agit.vim'
   NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
   NeoBundleLazy 'cohama/vim-hier', {'autoload': {'on_source': 'vim-watchdogs'}}
@@ -453,6 +452,7 @@ if 1
   endif
 
   if executable('npm')
+    NeoBundleLazy 'alpaca-tc/beautify.vim', {'build': {'others': 'npm i -g js-beautify'}, 'autoload': {'filetypes': ['javascript']}}
     NeoBundleLazy 'marijnh/tern_for_vim', {'build': {'others': 'npm install && npm install tern-coffee'}, 'autoload': {'filetypes': ['javascript', 'coffee']}}
     NeoBundleLazy 'othree/tern_for_vim_coffee', {'autoload': {'on_source': 'tern_for_vim'}}
   endif
