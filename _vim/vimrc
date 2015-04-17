@@ -617,8 +617,10 @@ if 1
 
   nmap [prefix]q <Plug>(quickrun)
 
-  nnoremap [prefix]b :<C-u>Beautify<CR>
-  vnoremap [prefix]b :Beautify<CR>
+  if executable('npm')
+    nnoremap [prefix]b :<C-u>Beautify<CR>
+    vnoremap [prefix]b :Beautify<CR>
+  endif
 
   nnoremap <silent> [prefix]res :Restart<CR>
 
