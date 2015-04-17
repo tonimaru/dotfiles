@@ -435,7 +435,6 @@ if 1
   NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': 'Shougo/unite.vim'}
   NeoBundleLazy 'Shougo/vimproc.vim', {'build': {'others': 'make'}}
   NeoBundleLazy 'Shougo/vimshell.vim', {'depends': ['Shougo/vimproc.vim', 'Shougo/unite.vim']}
-  NeoBundleLazy 'syngan/vim-vimlint'
   NeoBundleLazy 't9md/vim-textmanip', {'autoload': {'mappings': '<Plug>(textmanip'}}
   NeoBundleLazy 'thinca/vim-quickrun', {'complete' : 'customlist,quickrun#complete', 'depends': 'osyo-manga/quickrun-outputter-replace_region'}
   NeoBundleLazy 'thinca/vim-ref'
