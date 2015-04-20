@@ -629,6 +629,10 @@ if 1
 
   nnoremap <silent> [prefix]res :Restart<CR>
 
+  nmap [prefix]ref [ref]
+  nnoremap [ref] <Nop>
+  nnoremap [ref]m :<C-u>Ref man<Space>
+
   inoremap <expr> <C-L> neocomplete#complete_common_string()
 
   imap <C-E> <Plug>(neosnippet_expand_or_jump)
