@@ -465,7 +465,7 @@ if 1
 
   if neobundle#tap('unite.vim')
     function! neobundle#tapped.hooks.on_source(bundle)
-      call unite#custom#profile('default', 'context', { 'start_insert': 1, })
+      call unite#custom#profile('default', 'context', { 'start_insert': 1, 'direction': 'botright'})
       call unite#custom#profile('source/neobundle/update', 'context', { 'start_insert': 0, })
     endfunction
     call neobundle#untap()
