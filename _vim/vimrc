@@ -613,12 +613,14 @@ if 1
   nnoremap <silent> [vimshell]; :<C-u>VimShell<CR>
   nnoremap <silent> [vimshell]+ :<C-u>VimShell -create<CR>
 
-  nmap [prefix]g [fugitive]
+  map [prefix]g [fugitive]
   nnoremap [fugitive] <Nop>
-  nnoremap [fugitive]s :<C-u>Gstatus<CR>
-  nnoremap [fugitive]d :<C-u>Gdiff<CR>
-  nnoremap [fugitive]c :<C-u>Gcommit -a -m ""<Left>
+  nnoremap [fugitive]b :<C-u>Gblame<CR>
+  nnoremap [fugitive]cd :<C-u>Gcd<CR>
+  nnoremap [fugitive]d :<C-u>Gvdiff<CR>
   nnoremap [fugitive]p :<C-u>Gpush origin master
+  nnoremap [fugitive]s :<C-u>Gstatus<CR>
+  vnoremap [fugitive]b :Gblame<CR>
 
   nmap [prefix]q <Plug>(quickrun)
 
