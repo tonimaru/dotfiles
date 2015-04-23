@@ -341,7 +341,7 @@ if 1
 
   let g:brightest#pattern = '\w\+'
   let g:brightest#highlight = {}
-  let g:brightest#highlight['group'] = 'VimrcKeywordHighlight'
+  let g:brightest#highlight['group'] = 'VimrcKeywordHighlightBold'
   let g:brightest#highlight['format'] = '\v\C(^|\W\zs)%s(\ze\W|$)'
 
   let g:marching_clang_command_option = '-std=c++1y'
@@ -522,7 +522,8 @@ if 1
     colorscheme solarized
   endif
 
-  highlight VimrcKeywordHighlight term=bold cterm=bold ctermfg=224 gui=bold guifg=#ffd4c9
+  highlight VimrcKeywordHighlight term=bold ctermfg=224 guifg=#ffd4c9
+  highlight VimrcKeywordHighlightBold term=bold cterm=bold ctermfg=224 gui=bold guifg=#ffd4c9
 
   let g:hier_highlight_group_qf  = 'qf_error_ucurl'
   let g:hier_highlight_group_qfw = 'qf_warning_ucurl'
