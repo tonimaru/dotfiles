@@ -373,6 +373,7 @@ if 1
 
   call neobundle#begin(s:bundle_path)
 
+  NeoBundle 'airblade/vim-gitgutter'
   NeoBundle 'altercation/vim-colors-solarized'
   NeoBundle 'itchyny/lightline.vim'
   NeoBundle 'kana/vim-niceblock'
