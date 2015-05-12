@@ -538,8 +538,6 @@ if 1
   highlight DiffDelete term=bold ctermfg=Magenta ctermbg=DarkRed guifg=Red
   highlight DiffText term=bold ctermfg=Cyan ctermbg=DarkCyan guifg=White
 
-  inoremap <C-k> <ESC>
-
   nnoremap j gj
   nnoremap gj j
   nnoremap k gk
