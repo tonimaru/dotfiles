@@ -442,6 +442,7 @@ if 1
   NeoBundleLazy 'thinca/vim-scouter'
   NeoBundleLazy 'tyru/eskk.vim', {'autoload': {'insert': 1}}
   NeoBundleLazy 'tyru/restart.vim', {'gui': 1}
+  NeoBundleLazy 'ujihisa/ref-hoogle', {'autoload': {'on_source': 'vim-ref'}}
   NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': ['cpp']}}
   NeoBundleLazy 'vim-jp/vital.vim'
   NeoBundleLazy 'vimtaku/hl_matchit.vim', {'autoload': {'filetypes': ['html', 'vim']}}
@@ -636,6 +637,7 @@ if 1
   nmap [prefix]ref [ref]
   nnoremap [ref] <Nop>
   nnoremap [ref]m :<C-u>Ref man<Space>
+  nnoremap [ref]h :<C-u>Ref hoogle<Space>
 
   inoremap <expr> <C-L> neocomplete#complete_common_string()
 
