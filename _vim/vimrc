@@ -199,7 +199,7 @@ if 1
   let g:quickrun_config['_']['runner/vimproc/updatetime'] = 40
 
   let g:quickrun_config['json'] = {'type': executable('jq') ? 'json/jq' : ''}
-  let g:quickrun_config['json/jq'] = {'command': 'jq', 'exec': '%c "." %s'}
+  let g:quickrun_config['json/jq'] = {'command': 'jq', 'exec': '%c "." %s', 'outputter/buffer/filetype': 'json'}
 
   let g:quickrun_config['scala'] = {'type': executable('scala') ? 'scala/process_manager' : ''}
 
