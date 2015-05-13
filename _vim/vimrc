@@ -377,6 +377,7 @@ if 1
 
   NeoBundle 'airblade/vim-gitgutter'
   NeoBundle 'altercation/vim-colors-solarized'
+  NeoBundle 'daisuzu/translategoogle.vim'
   NeoBundle 'itchyny/lightline.vim'
   NeoBundle 'kana/vim-niceblock'
   NeoBundle 'kana/vim-operator-user'
