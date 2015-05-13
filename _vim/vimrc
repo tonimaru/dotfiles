@@ -198,8 +198,12 @@ if 1
   let g:quickrun_config['_']['runner'] = 'vimproc'
   let g:quickrun_config['_']['runner/vimproc/updatetime'] = 40
 
-  let g:quickrun_config['json'] = {'type': executable('jq') ? 'json/jq' : ''}
+  let g:quickrun_config['json'] = {'type': executable('jq') ? 'json/jq' : executable('json2yaml') ? 'json/json2yaml' : ''}
   let g:quickrun_config['json/jq'] = {'command': 'jq', 'exec': '%c "." %s', 'outputter/buffer/filetype': 'json'}
+  let g:quickrun_config['json/json2yaml'] = {'command': 'json2yaml', 'exec': '%c %s', 'outputter/buffer/filetype': 'yaml'}
+
+  let g:quickrun_config['yaml'] = {'type': executable('yaml2json') ? 'yaml/yaml2json' : ''}
+  let g:quickrun_config['yaml/yaml2json'] = {'command': 'yaml2json', 'exec': '%c %s', 'outputter/buffer/filetype': 'json'}
 
   let g:quickrun_config['scala'] = {'type': executable('scala') ? 'scala/process_manager' : ''}
 
@@ -409,6 +413,7 @@ if 1
   NeoBundleLazy 'hail2u/vim-css3-syntax', {'autoload': {'filetypes': ['css']}}
   NeoBundleLazy 'haya14busa/incsearch.vim', {'autoload': {'mappings': '<Plug>(incsearch'}}
   NeoBundleLazy 'haya14busa/vim-asterisk', {'autoload': {'mappings': '<Plug>(asterisk'}}
+  NeoBundleLazy 'ingydotnet/yaml-vim', {'autoload': {'filetypes': ['yaml']}}
   NeoBundleLazy 'jelera/vim-javascript-syntax', {'autoload': {'filetypes': ['javascript']}}
   NeoBundleLazy 'kana/vim-smartword', {'autoload': {'mappings': '<Plug>(smartword'}}
   NeoBundleLazy 'kannokanno/previm'
