@@ -425,6 +425,7 @@ if 1
   NeoBundleLazy 'leafgarland/typescript-vim', {'autoload': {'filetypes': ['typescript']}}
   NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
   NeoBundleLazy 'mattn/webapi-vim'
+  NeoBundleLazy 'mhinz/vim-sayonara'
   NeoBundleLazy 'osyo-manga/shabadou.vim', {'depends': 'thinca/vim-quickrun'}
   NeoBundleLazy 'osyo-manga/unite-quickfix', {'autoload': {'unite_sources': 'quickfix'}}
   NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'depends': 'thinca/vim-quickrun', 'autoload': {'unite_sources': 'quickrun_config'}}
@@ -652,6 +653,11 @@ if 1
   nnoremap [ref] <Nop>
   nnoremap [ref]m :<C-u>Ref man<Space>
   nnoremap [ref]h :<C-u>Ref hoogle<Space>
+
+  nmap [prefix]sa [sayonara]
+  nnoremap <silent> [sayonara] <Nop>
+  nnoremap <silent> [sayonara]y :<C-u>Sayonara<cr>
+  nnoremap <silent> [sayonara]; :<C-u>Sayonara!<cr>
 
   inoremap <expr> <C-L> neocomplete#complete_common_string()
 
