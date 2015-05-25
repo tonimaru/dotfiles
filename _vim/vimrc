@@ -349,6 +349,7 @@ if 1
   let g:brightest#highlight = {}
   let g:brightest#highlight['group'] = 'VimrcKeywordHighlightBold'
   let g:brightest#highlight['format'] = '\v\C(^|\W\zs)%s(\ze\W|$)'
+  let g:brightest#enable_highlight_all_window = 1
 
   let g:marching_clang_command_option = '-std=c++1y'
   let g:marching_enable_neocomplete = 1
