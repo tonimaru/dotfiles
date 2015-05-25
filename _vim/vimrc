@@ -368,9 +368,6 @@ if 1
 
   let g:asterisk#keeppos = 1
 
-  let g:hl_matchit_enable_on_vim_startup = 1
-  let g:hl_matchit_hl_groupname = 'VimrcKeywordHighlight'
-
   let g:anzu_status_format = '%p(%i/%l)'
 	let g:anzu_enable_CursorMoved_AnzuUpdateSearchStatus = 1
 
@@ -453,7 +450,6 @@ if 1
   NeoBundleLazy 'tyru/restart.vim', {'gui': 1}
   NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': ['cpp']}}
   NeoBundleLazy 'vim-jp/vital.vim'
-  NeoBundleLazy 'vimtaku/hl_matchit.vim', {'autoload': {'filetypes': ['html', 'vim']}}
 
   if has('lua') && ((v:version > 703) || (v:version == 703 && has('patch885')))
     NeoBundleLazy 'Shougo/neocomplete.vim', {'autoload': {'insert': 1}}
