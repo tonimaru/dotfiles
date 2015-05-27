@@ -419,8 +419,8 @@ NeoBundle 'kana/vim-textobj-entire', {'depends': 'kana/vim-textobj-user'}
 NeoBundle 'kana/vim-textobj-line', {'depends': 'kana/vim-textobj-user'}
 NeoBundle 'kana/vim-textobj-user'
 NeoBundle 'osyo-manga/vim-brightest'
-NeoBundle 'osyo-manga/vim-textobj-multiblock'
 NeoBundle 'osyo-manga/vim-snowdrop'
+NeoBundle 'osyo-manga/vim-textobj-multiblock'
 NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'thinca/vim-prettyprint'
 NeoBundle 'thinca/vim-qfreplace'
@@ -431,6 +431,7 @@ NeoBundle 'vim-jp/vimdoc-ja'
 NeoBundle 'wavded/vim-stylus'
 NeoBundle 'Yggdroot/indentLine'
 NeoBundleFetch 'Shougo/neobundle.vim'
+NeoBundleLazy 'alpaca-tc/beautify.vim', {'build': {'others': 'npm i -g js-beautify'}, 'disabled': !executable('npm')}
 NeoBundleLazy 'cohama/agit.vim'
 NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'cohama/vim-hier', {'autoload': {'on_source': 'vim-watchdogs'}}
@@ -438,6 +439,7 @@ NeoBundleLazy 'dag/vim2hs', {'autoload': {'filetypes': ['haskell']}}
 NeoBundleLazy 'dannyob/quickfixstatus', {'autoload': {'on_source': 'vim-watchdogs'}}
 NeoBundleLazy 'deris/vim-rengbang'
 NeoBundleLazy 'digitaltoad/vim-jade', {'autoload': {'filetypes': ['jade']}}
+NeoBundleLazy 'eagletmt/neco-ghc', {'autoload': {'filetypes': ['haskell']}, 'disabled': !executable('cabal') || !executable('ghc-mod')}
 NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': ['json']}}
 NeoBundleLazy 'h1mesuke/vim-alignta'
 NeoBundleLazy 'hail2u/vim-css3-syntax', {'autoload': {'filetypes': ['css']}}
@@ -453,6 +455,7 @@ NeoBundleLazy 'KazuakiM/vim-qfsigns', {'autoload': {'on_source': 'vim-watchdogs'
 NeoBundleLazy 'kchmck/vim-coffee-script', {'autoload': {'filetypes': ['coffee']}}
 NeoBundleLazy 'lambdalisue/vim-gista', {'autoload': {'commands': ['Gista'], 'unite_sources': 'gista'}}
 NeoBundleLazy 'leafgarland/typescript-vim', {'autoload': {'filetypes': ['typescript']}}
+NeoBundleLazy 'marijnh/tern_for_vim', {'build': {'others': 'npm install && npm install tern-coffee'}, 'autoload': {'filetypes': ['javascript', 'coffee']}, 'disabled': !executable('npm')}
 NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'mattn/webapi-vim'
 NeoBundleLazy 'mhinz/vim-sayonara'
@@ -465,10 +468,13 @@ NeoBundleLazy 'osyo-manga/vim-precious', {'depends': 'Shougo/context_filetype.vi
 NeoBundleLazy 'osyo-manga/vim-watchdogs', {'depends': ['thinca/vim-quickrun', 'osyo-manga/shabadou.vim', 'Shougo/vimproc.vim'], 'autoload': {'filetypes': 'all'}}
 NeoBundleLazy 'othree/html5.vim', {'autoload': {'filetypes': ['html']}}
 NeoBundleLazy 'othree/javascript-libraries-syntax.vim', {'filetypes': ['javascript', 'coffee', 'typescript']}
+NeoBundleLazy 'othree/tern_for_vim_coffee', {'autoload': {'on_source': 'tern_for_vim'}, 'disabled': !executable('npm')}
 NeoBundleLazy 'pangloss/vim-javascript', {'autoload': {'on_source': ['vim-javascript-syntax']}}
 NeoBundleLazy 'rhysd/vim-operator-surround', {'depends': 'kana/vim-operator-user', 'autoload': {'mappings': '<Plug>(operator-surround'}}
 NeoBundleLazy 'Shougo/context_filetype.vim'
 NeoBundleLazy 'Shougo/junkfile.vim', {'autoload': {'unite_sources': ['junkfile', 'junkfile/new']}}
+NeoBundleLazy 'Shougo/neocomplcache.vim', {'autoload': {'insert': 1}, 'disabled': has('lua') && ((v:version > 703) || (v:version == 703 && has('patch885')))}
+NeoBundleLazy 'Shougo/neocomplete.vim', {'autoload': {'insert': 1}, 'disabled': !has('lua') || !((v:version > 703) || (v:version == 703 && has('patch885')))}
 NeoBundleLazy 'Shougo/neosnippet.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'Shougo/unite.vim'
 NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': 'Shougo/unite.vim'}
@@ -480,29 +486,9 @@ NeoBundleLazy 'thinca/vim-ref'
 NeoBundleLazy 'thinca/vim-scouter'
 NeoBundleLazy 'tyru/eskk.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'tyru/restart.vim', {'gui': 1}
+NeoBundleLazy 'ujihisa/ref-hoogle', {'autoload': {'on_source': 'vim-ref'}, 'disabled': !executable('cabal') || !executable('hoogle')}
 NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': ['cpp']}}
 NeoBundleLazy 'vim-jp/vital.vim'
-
-if has('lua') && ((v:version > 703) || (v:version == 703 && has('patch885')))
-  NeoBundleLazy 'Shougo/neocomplete.vim', {'autoload': {'insert': 1}}
-else
-  NeoBundleLazy 'Shougo/neocomplcache.vim', {'autoload': {'insert': 1}}
-endif
-
-if executable('npm')
-  NeoBundleLazy 'alpaca-tc/beautify.vim', {'build': {'others': 'npm i -g js-beautify'}}
-  NeoBundleLazy 'marijnh/tern_for_vim', {'build': {'others': 'npm install && npm install tern-coffee'}, 'autoload': {'filetypes': ['javascript', 'coffee']}}
-  NeoBundleLazy 'othree/tern_for_vim_coffee', {'autoload': {'on_source': 'tern_for_vim'}}
-endif
-
-if executable('cabal')
-  if executable('hoogle')
-    NeoBundleLazy 'ujihisa/ref-hoogle', {'autoload': {'on_source': 'vim-ref'}}
-  endif
-  if executable('ghc-mod')
-    NeoBundleLazy 'eagletmt/neco-ghc', {'autoload': {'filetypes': ['haskell']}}
-  endif
-endif
 
 function! s:neco_lexima_on_sourced()
   if neobundle#is_installed('neocomplete.vim') && neobundle#is_installed('lexima.vim') && neobundle#is_sourced('neocomplete.vim') && neobundle#is_sourced('lexima.vim')
@@ -562,11 +548,12 @@ if !has('gui_running')
   endif
 endif
 
-if neobundle#is_installed('vim-colors-solarized') && neobundle#is_sourced('vim-colors-solarized')
+if neobundle#tap('vim-colors-solarized')
   if !has('gui_running')
     let g:solarized_termcolors=&t_Co
   endif
   colorscheme solarized
+  call neobundle#untap()
 endif
 
 highlight VimrcKeywordHighlight term=bold ctermfg=224 guifg=#ffd4c9
@@ -607,19 +594,25 @@ vnoremap q: <Nop>
 
 nnoremap <silent> <Esc><Esc> :nohls<CR>
 
-map /  <Plug>(incsearch-forward)
-map ?  <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
+if neobundle#tap('incsearch.vim')
+  map /  <Plug>(incsearch-forward)
+  map ?  <Plug>(incsearch-backward)
+  map g/ <Plug>(incsearch-stay)
+endif
 
-map *   <Plug>(asterisk-z*)<Plug>(anzu-echo-search-status)
-map #   <Plug>(asterisk-z#)<Plug>(anzu-echo-search-status)
-map g*  <Plug>(asterisk-gz*)<Plug>(anzu-echo-search-status)
-map g#  <Plug>(asterisk-gz#)<Plug>(anzu-echo-search-status)
+if neobundle#tap('vim-asterisk') && neobundle#tap('vim-anzu')
+  map *   <Plug>(asterisk-z*)<Plug>(anzu-echo-search-status)
+  map #   <Plug>(asterisk-z#)<Plug>(anzu-echo-search-status)
+  map g*  <Plug>(asterisk-gz*)<Plug>(anzu-echo-search-status)
+  map g#  <Plug>(asterisk-gz#)<Plug>(anzu-echo-search-status)
+endif
 
-map w  <Plug>(smartword-w)
-map b  <Plug>(smartword-b)
-map e  <Plug>(smartword-e)
-map ge  <Plug>(smartword-ge)
+if neobundle#tap('vim-smartword')
+  map w  <Plug>(smartword-w)
+  map b  <Plug>(smartword-b)
+  map e  <Plug>(smartword-e)
+  map ge  <Plug>(smartword-ge)
+endif
 
 map <Space> [prefix]
 noremap [prefix] <Nop>
@@ -629,78 +622,119 @@ nnoremap <silent> [prefix]er :<C-u>so $MYVIMRC<CR>
 
 nmap [prefix]u [unite]
 nnoremap [unite] <Nop>
-nnoremap <silent> [unite]bf :<C-u>Unite buffer<CR>
-nnoremap <silent> [unite]bu :<C-u>Unite neobundle/update:all<CR>
-nnoremap <silent> [unite]c :<C-u>Unite quickfix<CR>
-nnoremap <silent> [unite]fm :<C-u>Unite neomru/file<CR>
-nnoremap <silent> [unite]ga :<C-u>Unite grep -no-quit -create -auto-preview -tab -no-empty<CR>
-nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create -no-empty<CR>
-nnoremap <silent> [unite]gv :<C-u>Unite vimgrep -no-quit -create -tab -no-empty<CR>
-nnoremap <silent> [unite]gc :<C-u>Unite vimgrep:% -no-quit -create -tab -no-empty<CR>
-nnoremap <silent> [unite]l :<C-u>Unite line<CR>
-nnoremap <silent> [unite]j :<C-u>Unite junkfile/new junkfile<CR>
-nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
+if neobundle#tap('unite.vim')
+  nnoremap <silent> [unite]bf :<C-u>Unite buffer<CR>
+  nnoremap <silent> [unite]bu :<C-u>Unite neobundle/update:all<CR>
+  nnoremap <silent> [unite]c :<C-u>Unite quickfix<CR>
+  nnoremap <silent> [unite]fm :<C-u>Unite neomru/file<CR>
+  nnoremap <silent> [unite]ga :<C-u>Unite grep -no-quit -create -auto-preview -tab -no-empty<CR>
+  nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create -no-empty<CR>
+  nnoremap <silent> [unite]gv :<C-u>Unite vimgrep -no-quit -create -tab -no-empty<CR>
+  nnoremap <silent> [unite]gc :<C-u>Unite vimgrep:% -no-quit -create -tab -no-empty<CR>
+  nnoremap <silent> [unite]l :<C-u>Unite line<CR>
+  nnoremap <silent> [unite]j :<C-u>Unite junkfile/new junkfile<CR>
+  nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
+endif
 
 nmap [prefix]vf [vimfiler]
 nnoremap [vimfiler] <Nop>
-nnoremap <silent> [vimfiler]; :<C-u>VimFiler<CR>
-nnoremap <silent> [vimfiler]+ :<C-u>VimFiler -create<CR>
-nnoremap <silent> [vimfiler]p :<C-u>VimFiler -split<CR>
-nnoremap <silent> [vimfiler]P :<C-u>VimFiler -create -split<CR>
-nnoremap <silent> [vimfiler]j :<C-u>VimFilerExplorer<CR>
+if neobundle#tap('vimfiler.vim')
+  nnoremap <silent> [vimfiler]; :<C-u>VimFiler<CR>
+  nnoremap <silent> [vimfiler]+ :<C-u>VimFiler -create<CR>
+  nnoremap <silent> [vimfiler]p :<C-u>VimFiler -split<CR>
+  nnoremap <silent> [vimfiler]P :<C-u>VimFiler -create -split<CR>
+  nnoremap <silent> [vimfiler]j :<C-u>VimFilerExplorer<CR>
+endif
 
 nmap [prefix]vs [vimshell]
 nnoremap [vimshell] <Nop>
-nnoremap <silent> [vimshell]; :<C-u>VimShell<CR>
-nnoremap <silent> [vimshell]+ :<C-u>VimShell -create<CR>
+if neobundle#tap('vimshell.vim')
+  nnoremap <silent> [vimshell]; :<C-u>VimShell<CR>
+  nnoremap <silent> [vimshell]+ :<C-u>VimShell -create<CR>
+endif
 
 map [prefix]g [fugitive]
 nnoremap [fugitive] <Nop>
-nnoremap [fugitive]b :<C-u>Gblame<CR>
-nnoremap [fugitive]cd :<C-u>Gcd<CR>
-nnoremap [fugitive]d :<C-u>Gvdiff<CR>
-nnoremap [fugitive]p :<C-u>Gpush origin master
-nnoremap [fugitive]s :<C-u>Gstatus<CR>
-vnoremap [fugitive]b :Gblame<CR>
-
-nmap [prefix]q <Plug>(quickrun)
-
-if executable('npm')
-  nnoremap [prefix]b :<C-u>Beautify<CR>
-  vnoremap [prefix]b :Beautify<CR>
+if neobundle#tap('vim-fugitive')
+  nnoremap [fugitive]b :<C-u>Gblame<CR>
+  nnoremap [fugitive]cd :<C-u>Gcd<CR>
+  nnoremap [fugitive]d :<C-u>Gvdiff<CR>
+  nnoremap [fugitive]p :<C-u>Gpush origin master
+  nnoremap [fugitive]s :<C-u>Gstatus<CR>
+  vnoremap [fugitive]b :Gblame<CR>
 endif
 
-nnoremap <silent> [prefix]res :Restart<CR>
+map [prefix]q [quickrun]
+map [quickrun] <Nop>
+if neobundle#tap('vim-quickrun')
+  nmap [quickrun] <Plug>(quickrun)
+endif
+
+map [prefix]b [beautify]
+map [beautify] <Nop>
+if neobundle#tap('beautify.vim')
+  if executable('npm')
+    nnoremap [beautify] :<C-u>Beautify<CR>
+    vnoremap [beautify] :Beautify<CR>
+  endif
+endif
+
+map [prefix]res [restart]
+map [restart] <Nop>
+if neobundle#tap('restart.vim')
+  noremap <silent> [restart] :<C-u>Restart<CR>
+endif
 
 nmap [prefix]ref [ref]
 nnoremap [ref] <Nop>
-nnoremap [ref]m :<C-u>Ref man<Space>
-nnoremap [ref]h :<C-u>Ref hoogle<Space>
+if neobundle#tap('vim-ref')
+  nnoremap [ref]m :<C-u>Ref man<Space>
+  nnoremap [ref]h :<C-u>Ref hoogle<Space>
+endif
 
 nmap [prefix]sa [sayonara]
-nnoremap <silent> [sayonara] <Nop>
-nnoremap <silent> [sayonara]y :<C-u>Sayonara<cr>
-nnoremap <silent> [sayonara]; :<C-u>Sayonara!<cr>
+nnoremap [sayonara] <Nop>
+if neobundle#tap('vim-sayonara')
+  nnoremap <silent> [sayonara]y :<C-u>Sayonara<cr>
+  nnoremap <silent> [sayonara]; :<C-u>Sayonara!<cr>
+endif
 
 inoremap <expr> <C-L> neocomplete#complete_common_string()
 
-imap <C-K> <Plug>(neosnippet_expand_or_jump)
-smap <C-K> <Plug>(neosnippet_expand_or_jump)
-imap <C-J> <Plug>(neosnippet_jump_or_expand)
-smap <C-J> <Plug>(neosnippet_jump_or_expand)
+if neobundle#tap('neosnippet.vim')
+  imap <C-K> <Plug>(neosnippet_expand_or_jump)
+  smap <C-K> <Plug>(neosnippet_expand_or_jump)
+  imap <C-J> <Plug>(neosnippet_jump_or_expand)
+  smap <C-J> <Plug>(neosnippet_jump_or_expand)
+endif
 
-xmap <C-j> <Plug>(textmanip-move-down)
-xmap <C-k> <Plug>(textmanip-move-up)
-xmap <C-h> <Plug>(textmanip-move-left)
-xmap <C-l> <Plug>(textmanip-move-right)
+if neobundle#tap('vim-textmanip')
+  xmap <C-j> <Plug>(textmanip-move-down)
+  xmap <C-k> <Plug>(textmanip-move-up)
+  xmap <C-h> <Plug>(textmanip-move-left)
+  xmap <C-l> <Plug>(textmanip-move-right)
+endif
 
-imap <C-X>j <Plug>(eskk:toggle)
-imap <C-X><C-J> <Plug>(eskk:toggle)
-cmap <C-X>j <Plug>(eskk:toggle)
-cmap <C-X><C-J> <Plug>(eskk:toggle)
+if neobundle#tap('eskk.vim')
+  imap <C-X>j <Plug>(eskk:toggle)
+  imap <C-X><C-J> <Plug>(eskk:toggle)
+  cmap <C-X>j <Plug>(eskk:toggle)
+  cmap <C-X><C-J> <Plug>(eskk:toggle)
+endif
 
-omap ab <Plug>(textobj-multiblock-a)
-omap ib <Plug>(textobj-multiblock-i)
+if neobundle#tap('vim-textobj-multiblock')
+  omap ab <Plug>(textobj-multiblock-a)
+  omap ib <Plug>(textobj-multiblock-i)
+endif
+
+if neobundle#tap('vim-operator-surround')
+  nmap <silent>ys <Plug>(operator-surround-append)
+  nmap <silent>ds <Plug>(operator-surround-delete)
+  nmap <silent>cs <Plug>(operator-surround-replace)
+  xmap <silent>S <Plug>(operator-surround-append)
+  xmap <silent>D <Plug>(operator-surround-delete)
+  xmap <silent>C <Plug>(operator-surround-replace)
+endif
 
 " http://nanabit.net/blog/2009/07/04/vim-replace-motion/
 " https://github.com/kana/vim-operator-replace
@@ -722,13 +756,6 @@ function! s:operator_replace(type)
 endfunction
 nnoremap <silent> s :<C-u>set opfunc=<SID>operator_replace<CR>g@
 vnoremap <silent> s :<C-u>call <SID>operator_replace(visualmode())<CR>
-
-nmap <silent>ys <Plug>(operator-surround-append)
-nmap <silent>ds <Plug>(operator-surround-delete)
-nmap <silent>cs <Plug>(operator-surround-replace)
-xmap <silent>S <Plug>(operator-surround-append)
-xmap <silent>D <Plug>(operator-surround-delete)
-xmap <silent>C <Plug>(operator-surround-replace)
 
 if has('autocmd')
   augroup my_vimrc
