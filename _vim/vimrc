@@ -13,7 +13,7 @@ let s:is_mswin = has('win95') || has('win16') || has('win32') || has('win64')
 
 function! s:mkdir(path)
   if !isdirectory(a:path)
-    silent execute s:is_mswin ? 'md' : '!mkdir -p' a:path
+    silent execute s:is_mswin ? '!md' : '!mkdir -p' a:path
   endif
 endfunction
 
