@@ -948,14 +948,12 @@ if executable('git')
     return printf('%s%s%s', before, action, after)
   endfunction
 
-  let s:pat = '\v\C\@\@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? \@\@[^\n]{-}'
-  let s:sub = '\=s:to_ed_change_command(submatch(1), submatch(3), submatch(4), submatch(6))'
   function! s:to_ed_format(diff_out)
     let out = a:diff_out
     let out = substitute(out, '\v\C%^\_.{-}\ze\@\@', '', '')
     let out = substitute(out, '\M\C\n\zs+', '> ', 'g')
     let out = substitute(out, '\M\C\n\zs-', '< ', 'g')
-    let out = substitute(out, s:pat, s:sub, 'g')
+    let out = substitute(out, '\v\C\@\@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? \@\@[^\n]{-}', '\=s:to_ed_change_command(submatch(1), submatch(3), submatch(4), submatch(6))', 'g')
     let out = substitute(out, '\M\C<[^\n]\{-}\n\zs>', '---\n>', 'g')
     return out
   endfunction
