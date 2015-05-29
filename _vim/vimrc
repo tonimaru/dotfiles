@@ -378,9 +378,6 @@ let g:watchdogs_check_BufWritePost_enable_on_wq = 0
 
 let g:haskell_conceal = 0
 
-let g:solarized_contrast = 'high'
-let g:solarized_visibility = 'low'
-
 let g:brightest#pattern = '\w\+'
 let g:brightest#highlight = {}
 let g:brightest#highlight['group'] = 'VimrcKeywordHighlightBold'
