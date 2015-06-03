@@ -957,6 +957,7 @@ if executable('git')
 endif
 
 let s:local_vimrc = s:vimdir('local_vimrc')
+execute 'nnoremap' '[prefix]el' ':e' s:local_vimrc.'<CR>'
 if filereadable(s:local_vimrc)
   execute 'source' s:local_vimrc
 endif
