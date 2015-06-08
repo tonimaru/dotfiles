@@ -318,15 +318,11 @@ function! s:_apply(current, arg)
   return {'name': name, 'config': config}
 endfunction
 
-function! s:_tail(l)
-  return a:l[1:]
-endfunction
-
 function! s:_build_impl(current, args_list)
   let r = []
   let next = copy(a:args_list)
   for args in a:args_list
-    let next = s:_tail(next)
+    let next = next[1:]
     for arg in args
       let v = s:_apply(a:current, arg)
       call add(r, v)
