@@ -432,59 +432,59 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 NeoBundleLazy 'alpaca-tc/beautify.vim', {'build': {'others': 'npm i -g js-beautify'}, 'disabled': !executable('npm')}
 NeoBundleLazy 'cohama/agit.vim'
 NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
-NeoBundleLazy 'cohama/vim-hier', {'autoload': {'on_source': 'vim-watchdogs'}}
+NeoBundleLazy 'cohama/vim-hier', {'autoload': {'on_source': ['vim-watchdogs']}}
 NeoBundleLazy 'dag/vim2hs', {'autoload': {'filetypes': ['haskell']}}
-NeoBundleLazy 'dannyob/quickfixstatus', {'autoload': {'on_source': 'vim-watchdogs'}}
+NeoBundleLazy 'dannyob/quickfixstatus', {'autoload': {'on_source': ['vim-watchdogs']}}
 NeoBundleLazy 'deris/vim-rengbang'
 NeoBundleLazy 'digitaltoad/vim-jade', {'autoload': {'filetypes': ['jade']}}
 NeoBundleLazy 'eagletmt/neco-ghc', {'autoload': {'filetypes': ['haskell']}, 'disabled': !executable('cabal') || !executable('ghc-mod')}
 NeoBundleLazy 'elzr/vim-json', {'autoload': {'filetypes': ['json']}}
 NeoBundleLazy 'h1mesuke/vim-alignta'
 NeoBundleLazy 'hail2u/vim-css3-syntax', {'autoload': {'filetypes': ['css']}}
-NeoBundleLazy 'haya14busa/incsearch.vim', {'autoload': {'mappings': '<Plug>(incsearch'}}
-NeoBundleLazy 'haya14busa/vim-asterisk', {'autoload': {'mappings': '<Plug>(asterisk'}}
+NeoBundleLazy 'haya14busa/incsearch.vim', {'autoload': {'mappings': ['<Plug>(incsearch']}}
+NeoBundleLazy 'haya14busa/vim-asterisk', {'autoload': {'mappings': ['<Plug>(asterisk']}}
 NeoBundleLazy 'ingydotnet/yaml-vim', {'autoload': {'filetypes': ['yaml']}}
 NeoBundleLazy 'jelera/vim-javascript-syntax', {'autoload': {'filetypes': ['javascript']}}
-NeoBundleLazy 'kana/vim-smartword', {'autoload': {'mappings': '<Plug>(smartword'}}
+NeoBundleLazy 'kana/vim-smartword', {'autoload': {'mappings': ['<Plug>(smartword']}}
 NeoBundleLazy 'kannokanno/previm'
 NeoBundleLazy 'kannokanno/vim-helpnew'
 NeoBundleLazy 'katono/rogue.vim'
-NeoBundleLazy 'KazuakiM/vim-qfsigns', {'autoload': {'on_source': 'vim-watchdogs'}}
+NeoBundleLazy 'KazuakiM/vim-qfsigns', {'autoload': {'on_source': ['vim-watchdogs']}}
 NeoBundleLazy 'kchmck/vim-coffee-script', {'autoload': {'filetypes': ['coffee']}}
-NeoBundleLazy 'lambdalisue/vim-gista', {'autoload': {'commands': ['Gista'], 'unite_sources': 'gista'}}
+NeoBundleLazy 'lambdalisue/vim-gista', {'autoload': {'commands': ['Gista'], 'unite_sources': ['gista']}}
 NeoBundleLazy 'leafgarland/typescript-vim', {'autoload': {'filetypes': ['typescript']}}
 NeoBundleLazy 'marijnh/tern_for_vim', {'build': {'others': 'npm install && npm install tern-coffee'}, 'autoload': {'filetypes': ['javascript', 'coffee']}, 'disabled': !executable('npm')}
 NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'mattn/webapi-vim'
 NeoBundleLazy 'mhinz/vim-sayonara'
-NeoBundleLazy 'osyo-manga/shabadou.vim', {'depends': 'thinca/vim-quickrun'}
-NeoBundleLazy 'osyo-manga/unite-quickfix', {'autoload': {'unite_sources': 'quickfix'}}
-NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'depends': 'thinca/vim-quickrun', 'autoload': {'unite_sources': 'quickrun_config'}}
-NeoBundleLazy 'osyo-manga/vim-anzu', {'autoload': {'mappings': '<Plug>(anzu'}}
+NeoBundleLazy 'osyo-manga/shabadou.vim', {'depends': ['thinca/vim-quickrun']}
+NeoBundleLazy 'osyo-manga/unite-quickfix', {'autoload': {'unite_sources': ['quickfix']}}
+NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'depends': 'thinca/vim-quickrun', 'autoload': {'unite_sources': ['quickrun_config']}}
+NeoBundleLazy 'osyo-manga/vim-anzu', {'autoload': {'mappings': ['<Plug>(anzu']}}
 NeoBundleLazy 'osyo-manga/vim-marching', {'autoload': {'filetypes': ['cpp']}}
-NeoBundleLazy 'osyo-manga/vim-precious', {'depends': 'Shougo/context_filetype.vim', 'autoload': {'filetypes': ['vim', 'markdown']}}
-NeoBundleLazy 'osyo-manga/vim-watchdogs', {'depends': ['thinca/vim-quickrun', 'osyo-manga/shabadou.vim', 'Shougo/vimproc.vim'], 'autoload': {'filetypes': 'all'}}
+NeoBundleLazy 'osyo-manga/vim-precious', {'depends': ['Shougo/context_filetype.vim'], 'autoload': {'filetypes': ['vim', 'markdown']}}
+NeoBundleLazy 'osyo-manga/vim-watchdogs', {'depends': ['thinca/vim-quickrun', 'osyo-manga/shabadou.vim', 'Shougo/vimproc.vim'], 'autoload': {'filetypes': ['all']}}
 NeoBundleLazy 'othree/html5.vim', {'autoload': {'filetypes': ['html']}}
 NeoBundleLazy 'othree/javascript-libraries-syntax.vim', {'filetypes': ['javascript', 'coffee', 'typescript']}
-NeoBundleLazy 'othree/tern_for_vim_coffee', {'autoload': {'on_source': 'tern_for_vim'}, 'disabled': !executable('npm')}
+NeoBundleLazy 'othree/tern_for_vim_coffee', {'autoload': {'on_source': ['tern_for_vim']}, 'disabled': !executable('npm')}
 NeoBundleLazy 'pangloss/vim-javascript', {'autoload': {'on_source': ['vim-javascript-syntax']}}
-NeoBundleLazy 'rhysd/vim-operator-surround', {'depends': 'kana/vim-operator-user', 'autoload': {'mappings': '<Plug>(operator-surround'}}
+NeoBundleLazy 'rhysd/vim-operator-surround', {'depends': 'kana/vim-operator-user', 'autoload': {'mappings': ['<Plug>(operator-surround']}}
 NeoBundleLazy 'Shougo/context_filetype.vim'
 NeoBundleLazy 'Shougo/junkfile.vim', {'autoload': {'unite_sources': ['junkfile', 'junkfile/new']}}
 NeoBundleLazy 'Shougo/neocomplcache.vim', {'autoload': {'insert': 1}, 'disabled': has('lua') && ((v:version > 703) || (v:version == 703 && has('patch885')))}
 NeoBundleLazy 'Shougo/neocomplete.vim', {'autoload': {'insert': 1}, 'disabled': !has('lua') || !((v:version > 703) || (v:version == 703 && has('patch885')))}
 NeoBundleLazy 'Shougo/neosnippet.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'Shougo/unite.vim'
-NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': 'Shougo/unite.vim'}
+NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': ['Shougo/unite.vim']}
 NeoBundleLazy 'Shougo/vimproc.vim', {'build': {'others': 'make'}}
 NeoBundleLazy 'Shougo/vimshell.vim', {'depends': ['Shougo/vimproc.vim', 'Shougo/unite.vim']}
-NeoBundleLazy 't9md/vim-textmanip', {'autoload': {'mappings': '<Plug>(textmanip'}}
-NeoBundleLazy 'thinca/vim-quickrun', {'complete' : 'customlist,quickrun#complete', 'depends': 'osyo-manga/quickrun-outputter-replace_region'}
+NeoBundleLazy 't9md/vim-textmanip', {'autoload': {'mappings': ['<Plug>(textmanip']}}
+NeoBundleLazy 'thinca/vim-quickrun', {'complete' : 'customlist,quickrun#complete', 'depends': ['osyo-manga/quickrun-outputter-replace_region']}
 NeoBundleLazy 'thinca/vim-ref'
 NeoBundleLazy 'thinca/vim-scouter'
 NeoBundleLazy 'tyru/eskk.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'tyru/restart.vim', {'gui': 1}
-NeoBundleLazy 'ujihisa/ref-hoogle', {'autoload': {'on_source': 'vim-ref'}, 'disabled': !executable('cabal') || !executable('hoogle')}
+NeoBundleLazy 'ujihisa/ref-hoogle', {'autoload': {'on_source': ['vim-ref']}, 'disabled': !executable('cabal') || !executable('hoogle')}
 NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': ['cpp']}}
 NeoBundleLazy 'vim-jp/vital.vim'
 
