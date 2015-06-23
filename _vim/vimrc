@@ -470,9 +470,10 @@ NeoBundleLazy 'othree/tern_for_vim_coffee', {'autoload': {'on_source': ['tern_fo
 NeoBundleLazy 'pangloss/vim-javascript', {'autoload': {'on_source': ['vim-javascript-syntax']}}
 NeoBundleLazy 'rhysd/vim-operator-surround', {'depends': 'kana/vim-operator-user', 'autoload': {'mappings': ['<Plug>(operator-surround']}}
 NeoBundleLazy 'Shougo/context_filetype.vim'
+NeoBundleLazy 'Shougo/deoplete.nvim', {'autoload': {'insert': 1}, 'disabled': !has('nvim')}
 NeoBundleLazy 'Shougo/junkfile.vim', {'autoload': {'unite_sources': ['junkfile', 'junkfile/new']}}
-NeoBundleLazy 'Shougo/neocomplcache.vim', {'autoload': {'insert': 1}, 'disabled': has('lua') && ((v:version > 703) || (v:version == 703 && has('patch885')))}
-NeoBundleLazy 'Shougo/neocomplete.vim', {'autoload': {'insert': 1}, 'disabled': !has('lua') || !((v:version > 703) || (v:version == 703 && has('patch885')))}
+NeoBundleLazy 'Shougo/neocomplcache.vim', {'autoload': {'insert': 1}, 'disabled': has('nvim') || (has('lua') && ((v:version > 703) || (v:version == 703 && has('patch885'))))}
+NeoBundleLazy 'Shougo/neocomplete.vim', {'autoload': {'insert': 1}, 'disabled': has('nvim') || !has('lua') || !((v:version > 703) || (v:version == 703 && has('patch885')))}
 NeoBundleLazy 'Shougo/neosnippet.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'Shougo/unite.vim'
 NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': ['Shougo/unite.vim']}
