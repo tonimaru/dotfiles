@@ -821,15 +821,36 @@ if !has('vim_starting')
 endif
 
 " https://github.com/bronson/vim-trailing-whitespace
-function! s:fix_traillng_whitespace()
+" http://d.hatena.ne.jp/thinca/20110810/1312913305
+
+function! s:enable_auto_fix_trailing_whitespace()
+  call s:disable_auto_fix_trailing_whitespace()
+  autocmd VimrcFixTrailingWhitespaceGroup BufWritePre * VimrcFixTrailingWhitespace
+endfunction
+
+function! s:disable_auto_fix_trailing_whitespace()
+  augroup VimrcFixTrailingWhitespaceGroup
+    autocmd!
+  augroup END
+endfunction
+
+function! s:fix_trailing_whitespace(range_given, line1, line2)
   if &filetype ==# 'markdown'
     return
   endif
   let save_pos = getpos('.')
-  execute '%s/\v\\@<!(\s|\t|　)+$//e'
+  if a:range_given
+    execute printf('%d,%ds/\v\\@<!(\s|\t|　)+$//e', a:line1, a:line2)
+  else
+    execute '%s/\v\\@<!(\s|\t|　)+$//e'
+  endif
   call setpos('.', save_pos)
 endfunction
-Au BufWritePre * call s:fix_traillng_whitespace()
+
+command! -range=0 VimrcFixTrailingWhitespace call s:fix_trailing_whitespace(<count>, <line1>, <line2>)
+command! VimrcFixTrailingWhitespaceEnable call s:enable_auto_fix_trailing_whitespace()
+command! VimrcFixTrailingWhitespaceDisable call s:disable_auto_fix_trailing_whitespace()
+VimrcFixTrailingWhitespaceEnable
 
 " TODO
 if has('vim_starting')
