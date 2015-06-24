@@ -9,6 +9,15 @@ endif
 
 scriptencoding utf-8
 
+if has('autocmd')
+  augroup my_vimrc
+    autocmd!
+  augroup END
+  command! -bang -nargs=* Au autocmd<bang> my_vimrc <args>
+else
+  command! -bang -nargs=* Au
+endif
+
 let s:is_mswin = has('win95') || has('win16') || has('win32') || has('win64')
 
 function! s:mkdir(path)
@@ -118,6 +127,72 @@ if exists('+clipboard')
   endif
 endif
 
+nnoremap j gj
+nnoremap gj j
+nnoremap k gk
+nnoremap gk k
+
+nnoremap <Down> <C-w>j
+nnoremap <Up> <C-w>k
+nnoremap <Right> <C-w>l
+nnoremap <Left> <C-w>h
+
+nnoremap <S-Right> gt
+nnoremap <S-Left> gT
+
+nnoremap ; q:
+vnoremap ; q:
+nnoremap : ;
+vnoremap : ;
+nnoremap q; :
+vnoremap q; :
+nnoremap q: <Nop>
+vnoremap q: <Nop>
+
+nnoremap <silent> <Esc><Esc> :nohls<CR>
+
+map <Space> [prefix]
+noremap [prefix] <Nop>
+
+nnoremap <silent> [prefix]ee :<C-u>e $MYVIMRC<CR>
+nnoremap <silent> [prefix]er :<C-u>so $MYVIMRC<CR>
+
+" http://nanabit.net/blog/2009/07/04/vim-replace-motion/
+" https://github.com/kana/vim-operator-replace
+function! s:operator_replace(type)
+  let sel_save = &selection
+  let p_save = &paste
+  let &selection = 'inclusive'
+  set paste
+
+  let register = v:register !=# '' ? v:register : '"'
+  if a:type =~# '\v\C^[vV]$'
+    execute printf('normal! `<%s`>"_c%s%s', a:type, "\<C-r>", register)
+  else
+    execute printf('normal! `[v`]"_c%s%s', "\<C-r>", register)
+  endif
+
+  let &paste = p_save
+  let &selection = sel_save
+endfunction
+nnoremap <silent> s :<C-u>set opfunc=<SID>operator_replace<CR>g@
+vnoremap <silent> s :<C-u>call <SID>operator_replace(visualmode())<CR>
+
+Au CmdWinEnter * call s:init_cmdwin()
+function! s:init_cmdwin()
+  nnoremap <buffer><silent><nowait> <ESC> <C-w>c
+  vnoremap <buffer><silent><nowait> <ESC> <C-w>c
+  nnoremap <buffer><silent><nowait> q <C-w>c
+  vnoremap <buffer><silent><nowait> q <C-w>c
+  startinsert!
+endfunction
+
+Au FileType help noremap <buffer><nowait> q <C-w>c
+
+Au FileType javascript,coffee set tabstop=2 shiftwidth=2
+
+Au WinEnter * checktime
+
 let s:bundle_path = s:vimdir('bundle')
 let s:neobundle_path = expand(printf('%s/%s', s:bundle_path, 'neobundle.vim'))
 " TODO
@@ -143,262 +218,6 @@ if !s:neobundle_installed()
     finish
   endif
 endif
-
-let g:unite_source_grep_max_candidates = 10000
-if executable('ag')
-  let g:unite_source_grep_command = 'ag'
-  let g:unite_source_grep_default_opts = ''
-  let g:unite_source_grep_default_opts .= ' --all-types'
-  let g:unite_source_grep_default_opts .= ' --hidden'
-  let g:unite_source_grep_default_opts .= ' --ignore-case'
-  let g:unite_source_grep_default_opts .= ' --line-numbers'
-  let g:unite_source_grep_default_opts .= ' --nocolor'
-  let g:unite_source_grep_default_opts .= ' --nogroup'
-  let g:unite_source_grep_default_opts .= ' --ignore ''.git'''
-  let g:unite_source_grep_default_opts .= ' --ignore ''.hg'''
-  let g:unite_source_grep_default_opts .= ' --ignore ''.svn'''
-  let g:unite_source_grep_recursive_opt = ''
-endif
-
-let g:unite_source_find_max_candidates = 2000
-
-let g:vimfiler_safe_mode_by_default = 0
-let g:vimfiler_enable_auto_cd       = 1
-
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#enable_auto_select = 0
-
-if !exists('g:neocomplete#force_omni_input_patterns')
-  let g:neocomplete#force_omni_input_patterns = {}
-endif
-let g:neocomplete#force_omni_input_patterns['c'] = '\v\C%(<\h\w*>|]|\)|^)\zs\s*%(\.|-\>)'
-let g:neocomplete#force_omni_input_patterns['cpp'] = '\v%(<\h\w*>|^|[;,()<>])\s*((::|\.|-\>)(<\h\w*>)?)+|^\s*<\h\w*>'
-
-if executable('npm')
-  let g:neocomplete#force_omni_input_patterns['javascript'] = '[^. \t]\.\w*'
-  let g:neocomplete#force_omni_input_patterns['coffee'] = '[^. \t]\.\w*'
-endif
-
-let g:neosnippet#disable_runtime_snippets = { '_': 1, }
-let g:neosnippet#snippets_directory = s:vimdir('snippets')
-
-let g:eskk#no_default_mappings = 1
-let g:eskk#enable_completion = 1
-let g:eskk#max_candidates = 100
-let g:eskk#start_completion_length = 2
-let g:eskk#auto_save_dictionary_at_exit = 0
-
-if executable('google-ime-skk')
-  let g:eskk#server = { 'host': 'localhost', 'port': 55100, }
-
-  call system('ps ax | grep google-ime-skk | grep -v grep')
-  if v:shell_error
-    silent! !google-ime-skk &
-  endif
-endif
-
-let g:quickrun_config = {}
-
-let g:quickrun_config['_'] = {}
-let g:quickrun_config['_']['runner'] = 'vimproc'
-let g:quickrun_config['_']['runner/vimproc/updatetime'] = 40
-
-let g:quickrun_config['json'] = {'type': executable('jq') ? 'json/jq' : executable('json2yaml') ? 'json/json2yaml' : ''}
-let g:quickrun_config['json/jq'] = {'command': 'jq', 'exec': '%c "." %s', 'outputter/buffer/filetype': 'json'}
-let g:quickrun_config['json/json2yaml'] = {'command': 'json2yaml', 'exec': '%c %s', 'outputter/buffer/filetype': 'yaml'}
-
-let g:quickrun_config['yaml'] = {'type': executable('yaml2json') ? 'yaml/yaml2json' : ''}
-let g:quickrun_config['yaml/yaml2json'] = {'command': 'yaml2json', 'exec': '%c %s', 'outputter/buffer/filetype': 'json'}
-
-let g:quickrun_config['scala'] = {'type': executable('scala') ? 'scala/process_manager' : ''}
-
-let s:clang_exe = expand($HOME.'/local/llvm/bin/clang++')
-let s:clang_exe = executable(s:clang_exe) ? s:clang_exe : 'clang++'
-
-let  s:conf_base = {}
-function! s:conf_base.set_to(config) dict
-  return self.set_to_impl(deepcopy(a:config))
-endfunction
-
-function! s:new_conf(name, ...)
-  let config = extend({'name': a:name}, s:conf_base)
-  if a:0 != 0
-    let config['set_to_impl'] = a:1
-  endif
-  return config
-endfunction
-
-let s:pp = s:new_conf('pp')
-function! s:pp.set_to_impl(config) dict
-  let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -E'
-  let a:config['exec'] = '%c %o %s'
-  return a:config
-endfunction
-
-let s:asm = s:new_conf('asm')
-function! s:asm.set_to_impl(config) dict
-  let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -S'
-  let a:config['exec'] = ['%c %o %s -o -']
-  return a:config
-endfunction
-
-function! s:std(config) dict
-  let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -std='.self['name']
-  return a:config
-endfunction
-
-let s:c11             = s:new_conf('c11', function('s:std'))
-let s:c1x             = s:new_conf('c1x', function('s:std'))
-let s:c89             = s:new_conf('c89', function('s:std'))
-let s:c90             = s:new_conf('c90', function('s:std'))
-let s:c99             = s:new_conf('c99', function('s:std'))
-let s:c9x             = s:new_conf('c9x', function('s:std'))
-let s:gnu11           = s:new_conf('gnu11', function('s:std'))
-let s:gnu1x           = s:new_conf('gnu1x', function('s:std'))
-let s:gnu89           = s:new_conf('gnu89', function('s:std'))
-let s:gnu90           = s:new_conf('gnu90', function('s:std'))
-let s:gnu99           = s:new_conf('gnu99', function('s:std'))
-let s:gnu9x           = s:new_conf('gnu9x', function('s:std'))
-let s:iso9899_1990    = s:new_conf('iso9899:1990', function('s:std'))
-let s:iso9899_199409  = s:new_conf('iso9899:199409', function('s:std'))
-let s:iso9899_1999    = s:new_conf('iso9899:1999', function('s:std'))
-let s:iso9899_199x    = s:new_conf('iso9899:199x', function('s:std'))
-let s:iso9899_2011    = s:new_conf('iso9899:2011', function('s:std'))
-
-let s:cxx03    = s:new_conf('c++03', function('s:std'))
-let s:cxx0x    = s:new_conf('c++0x', function('s:std'))
-let s:cxx11    = s:new_conf('c++11', function('s:std'))
-let s:cxx14    = s:new_conf('c++14', function('s:std'))
-let s:cxx1y    = s:new_conf('c++1y', function('s:std'))
-let s:cxx1z    = s:new_conf('c++1z', function('s:std'))
-let s:cxx98    = s:new_conf('c++98', function('s:std'))
-let s:gnuxx03  = s:new_conf('gnu++03', function('s:std'))
-let s:gnuxx0x  = s:new_conf('gnu++0x', function('s:std'))
-let s:gnuxx11  = s:new_conf('gnu++11', function('s:std'))
-let s:gnuxx14  = s:new_conf('gnu++14', function('s:std'))
-let s:gnuxx1y  = s:new_conf('gnu++1y', function('s:std'))
-let s:gnuxx1z  = s:new_conf('gnu++1z', function('s:std'))
-let s:gnuxx98  = s:new_conf('gnu++98', function('s:std'))
-
-let s:libcxx_libsupcxx_path = expand($HOME.'/local/llvm/libcxx_libsupcxx')
-let s:libcxx_libcxxabi_path = expand($HOME.'/local/llvm/libcxx_libcxxabi')
-let s:libcxxabi_path = expand($HOME.'/local/llvm/libcxxabi')
-
-" TODO libcxx path
-let s:libcxx_libsupcxx = s:new_conf('libcxx_libsupcxx')
-function! s:libcxx_libsupcxx.set_to_impl(config) dict
-  let a:config['cmdopt'] = get(a:config, 'cmdopt', '').printf(' -stdlib=libc++ -I%s/include/c++/v1', s:libcxx_libsupcxx_path)
-
-  if a:config['cmdopt'] !~# '\v\C(^|\s+)-[ES](\s+|$)'
-    let a:config['cmdopt'] .= printf(' -L%s/lib', s:libcxx_libsupcxx_path)
-  endif
-  return a:config
-endfunction
-
-let s:libcxx_libcxxabi = s:new_conf('libcxx_libcxxabi')
-function! s:libcxx_libcxxabi.set_to_impl(config) dict
-  let a:config['cmdopt'] = get(a:config, 'cmdopt', '').printf(' -stdlib=libc++ -I%s/include/c++/v1', s:libcxx_libcxxabi_path)
-
-  if a:config['cmdopt'] !~# '\v\C(^|\s+)-[ES](\s+|$)'
-    let a:config['cmdopt'] .= printf(' -L%s/lib -L%s/lib -lc++abi', s:libcxx_libcxxabi_path, s:libcxxabi_path)
-  endif
-  return a:config
-endfunction
-
-let s:cdst = [s:pp, s:asm]
-let s:cstd = [s:c11, s:c1x, s:c89, s:c90, s:c99, s:c9x, s:gnu11, s:gnu1x, s:gnu89, s:gnu90, s:gnu99, s:gnu9x, s:iso9899_1990, s:iso9899_199409, s:iso9899_1999, s:iso9899_199x, s:iso9899_2011]
-
-let s:cxxdst = [s:pp, s:asm]
-let s:cxxstd = [s:cxx03, s:cxx0x, s:cxx11, s:cxx14, s:cxx1y, s:cxx1z, s:cxx98, s:gnuxx03, s:gnuxx0x, s:gnuxx11, s:gnuxx14, s:gnuxx1y, s:gnuxx1z, s:gnuxx98]
-let s:cxxlib = [s:libcxx_libsupcxx, s:libcxx_libcxxabi]
-
-function! s:_apply(current, arg)
-  let config = extend(a:arg.set_to(a:current['config']), {'type': a:current['name']}, 'force')
-  let name = printf('%s/%s', a:current['name'], a:arg['name'])
-  return {'name': name, 'config': config}
-endfunction
-
-function! s:_build_impl(current, args_list)
-  let r = []
-  let next = copy(a:args_list)
-  for args in a:args_list
-    let next = next[1:]
-    for arg in args
-      let v = s:_apply(a:current, arg)
-      call add(r, v)
-      call extend(r, s:_build_impl(v, next))
-    endfor
-  endfor
-  return r
-endfunction
-
-function! s:_set_quickrun_config(root, arg)
-  let built = s:_build_impl(a:root, a:arg)
-  for v in built
-    let g:quickrun_config[v['name']] = v['config']
-  endfor
-endfunction
-
-function! s:set_quickrun_configs()
-  if executable('gcc')
-    call s:_set_quickrun_config({'name': 'c/gcc', 'config': {}}, [s:cdst, s:cstd])
-  endif
-  if executable('g++')
-    call s:_set_quickrun_config({'name': 'cpp/g++', 'config': {}}, [s:cxxdst, s:cxxstd])
-  endif
-  if executable(s:clang_exe)
-    " TODO libcxx path
-    let clang_arg = isdirectory($HOME.'/local/llvm') ? [s:cxxdst, s:cxxstd, s:cxxlib] : [s:cxxdst, s:cxxstd]
-
-    let cpp_includes = join(map([$HOME.'/local/src/cpp/boost_1_58_0/', ], '''-I''.v:val'), ' ')
-    let cpp_lib_path = '-L'.$HOME.'/local/src/cpp/boost_1_58_0/stage/clang/lib'
-    let cpp_libs = join(map(['boost_atomic', 'boost_thread', 'boost_system', 'python2.7' , 'pthread'], '''-l''.v:val'), ' ')
-    let cpp_opt = printf('%s %s %s', cpp_includes, cpp_lib_path, cpp_libs)
-    call s:_set_quickrun_config({'name': 'cpp/clang++', 'config': {'command': s:clang_exe, 'cmdopt': cpp_opt}}, clang_arg)
-  endif
-endfunction
-call s:set_quickrun_configs()
-
-let g:quickrun_config['watchdogs_checker/_' ] = {}
-let g:quickrun_config['watchdogs_checker/_' ]['runner/vimproc/updatetime'] = 40
-let g:quickrun_config['watchdogs_checker/_' ]['outputter/quickfix/open_cmd'] = ''
-
-let g:quickrun_config['watchdogs_checker/_' ]['hook/qfsigns_update/enable_exit'] = 1
-
-let g:quickrun_config['c/watchdogs_checker'] = { 'type' : executable('clang') ? 'watchdogs_checker/clang' : executable('gcc')   ? 'watchdogs_checker/gcc' : '' }
-
-let g:quickrun_config['watchdogs_checker/ghc-mod'] = {'cmdopt': '-fno-warn-type-defaults'}
-
-let g:watchdogs_check_BufWritePost_enable = 1
-let g:watchdogs_check_BufWritePost_enable_on_wq = 0
-
-let g:haskell_conceal = 0
-
-let g:brightest#pattern = '\w\+'
-let g:brightest#highlight = {}
-let g:brightest#highlight['group'] = 'VimrcKeywordHighlightBold'
-let g:brightest#highlight['format'] = '\v\C(^|\W\zs)%s(\ze\W|$)'
-let g:brightest#enable_highlight_all_window = 1
-
-let g:marching_clang_command_option = '-std=c++1y'
-let g:marching_enable_neocomplete = 1
-if !executable('clang')
-  let g:marching_backend = 'sywnc_wandbox'
-endif
-
-" TODO path
-if !filereadable('libclang.so') && filereadable(expand($HOME.'/local/llvm/lib/libclang.so'))
-  let g:snowdrop#libclang_directory = expand($HOME.'/local/llvm/lib')
-endif
-
-let g:rogue#japanese = 1
-
-let g:vim_json_syntax_conceal = 0
-
-let g:asterisk#keeppos = 1
-
-let g:anzu_status_format = '%p(%i/%l)'
-let g:anzu_enable_CursorMoved_AnzuUpdateSearchStatus = 1
 
 if has('vim_starting')
   execute 'set runtimepath+='.s:neobundle_path
@@ -496,39 +315,549 @@ function! s:neco_lexima_on_sourced()
   endif
 endfunction
 
+nmap [prefix]u [unite]
+nnoremap [unite] <Nop>
 if neobundle#tap('unite.vim')
+
+  let g:unite_source_grep_max_candidates = 10000
+  if executable('ag')
+    let g:unite_source_grep_command = 'ag'
+    let g:unite_source_grep_default_opts = ''
+    let g:unite_source_grep_default_opts .= ' --all-types'
+    let g:unite_source_grep_default_opts .= ' --hidden'
+    let g:unite_source_grep_default_opts .= ' --ignore-case'
+    let g:unite_source_grep_default_opts .= ' --line-numbers'
+    let g:unite_source_grep_default_opts .= ' --nocolor'
+    let g:unite_source_grep_default_opts .= ' --nogroup'
+    let g:unite_source_grep_default_opts .= ' --ignore ''.git'''
+    let g:unite_source_grep_default_opts .= ' --ignore ''.hg'''
+    let g:unite_source_grep_default_opts .= ' --ignore ''.svn'''
+    let g:unite_source_grep_recursive_opt = ''
+  endif
+
+  let g:unite_source_find_max_candidates = 2000
+
+  nnoremap <silent> [unite]bf :<C-u>Unite buffer<CR>
+  nnoremap <silent> [unite]bu :<C-u>Unite neobundle/update:all<CR>
+  nnoremap <silent> [unite]c :<C-u>Unite quickfix<CR>
+  nnoremap <silent> [unite]fm :<C-u>Unite neomru/file<CR>
+  nnoremap <silent> [unite]ga :<C-u>Unite grep -no-quit -create -auto-preview -tab -no-empty<CR>
+  nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create -no-empty<CR>
+  nnoremap <silent> [unite]gv :<C-u>Unite vimgrep -no-quit -create -tab -no-empty<CR>
+  nnoremap <silent> [unite]gc :<C-u>Unite vimgrep:% -no-quit -create -tab -no-empty<CR>
+  nnoremap <silent> [unite]l :<C-u>Unite line<CR>
+  nnoremap <silent> [unite]j :<C-u>Unite junkfile/new junkfile<CR>
+  nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
+
+  Au FileType unite call s:ft_unite()
+  function! s:ft_unite()
+    map <buffer><nowait> q <Plug>(unite_exit)
+    map <buffer><nowait> <C-g> <Plug>(unite_exit)
+
+    map <buffer><nowait> Q <Plug>(unite_all_exit)|
+    map <buffer><nowait> g<C-g> <Plug>(unite_all_exit)|
+  endfunction
+
   function! neobundle#tapped.hooks.on_source(bundle)
     call unite#custom#profile('default', 'context', { 'start_insert': 1, 'direction': 'botright'})
     call unite#custom#profile('source/neobundle/update', 'context', { 'start_insert': 0, })
   endfunction
+
+  call neobundle#untap()
+endif
+
+nmap [prefix]vf [vimfiler]
+nnoremap [vimfiler] <Nop>
+if neobundle#tap('vimfiler.vim')
+
+  let g:vimfiler_safe_mode_by_default = 0
+  let g:vimfiler_enable_auto_cd       = 1
+
+  nnoremap <silent> [vimfiler]; :<C-u>VimFiler<CR>
+  nnoremap <silent> [vimfiler]+ :<C-u>VimFiler -create<CR>
+  nnoremap <silent> [vimfiler]p :<C-u>VimFiler -split<CR>
+  nnoremap <silent> [vimfiler]P :<C-u>VimFiler -create -split<CR>
+  nnoremap <silent> [vimfiler]j :<C-u>VimFilerExplorer<CR>
+
+  Au FileType vimfiler call s:ft_vimfiler()
+  function! s:vimfiler_key_wrap(plug)
+    if empty(vimfiler#get_marked_files())
+      call feedkeys("\<Plug>(vimfiler_toggle_mark_current_line)", 'm')
+      call feedkeys(a:plug, 'm')
+    else
+      call feedkeys(a:plug, 'm')
+    endif
+  endfunction
+
+  function! s:ft_vimfiler()
+    nmap <buffer><expr><nowait> c <SID>vimfiler_key_wrap("\<Plug>(vimfiler_copy_file)")
+    nmap <buffer><expr><nowait> m <SID>vimfiler_key_wrap("\<Plug>(vimfiler_move_file)")
+    nmap <buffer><expr><nowait> d <SID>vimfiler_key_wrap("\<Plug>(vimfiler_delete_file)")
+    nmap <buffer><expr><nowait> r <SID>vimfiler_key_wrap("\<Plug>(vimfiler_rename_file)")
+
+    map <buffer><nowait> q <Plug>(vimfiler_hide)
+  endfunction
+
+  function! neobundle#tapped.hooks.on_source(bundle)
+    NeoBundleSource vimshell.vim
+  endfunction
+
+  call neobundle#untap()
+endif
+
+nmap [prefix]vs [vimshell]
+nnoremap [vimshell] <Nop>
+if neobundle#tap('vimshell.vim')
+
+  nnoremap <silent> [vimshell]; :<C-u>VimShell<CR>
+  nnoremap <silent> [vimshell]+ :<C-u>VimShell -create<CR>
+
+  call neobundle#untap()
+endif
+
+map [prefix]g [fugitive]
+nnoremap [fugitive] <Nop>
+if neobundle#tap('vim-fugitive')
+
+  nnoremap [fugitive]b :<C-u>Gblame<CR>
+  nnoremap [fugitive]cd :<C-u>Gcd<CR>
+  nnoremap [fugitive]d :<C-u>Gvdiff<CR>
+  nnoremap [fugitive]p :<C-u>Gpush origin master
+  nnoremap [fugitive]s :<C-u>Gstatus<CR>
+  vnoremap [fugitive]b :Gblame<CR>
+
+  call neobundle#untap()
+endif
+
+map [prefix]q [quickrun]
+noremap [quickrun] <Nop>
+if neobundle#tap('vim-quickrun')
+
+  let g:quickrun_config = {}
+
+  let g:quickrun_config['_'] = {}
+  let g:quickrun_config['_']['runner'] = 'vimproc'
+  let g:quickrun_config['_']['runner/vimproc/updatetime'] = 40
+
+  let g:quickrun_config['json'] = {'type': executable('jq') ? 'json/jq' : executable('json2yaml') ? 'json/json2yaml' : ''}
+  let g:quickrun_config['json/jq'] = {'command': 'jq', 'exec': '%c "." %s', 'outputter/buffer/filetype': 'json'}
+  let g:quickrun_config['json/json2yaml'] = {'command': 'json2yaml', 'exec': '%c %s', 'outputter/buffer/filetype': 'yaml'}
+
+  let g:quickrun_config['yaml'] = {'type': executable('yaml2json') ? 'yaml/yaml2json' : ''}
+  let g:quickrun_config['yaml/yaml2json'] = {'command': 'yaml2json', 'exec': '%c %s', 'outputter/buffer/filetype': 'json'}
+
+  let g:quickrun_config['scala'] = {'type': executable('scala') ? 'scala/process_manager' : ''}
+
+  let s:clang_exe = expand($HOME.'/local/llvm/bin/clang++')
+  let s:clang_exe = executable(s:clang_exe) ? s:clang_exe : 'clang++'
+
+  let  s:conf_base = {}
+  function! s:conf_base.set_to(config) dict
+    return self.set_to_impl(deepcopy(a:config))
+  endfunction
+
+  function! s:new_conf(name, ...)
+    let config = extend({'name': a:name}, s:conf_base)
+    if a:0 != 0
+      let config['set_to_impl'] = a:1
+    endif
+    return config
+  endfunction
+
+  let s:pp = s:new_conf('pp')
+  function! s:pp.set_to_impl(config) dict
+    let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -E'
+    let a:config['exec'] = '%c %o %s'
+    return a:config
+  endfunction
+
+  let s:asm = s:new_conf('asm')
+  function! s:asm.set_to_impl(config) dict
+    let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -S'
+    let a:config['exec'] = ['%c %o %s -o -']
+    return a:config
+  endfunction
+
+  function! s:std(config) dict
+    let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -std='.self['name']
+    return a:config
+  endfunction
+
+  let s:c11             = s:new_conf('c11', function('s:std'))
+  let s:c1x             = s:new_conf('c1x', function('s:std'))
+  let s:c89             = s:new_conf('c89', function('s:std'))
+  let s:c90             = s:new_conf('c90', function('s:std'))
+  let s:c99             = s:new_conf('c99', function('s:std'))
+  let s:c9x             = s:new_conf('c9x', function('s:std'))
+  let s:gnu11           = s:new_conf('gnu11', function('s:std'))
+  let s:gnu1x           = s:new_conf('gnu1x', function('s:std'))
+  let s:gnu89           = s:new_conf('gnu89', function('s:std'))
+  let s:gnu90           = s:new_conf('gnu90', function('s:std'))
+  let s:gnu99           = s:new_conf('gnu99', function('s:std'))
+  let s:gnu9x           = s:new_conf('gnu9x', function('s:std'))
+  let s:iso9899_1990    = s:new_conf('iso9899:1990', function('s:std'))
+  let s:iso9899_199409  = s:new_conf('iso9899:199409', function('s:std'))
+  let s:iso9899_1999    = s:new_conf('iso9899:1999', function('s:std'))
+  let s:iso9899_199x    = s:new_conf('iso9899:199x', function('s:std'))
+  let s:iso9899_2011    = s:new_conf('iso9899:2011', function('s:std'))
+
+  let s:cxx03    = s:new_conf('c++03', function('s:std'))
+  let s:cxx0x    = s:new_conf('c++0x', function('s:std'))
+  let s:cxx11    = s:new_conf('c++11', function('s:std'))
+  let s:cxx14    = s:new_conf('c++14', function('s:std'))
+  let s:cxx1y    = s:new_conf('c++1y', function('s:std'))
+  let s:cxx1z    = s:new_conf('c++1z', function('s:std'))
+  let s:cxx98    = s:new_conf('c++98', function('s:std'))
+  let s:gnuxx03  = s:new_conf('gnu++03', function('s:std'))
+  let s:gnuxx0x  = s:new_conf('gnu++0x', function('s:std'))
+  let s:gnuxx11  = s:new_conf('gnu++11', function('s:std'))
+  let s:gnuxx14  = s:new_conf('gnu++14', function('s:std'))
+  let s:gnuxx1y  = s:new_conf('gnu++1y', function('s:std'))
+  let s:gnuxx1z  = s:new_conf('gnu++1z', function('s:std'))
+  let s:gnuxx98  = s:new_conf('gnu++98', function('s:std'))
+
+  let s:libcxx_libsupcxx_path = expand($HOME.'/local/llvm/libcxx_libsupcxx')
+  let s:libcxx_libcxxabi_path = expand($HOME.'/local/llvm/libcxx_libcxxabi')
+  let s:libcxxabi_path = expand($HOME.'/local/llvm/libcxxabi')
+
+  " TODO libcxx path
+  let s:libcxx_libsupcxx = s:new_conf('libcxx_libsupcxx')
+  function! s:libcxx_libsupcxx.set_to_impl(config) dict
+    let a:config['cmdopt'] = get(a:config, 'cmdopt', '').printf(' -stdlib=libc++ -I%s/include/c++/v1', s:libcxx_libsupcxx_path)
+
+    if a:config['cmdopt'] !~# '\v\C(^|\s+)-[ES](\s+|$)'
+      let a:config['cmdopt'] .= printf(' -L%s/lib', s:libcxx_libsupcxx_path)
+    endif
+    return a:config
+  endfunction
+
+  let s:libcxx_libcxxabi = s:new_conf('libcxx_libcxxabi')
+  function! s:libcxx_libcxxabi.set_to_impl(config) dict
+    let a:config['cmdopt'] = get(a:config, 'cmdopt', '').printf(' -stdlib=libc++ -I%s/include/c++/v1', s:libcxx_libcxxabi_path)
+
+    if a:config['cmdopt'] !~# '\v\C(^|\s+)-[ES](\s+|$)'
+      let a:config['cmdopt'] .= printf(' -L%s/lib -L%s/lib -lc++abi', s:libcxx_libcxxabi_path, s:libcxxabi_path)
+    endif
+    return a:config
+  endfunction
+
+  let s:cdst = [s:pp, s:asm]
+  let s:cstd = [s:c11, s:c1x, s:c89, s:c90, s:c99, s:c9x, s:gnu11, s:gnu1x, s:gnu89, s:gnu90, s:gnu99, s:gnu9x, s:iso9899_1990, s:iso9899_199409, s:iso9899_1999, s:iso9899_199x, s:iso9899_2011]
+
+  let s:cxxdst = [s:pp, s:asm]
+  let s:cxxstd = [s:cxx03, s:cxx0x, s:cxx11, s:cxx14, s:cxx1y, s:cxx1z, s:cxx98, s:gnuxx03, s:gnuxx0x, s:gnuxx11, s:gnuxx14, s:gnuxx1y, s:gnuxx1z, s:gnuxx98]
+  let s:cxxlib = [s:libcxx_libsupcxx, s:libcxx_libcxxabi]
+
+  function! s:_apply(current, arg)
+    let config = extend(a:arg.set_to(a:current['config']), {'type': a:current['name']}, 'force')
+    let name = printf('%s/%s', a:current['name'], a:arg['name'])
+    return {'name': name, 'config': config}
+  endfunction
+
+  function! s:_build_impl(current, args_list)
+    let r = []
+    let next = copy(a:args_list)
+    for args in a:args_list
+      let next = next[1:]
+      for arg in args
+        let v = s:_apply(a:current, arg)
+        call add(r, v)
+        call extend(r, s:_build_impl(v, next))
+      endfor
+    endfor
+    return r
+  endfunction
+
+  function! s:_set_quickrun_config(root, arg)
+    let built = s:_build_impl(a:root, a:arg)
+    for v in built
+      let g:quickrun_config[v['name']] = v['config']
+    endfor
+  endfunction
+
+  function! s:set_quickrun_configs()
+    if executable('gcc')
+      call s:_set_quickrun_config({'name': 'c/gcc', 'config': {}}, [s:cdst, s:cstd])
+    endif
+    if executable('g++')
+      call s:_set_quickrun_config({'name': 'cpp/g++', 'config': {}}, [s:cxxdst, s:cxxstd])
+    endif
+    if executable(s:clang_exe)
+      " TODO libcxx path
+      let clang_arg = isdirectory($HOME.'/local/llvm') ? [s:cxxdst, s:cxxstd, s:cxxlib] : [s:cxxdst, s:cxxstd]
+
+      let cpp_includes = join(map([$HOME.'/local/src/cpp/boost_1_58_0/', ], '''-I''.v:val'), ' ')
+      let cpp_lib_path = '-L'.$HOME.'/local/src/cpp/boost_1_58_0/stage/clang/lib'
+      let cpp_libs = join(map(['boost_atomic', 'boost_thread', 'boost_system', 'python2.7' , 'pthread'], '''-l''.v:val'), ' ')
+      let cpp_opt = printf('%s %s %s', cpp_includes, cpp_lib_path, cpp_libs)
+      call s:_set_quickrun_config({'name': 'cpp/clang++', 'config': {'command': s:clang_exe, 'cmdopt': cpp_opt}}, clang_arg)
+    endif
+  endfunction
+  call s:set_quickrun_configs()
+
+  nmap [quickrun] <Plug>(quickrun)
+
   call neobundle#untap()
 endif
 
 if neobundle#tap('vim-watchdogs')
+
+  let g:quickrun_config['watchdogs_checker/_' ] = {}
+  let g:quickrun_config['watchdogs_checker/_' ]['runner/vimproc/updatetime'] = 40
+  let g:quickrun_config['watchdogs_checker/_' ]['outputter/quickfix/open_cmd'] = ''
+
+  let g:quickrun_config['watchdogs_checker/_' ]['hook/qfsigns_update/enable_exit'] = 1
+
+  let g:quickrun_config['c/watchdogs_checker'] = { 'type' : executable('clang') ? 'watchdogs_checker/clang' : executable('gcc')   ? 'watchdogs_checker/gcc' : '' }
+
+  let g:quickrun_config['watchdogs_checker/ghc-mod'] = {'cmdopt': '-fno-warn-type-defaults'}
+
+  let g:watchdogs_check_BufWritePost_enable = 1
+  let g:watchdogs_check_BufWritePost_enable_on_wq = 0
+
   function! neobundle#tapped.hooks.on_source(bundle)
     call watchdogs#setup(g:quickrun_config)
   endfunction
+
   call neobundle#untap()
 endif
 
-if neobundle#tap('vimfiler.vim')
-  function! neobundle#tapped.hooks.on_source(bundle)
-    NeoBundleSource vimshell.vim
-  endfunction
+map [prefix]b [beautify]
+noremap [beautify] <Nop>
+if neobundle#tap('beautify.vim')
+
+  if executable('npm')
+    nnoremap [beautify] :<C-u>Beautify<CR>
+    vnoremap [beautify] :Beautify<CR>
+  endif
+
+  call neobundle#untap()
+endif
+
+map [prefix]res [restart]
+noremap [restart] <Nop>
+if neobundle#tap('restart.vim')
+
+  noremap <silent> [restart] :<C-u>Restart<CR>
+
+  call neobundle#untap()
+endif
+
+nmap [prefix]ref [ref]
+nnoremap [ref] <Nop>
+if neobundle#tap('vim-ref')
+
+  nnoremap [ref]m :<C-u>Ref man<Space>
+  nnoremap [ref]h :<C-u>Ref hoogle<Space>
+
+  call neobundle#untap()
+endif
+
+nmap [prefix]sa [sayonara]
+nnoremap [sayonara] <Nop>
+if neobundle#tap('vim-sayonara')
+
+  nnoremap <silent> [sayonara]y :<C-u>Sayonara<cr>
+  nnoremap <silent> [sayonara]; :<C-u>Sayonara!<cr>
+
   call neobundle#untap()
 endif
 
 if neobundle#tap('neocomplete.vim')
+
+  let g:neocomplete#enable_at_startup = 1
+  let g:neocomplete#enable_auto_select = 0
+
+  if !exists('g:neocomplete#force_omni_input_patterns')
+    let g:neocomplete#force_omni_input_patterns = {}
+  endif
+  let g:neocomplete#force_omni_input_patterns['c'] = '\v\C%(<\h\w*>|]|\)|^)\zs\s*%(\.|-\>)'
+  let g:neocomplete#force_omni_input_patterns['cpp'] = '\v%(<\h\w*>|^|[;,()<>])\s*((::|\.|-\>)(<\h\w*>)?)+|^\s*<\h\w*>'
+
+  if executable('npm')
+    let g:neocomplete#force_omni_input_patterns['javascript'] = '[^. \t]\.\w*'
+    let g:neocomplete#force_omni_input_patterns['coffee'] = '[^. \t]\.\w*'
+  endif
+
+  inoremap <expr> <C-L> neocomplete#complete_common_string()
+
   function! neobundle#tapped.hooks.on_source(bundle)
     call s:neco_lexima_on_sourced()
   endfunction
+
   call neobundle#untap()
 endif
 
 if neobundle#tap('lexima.vim')
+
   function! neobundle#tapped.hooks.on_source(bundle)
     call s:neco_lexima_on_sourced()
   endfunction
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim2hs')
+
+  let g:haskell_conceal = 0
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim-brightest')
+
+  let g:brightest#pattern = '\w\+'
+  let g:brightest#highlight = {}
+  let g:brightest#highlight['group'] = 'VimrcKeywordHighlightBold'
+  let g:brightest#highlight['format'] = '\v\C(^|\W\zs)%s(\ze\W|$)'
+  let g:brightest#enable_highlight_all_window = 1
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim-marching')
+
+  let g:marching_clang_command_option = '-std=c++1y'
+  let g:marching_enable_neocomplete = 1
+  if !executable('clang')
+    let g:marching_backend = 'sywnc_wandbox'
+  endif
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim-snowdrop')
+
+  " TODO path
+  if !filereadable('libclang.so') && filereadable(expand($HOME.'/local/llvm/lib/libclang.so'))
+    let g:snowdrop#libclang_directory = expand($HOME.'/local/llvm/lib')
+  endif
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('rogue.vim')
+
+  let g:rogue#japanese = 1
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim-json')
+
+  let g:vim_json_syntax_conceal = 0
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim-asterisk')
+  let g:asterisk#keeppos = 1
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim-anzu')
+
+  let g:anzu_status_format = '%p(%i/%l)'
+  let g:anzu_enable_CursorMoved_AnzuUpdateSearchStatus = 1
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('incsearch.vim')
+
+  map /  <Plug>(incsearch-forward)
+  map ?  <Plug>(incsearch-backward)
+  map g/ <Plug>(incsearch-stay)
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim-asterisk') && neobundle#tap('vim-anzu')
+
+  map *   <Plug>(asterisk-z*)<Plug>(anzu-echo-search-status)
+  map #   <Plug>(asterisk-z#)<Plug>(anzu-echo-search-status)
+  map g*  <Plug>(asterisk-gz*)<Plug>(anzu-echo-search-status)
+  map g#  <Plug>(asterisk-gz#)<Plug>(anzu-echo-search-status)
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim-smartword')
+
+  map w  <Plug>(smartword-w)
+  map b  <Plug>(smartword-b)
+  map e  <Plug>(smartword-e)
+  map ge  <Plug>(smartword-ge)
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('neosnippet.vim')
+
+  let g:neosnippet#disable_runtime_snippets = { '_': 1, }
+  let g:neosnippet#snippets_directory = s:vimdir('snippets')
+
+  imap <C-K> <Plug>(neosnippet_expand_or_jump)
+  smap <C-K> <Plug>(neosnippet_expand_or_jump)
+  imap <C-J> <Plug>(neosnippet_jump_or_expand)
+  smap <C-J> <Plug>(neosnippet_jump_or_expand)
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim-textmanip')
+
+  xmap <C-j> <Plug>(textmanip-move-down)
+  xmap <C-k> <Plug>(textmanip-move-up)
+  xmap <C-h> <Plug>(textmanip-move-left)
+  xmap <C-l> <Plug>(textmanip-move-right)
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('eskk.vim')
+
+  let g:eskk#no_default_mappings = 1
+  let g:eskk#enable_completion = 1
+  let g:eskk#max_candidates = 100
+  let g:eskk#start_completion_length = 2
+  let g:eskk#auto_save_dictionary_at_exit = 0
+
+  if executable('google-ime-skk')
+    let g:eskk#server = { 'host': 'localhost', 'port': 55100, }
+
+    call system('ps ax | grep google-ime-skk | grep -v grep')
+    if v:shell_error
+      silent! !google-ime-skk &
+    endif
+  endif
+
+  imap <C-X>j <Plug>(eskk:toggle)
+  imap <C-X><C-J> <Plug>(eskk:toggle)
+  cmap <C-X>j <Plug>(eskk:toggle)
+  cmap <C-X><C-J> <Plug>(eskk:toggle)
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim-textobj-multiblock')
+
+  omap ab <Plug>(textobj-multiblock-a)
+  omap ib <Plug>(textobj-multiblock-i)
+
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim-operator-surround')
+
+  nmap <silent>ys <Plug>(operator-surround-append)
+  nmap <silent>ds <Plug>(operator-surround-delete)
+  nmap <silent>cs <Plug>(operator-surround-replace)
+  xmap <silent>S <Plug>(operator-surround-append)
+  xmap <silent>D <Plug>(operator-surround-delete)
+  xmap <silent>C <Plug>(operator-surround-replace)
+
   call neobundle#untap()
 endif
 
@@ -549,10 +878,12 @@ if !has('gui_running')
 endif
 
 if neobundle#tap('vim-colors-solarized')
+
   if !has('gui_running')
     let g:solarized_termcolors=&t_Co
   endif
   colorscheme solarized
+
   call neobundle#untap()
 endif
 
@@ -570,252 +901,13 @@ highlight DiffChange term=bold ctermfg=Blue ctermbg=DarkBlue guifg=Blue
 highlight DiffDelete term=bold ctermfg=Magenta ctermbg=DarkRed guifg=Red
 highlight DiffText term=bold ctermfg=Cyan ctermbg=DarkCyan guifg=White
 
-nnoremap j gj
-nnoremap gj j
-nnoremap k gk
-nnoremap gk k
-
-nnoremap <Down> <C-w>j
-nnoremap <Up> <C-w>k
-nnoremap <Right> <C-w>l
-nnoremap <Left> <C-w>h
-
-nnoremap <S-Right> gt
-nnoremap <S-Left> gT
-
-nnoremap ; q:
-vnoremap ; q:
-nnoremap : ;
-vnoremap : ;
-nnoremap q; :
-vnoremap q; :
-nnoremap q: <Nop>
-vnoremap q: <Nop>
-
-nnoremap <silent> <Esc><Esc> :nohls<CR>
-
-if neobundle#tap('incsearch.vim')
-  map /  <Plug>(incsearch-forward)
-  map ?  <Plug>(incsearch-backward)
-  map g/ <Plug>(incsearch-stay)
-endif
-
-if neobundle#tap('vim-asterisk') && neobundle#tap('vim-anzu')
-  map *   <Plug>(asterisk-z*)<Plug>(anzu-echo-search-status)
-  map #   <Plug>(asterisk-z#)<Plug>(anzu-echo-search-status)
-  map g*  <Plug>(asterisk-gz*)<Plug>(anzu-echo-search-status)
-  map g#  <Plug>(asterisk-gz#)<Plug>(anzu-echo-search-status)
-endif
-
-if neobundle#tap('vim-smartword')
-  map w  <Plug>(smartword-w)
-  map b  <Plug>(smartword-b)
-  map e  <Plug>(smartword-e)
-  map ge  <Plug>(smartword-ge)
-endif
-
-map <Space> [prefix]
-noremap [prefix] <Nop>
-
-nnoremap <silent> [prefix]ee :<C-u>e $MYVIMRC<CR>
-nnoremap <silent> [prefix]er :<C-u>so $MYVIMRC<CR>
-
-nmap [prefix]u [unite]
-nnoremap [unite] <Nop>
-if neobundle#tap('unite.vim')
-  nnoremap <silent> [unite]bf :<C-u>Unite buffer<CR>
-  nnoremap <silent> [unite]bu :<C-u>Unite neobundle/update:all<CR>
-  nnoremap <silent> [unite]c :<C-u>Unite quickfix<CR>
-  nnoremap <silent> [unite]fm :<C-u>Unite neomru/file<CR>
-  nnoremap <silent> [unite]ga :<C-u>Unite grep -no-quit -create -auto-preview -tab -no-empty<CR>
-  nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create -no-empty<CR>
-  nnoremap <silent> [unite]gv :<C-u>Unite vimgrep -no-quit -create -tab -no-empty<CR>
-  nnoremap <silent> [unite]gc :<C-u>Unite vimgrep:% -no-quit -create -tab -no-empty<CR>
-  nnoremap <silent> [unite]l :<C-u>Unite line<CR>
-  nnoremap <silent> [unite]j :<C-u>Unite junkfile/new junkfile<CR>
-  nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
-endif
-
-nmap [prefix]vf [vimfiler]
-nnoremap [vimfiler] <Nop>
-if neobundle#tap('vimfiler.vim')
-  nnoremap <silent> [vimfiler]; :<C-u>VimFiler<CR>
-  nnoremap <silent> [vimfiler]+ :<C-u>VimFiler -create<CR>
-  nnoremap <silent> [vimfiler]p :<C-u>VimFiler -split<CR>
-  nnoremap <silent> [vimfiler]P :<C-u>VimFiler -create -split<CR>
-  nnoremap <silent> [vimfiler]j :<C-u>VimFilerExplorer<CR>
-endif
-
-nmap [prefix]vs [vimshell]
-nnoremap [vimshell] <Nop>
-if neobundle#tap('vimshell.vim')
-  nnoremap <silent> [vimshell]; :<C-u>VimShell<CR>
-  nnoremap <silent> [vimshell]+ :<C-u>VimShell -create<CR>
-endif
-
-map [prefix]g [fugitive]
-nnoremap [fugitive] <Nop>
-if neobundle#tap('vim-fugitive')
-  nnoremap [fugitive]b :<C-u>Gblame<CR>
-  nnoremap [fugitive]cd :<C-u>Gcd<CR>
-  nnoremap [fugitive]d :<C-u>Gvdiff<CR>
-  nnoremap [fugitive]p :<C-u>Gpush origin master
-  nnoremap [fugitive]s :<C-u>Gstatus<CR>
-  vnoremap [fugitive]b :Gblame<CR>
-endif
-
-map [prefix]q [quickrun]
-map [quickrun] <Nop>
-if neobundle#tap('vim-quickrun')
-  nmap [quickrun] <Plug>(quickrun)
-endif
-
-map [prefix]b [beautify]
-map [beautify] <Nop>
-if neobundle#tap('beautify.vim')
-  if executable('npm')
-    nnoremap [beautify] :<C-u>Beautify<CR>
-    vnoremap [beautify] :Beautify<CR>
-  endif
-endif
-
-map [prefix]res [restart]
-map [restart] <Nop>
-if neobundle#tap('restart.vim')
-  noremap <silent> [restart] :<C-u>Restart<CR>
-endif
-
-nmap [prefix]ref [ref]
-nnoremap [ref] <Nop>
-if neobundle#tap('vim-ref')
-  nnoremap [ref]m :<C-u>Ref man<Space>
-  nnoremap [ref]h :<C-u>Ref hoogle<Space>
-endif
-
-nmap [prefix]sa [sayonara]
-nnoremap [sayonara] <Nop>
-if neobundle#tap('vim-sayonara')
-  nnoremap <silent> [sayonara]y :<C-u>Sayonara<cr>
-  nnoremap <silent> [sayonara]; :<C-u>Sayonara!<cr>
-endif
-
-inoremap <expr> <C-L> neocomplete#complete_common_string()
-
-if neobundle#tap('neosnippet.vim')
-  imap <C-K> <Plug>(neosnippet_expand_or_jump)
-  smap <C-K> <Plug>(neosnippet_expand_or_jump)
-  imap <C-J> <Plug>(neosnippet_jump_or_expand)
-  smap <C-J> <Plug>(neosnippet_jump_or_expand)
-endif
-
-if neobundle#tap('vim-textmanip')
-  xmap <C-j> <Plug>(textmanip-move-down)
-  xmap <C-k> <Plug>(textmanip-move-up)
-  xmap <C-h> <Plug>(textmanip-move-left)
-  xmap <C-l> <Plug>(textmanip-move-right)
-endif
-
-if neobundle#tap('eskk.vim')
-  imap <C-X>j <Plug>(eskk:toggle)
-  imap <C-X><C-J> <Plug>(eskk:toggle)
-  cmap <C-X>j <Plug>(eskk:toggle)
-  cmap <C-X><C-J> <Plug>(eskk:toggle)
-endif
-
-if neobundle#tap('vim-textobj-multiblock')
-  omap ab <Plug>(textobj-multiblock-a)
-  omap ib <Plug>(textobj-multiblock-i)
-endif
-
-if neobundle#tap('vim-operator-surround')
-  nmap <silent>ys <Plug>(operator-surround-append)
-  nmap <silent>ds <Plug>(operator-surround-delete)
-  nmap <silent>cs <Plug>(operator-surround-replace)
-  xmap <silent>S <Plug>(operator-surround-append)
-  xmap <silent>D <Plug>(operator-surround-delete)
-  xmap <silent>C <Plug>(operator-surround-replace)
-endif
-
-" http://nanabit.net/blog/2009/07/04/vim-replace-motion/
-" https://github.com/kana/vim-operator-replace
-function! s:operator_replace(type)
-  let sel_save = &selection
-  let p_save = &paste
-  let &selection = 'inclusive'
-  set paste
-
-  let register = v:register !=# '' ? v:register : '"'
-  if a:type =~# '\v\C^[vV]$'
-    execute printf('normal! `<%s`>"_c%s%s', a:type, "\<C-r>", register)
-  else
-    execute printf('normal! `[v`]"_c%s%s', "\<C-r>", register)
-  endif
-
-  let &paste = p_save
-  let &selection = sel_save
-endfunction
-nnoremap <silent> s :<C-u>set opfunc=<SID>operator_replace<CR>g@
-vnoremap <silent> s :<C-u>call <SID>operator_replace(visualmode())<CR>
-
-if has('autocmd')
-  augroup my_vimrc
-    autocmd!
-  augroup END
-  command! -bang -nargs=* Au autocmd<bang> my_vimrc <args>
-else
-  command! -bang -nargs=* Au
-endif
-
-Au CmdWinEnter * call s:init_cmdwin()
-function! s:init_cmdwin()
-  nnoremap <buffer><silent><nowait> <ESC> <C-w>c
-  vnoremap <buffer><silent><nowait> <ESC> <C-w>c
-  nnoremap <buffer><silent><nowait> q <C-w>c
-  vnoremap <buffer><silent><nowait> q <C-w>c
-  startinsert!
-endfunction
-
-Au FileType help noremap <buffer><nowait> q <C-w>c
-
-Au FileType unite call s:ft_unite()
-function! s:ft_unite()
-  map <buffer><nowait> q <Plug>(unite_exit)
-  map <buffer><nowait> <C-g> <Plug>(unite_exit)
-
-  map <buffer><nowait> Q <Plug>(unite_all_exit)|
-  map <buffer><nowait> g<C-g> <Plug>(unite_all_exit)|
-endfunction
-
-Au FileType vimfiler call s:ft_vimfiler()
-function! s:vimfiler_key_wrap(plug)
-  if empty(vimfiler#get_marked_files())
-    call feedkeys("\<Plug>(vimfiler_toggle_mark_current_line)", 'm')
-    call feedkeys(a:plug, 'm')
-  else
-    call feedkeys(a:plug, 'm')
-  endif
-endfunction
-
-Au FileType javascript,coffee set tabstop=2 shiftwidth=2
-
-function! s:ft_vimfiler()
-  nmap <buffer><expr><nowait> c <SID>vimfiler_key_wrap("\<Plug>(vimfiler_copy_file)")
-  nmap <buffer><expr><nowait> m <SID>vimfiler_key_wrap("\<Plug>(vimfiler_move_file)")
-  nmap <buffer><expr><nowait> d <SID>vimfiler_key_wrap("\<Plug>(vimfiler_delete_file)")
-  nmap <buffer><expr><nowait> r <SID>vimfiler_key_wrap("\<Plug>(vimfiler_rename_file)")
-
-  map <buffer><nowait> q <Plug>(vimfiler_hide)
-endfunction
-
-Au WinEnter * checktime
-
+Au VimEnter * call s:vimenter()
 function! s:vimenter()
   NeoBundleCheck
   if !has('patch-7.4.414')
     NeoBundleSource
   endif
 endfunction
-Au VimEnter * call s:vimenter()
 if !has('vim_starting')
   call s:vimenter()
 endif
