@@ -917,11 +917,11 @@ endif
 
 function! s:enable_auto_fix_trailing_whitespace()
   call s:disable_auto_fix_trailing_whitespace()
-  autocmd VimrcFixTrailingWhitespaceGroup BufWritePre * VimrcFixTrailingWhitespace
+  autocmd my_vimrc_fix_trailing_whitespace BufWritePre * VimrcFixTrailingWhitespace
 endfunction
 
 function! s:disable_auto_fix_trailing_whitespace()
-  augroup VimrcFixTrailingWhitespaceGroup
+  augroup my_vimrc_fix_trailing_whitespace
     autocmd!
   augroup END
 endfunction
