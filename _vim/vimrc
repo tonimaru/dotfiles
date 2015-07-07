@@ -281,6 +281,7 @@ NeoBundleLazy 'osyo-manga/shabadou.vim', {'depends': ['thinca/vim-quickrun']}
 NeoBundleLazy 'osyo-manga/unite-quickfix', {'autoload': {'unite_sources': ['quickfix']}}
 NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'depends': 'thinca/vim-quickrun', 'autoload': {'unite_sources': ['quickrun_config']}}
 NeoBundleLazy 'osyo-manga/vim-anzu', {'autoload': {'mappings': ['<Plug>(anzu']}}
+NeoBundleLazy 'osyo-manga/vim-hopping'
 NeoBundleLazy 'osyo-manga/vim-marching', {'autoload': {'filetypes': ['cpp']}}
 NeoBundleLazy 'osyo-manga/vim-precious', {'depends': ['Shougo/context_filetype.vim'], 'autoload': {'filetypes': ['vim', 'markdown']}}
 NeoBundleLazy 'osyo-manga/vim-watchdogs', {'depends': ['thinca/vim-quickrun', 'osyo-manga/shabadou.vim', 'Shougo/vimproc.vim'], 'autoload': {'filetypes': ['all']}}
