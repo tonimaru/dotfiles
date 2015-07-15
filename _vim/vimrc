@@ -957,13 +957,12 @@ VimrcFixTrailingWhitespaceEnable
 " TODO
 if has('vim_starting')
   set path-=,
-  let s:path = &path
 endif
 
 let s:t = {}
 
 function! s:set_path(ft)
-  execute printf('setl path=%s', s:path)
+  let &l:path = &g:path
   let f = get(s:t, a:ft, {})
   if !empty(f)
     if !has_key(f, 'cache')
