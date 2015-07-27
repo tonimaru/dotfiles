@@ -871,6 +871,11 @@ if neobundle#tap('vim-operator-surround')
   call neobundle#untap()
 endif
 
+if neobundle#tap('deoplete.nvim')
+  let g:deoplete#enable_at_startup = 1
+  call neobundle#untap()
+endif
+
 call neobundle#end()
 
 runtime macros/matchit.vim
