@@ -242,6 +242,7 @@ NeoBundle 'rust-lang/rust.vim'
 NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'thinca/vim-prettyprint'
 NeoBundle 'thinca/vim-qfreplace'
+NeoBundle 'thinca/vim-template'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'tyru/caw.vim'
 NeoBundle 'tyru/open-browser.vim'
@@ -872,6 +873,11 @@ if neobundle#tap('vim-sandwich')
   xmap D <Plug>(operator-sandwich-delete)<Plug>(textobj-sandwich-query-a)
   xmap C <Plug>(operator-sandwich-replace)<Plug>(textobj-sandwich-query-a)
 
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim-template')
+  Au FileType * execute 'TemplateLoad /filetype/' . &l:filetype
   call neobundle#untap()
 endif
 
