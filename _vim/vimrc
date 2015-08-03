@@ -876,6 +876,20 @@ if neobundle#tap('vim-sandwich')
   call neobundle#untap()
 endif
 
+if neobundle#tap('vim-hopping')
+  let g:hopping#keymapping = {
+        \   "\<C-n>" : '<Over>(hopping-next)',
+        \   "\<C-p>" : '<Over>(hopping-prev)',
+        \   "\<C-y>" : '<Over>(scroll-y)',
+        \   "\<C-u>" : '<Over>(scroll-u)',
+        \   "\<C-f>" : '<Over>(scroll-f)',
+        \   "\<C-e>" : '<Over>(scroll-e)',
+        \   "\<C-d>" : '<Over>(scroll-d)',
+        \   "\<C-b>" : '<Over>(scroll-b)',
+        \ }
+  call neobundle#untap()
+endif
+
 if neobundle#tap('vim-template')
   Au FileType * execute 'TemplateLoad /filetype/' . &l:filetype
   call neobundle#untap()
