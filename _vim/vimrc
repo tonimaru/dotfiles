@@ -239,7 +239,6 @@ NeoBundle 'kana/vim-textobj-entire', {'depends': 'kana/vim-textobj-user'}
 NeoBundle 'kana/vim-textobj-line', {'depends': 'kana/vim-textobj-user'}
 NeoBundle 'kana/vim-textobj-user'
 NeoBundle 'osyo-manga/vim-brightest'
-NeoBundle 'osyo-manga/vim-snowdrop'
 NeoBundle 'osyo-manga/vim-textobj-multiblock'
 NeoBundle 'rust-lang/rust.vim'
 NeoBundle 'Shougo/neomru.vim'
@@ -289,6 +288,7 @@ NeoBundleLazy 'osyo-manga/vim-anzu', {'autoload': {'mappings': ['<Plug>(anzu']}}
 NeoBundleLazy 'osyo-manga/vim-hopping'
 NeoBundleLazy 'osyo-manga/vim-marching', {'autoload': {'filetypes': ['cpp']}}
 NeoBundleLazy 'osyo-manga/vim-precious', {'depends': ['Shougo/context_filetype.vim'], 'autoload': {'filetypes': ['vim', 'markdown']}}
+NeoBundleLazy 'osyo-manga/vim-snowdrop', {'autoload': {'filetypes': ['c', 'cpp']}}
 NeoBundleLazy 'osyo-manga/vim-watchdogs', {'depends': ['thinca/vim-quickrun', 'osyo-manga/shabadou.vim', 'Shougo/vimproc.vim'], 'autoload': {'filetypes': ['all']}}
 NeoBundleLazy 'othree/html5.vim', {'autoload': {'filetypes': ['html']}}
 NeoBundleLazy 'othree/javascript-libraries-syntax.vim', {'filetypes': ['javascript', 'coffee', 'typescript']}
