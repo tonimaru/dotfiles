@@ -178,7 +178,7 @@ endfunction
 nnoremap <silent> s :<C-u>set opfunc=<SID>operator_replace<CR>g@
 vnoremap <silent> s :<C-u>call <SID>operator_replace(visualmode())<CR>
 
-Au CmdWinEnter * call s:init_cmdwin()
+Au CmdwinEnter * call s:init_cmdwin()
 function! s:init_cmdwin()
   nnoremap <buffer><silent><nowait> <ESC> <C-w>c
   vnoremap <buffer><silent><nowait> <ESC> <C-w>c
