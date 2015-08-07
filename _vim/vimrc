@@ -85,6 +85,9 @@ endif
 
 if has('insert_expand')
   set completeopt-=preview
+  if has('patch-7.4.775')
+    set completeopt+=noselect,noinsert
+  endif
 endif
 
 if has('smartindent')
