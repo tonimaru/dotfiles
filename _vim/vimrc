@@ -301,8 +301,7 @@ NeoBundleLazy 'pangloss/vim-javascript', {'autoload': {'on_source': ['vim-javasc
 NeoBundleLazy 'Shougo/context_filetype.vim'
 NeoBundleLazy 'Shougo/deoplete.nvim', {'autoload': {'insert': 1}, 'disabled': !has('nvim')}
 NeoBundleLazy 'Shougo/junkfile.vim', {'autoload': {'unite_sources': ['junkfile', 'junkfile/new']}}
-NeoBundleLazy 'Shougo/neocomplcache.vim', {'autoload': {'insert': 1}, 'disabled': has('nvim') || (has('lua') && ((v:version > 703) || (v:version == 703 && has('patch885'))))}
-NeoBundleLazy 'Shougo/neocomplete.vim', {'autoload': {'insert': 1}, 'disabled': has('nvim') || !has('lua') || !((v:version > 703) || (v:version == 703 && has('patch885')))}
+NeoBundleLazy 'Shougo/neocomplete.vim', {'autoload': {'insert': 1}, 'disabled': has('nvim') || !has('lua')}
 NeoBundleLazy 'Shougo/neoinclude.vim', {'autoload': {'on_source': ['neocomplete.vim', 'deoplete.nvim']}}
 NeoBundleLazy 'Shougo/neosnippet.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'Shougo/unite.vim'
