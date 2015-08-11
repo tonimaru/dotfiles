@@ -130,6 +130,10 @@ if exists('+clipboard')
   endif
 endif
 
+if has('patch-7.4.785')
+  set nofixeol
+endif
+
 nnoremap j gj
 nnoremap gj j
 nnoremap k gk
