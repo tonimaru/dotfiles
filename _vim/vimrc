@@ -261,7 +261,6 @@ NeoBundleLazy 'cohama/agit.vim'
 NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'cohama/vim-hier', {'autoload': {'on_source': ['vim-watchdogs']}}
 NeoBundleLazy 'dag/vim2hs', {'autoload': {'filetypes': ['haskell']}}
-NeoBundleLazy 'dannyob/quickfixstatus', {'autoload': {'on_source': ['vim-watchdogs']}}
 NeoBundleLazy 'deris/vim-rengbang'
 NeoBundleLazy 'digitaltoad/vim-jade', {'autoload': {'filetypes': ['jade']}}
 NeoBundleLazy 'eagletmt/neco-ghc', {'autoload': {'filetypes': ['haskell']}, 'disabled': !executable('cabal') || !executable('ghc-mod')}
@@ -313,6 +312,7 @@ NeoBundleLazy 't9md/vim-textmanip', {'autoload': {'mappings': ['<Plug>(textmanip
 NeoBundleLazy 'thinca/vim-quickrun', {'complete' : 'customlist,quickrun#complete', 'depends': ['osyo-manga/quickrun-outputter-replace_region']}
 NeoBundleLazy 'thinca/vim-ref'
 NeoBundleLazy 'thinca/vim-scouter'
+NeoBundleLazy 'tonimaru/vim-qfecho', {'autoload': {'on_source': ['vim-watchdogs']}}
 NeoBundleLazy 'tyru/eskk.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'tyru/restart.vim', {'gui': 1}
 NeoBundleLazy 'ujihisa/ref-hoogle', {'autoload': {'on_source': ['vim-ref']}, 'disabled': !executable('cabal') || !executable('hoogle')}
@@ -903,6 +903,11 @@ endif
 
 if neobundle#tap('deoplete.nvim')
   let g:deoplete#enable_at_startup = 1
+  call neobundle#untap()
+endif
+
+if neobundle#tap('vim-qfecho')
+  let g:qfecho_enable_at_startup = 1
   call neobundle#untap()
 endif
 
