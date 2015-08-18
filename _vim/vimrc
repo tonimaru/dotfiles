@@ -258,7 +258,7 @@ NeoBundle 'Yggdroot/indentLine'
 NeoBundleFetch 'Shougo/neobundle.vim'
 NeoBundleLazy 'alpaca-tc/beautify.vim', {'build': {'others': 'npm i -g js-beautify'}, 'disabled': !executable('npm')}
 NeoBundleLazy 'cohama/agit.vim'
-NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
+NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1, 'function_prefixes': []}}
 NeoBundleLazy 'cohama/vim-hier', {'autoload': {'on_source': ['vim-watchdogs']}}
 NeoBundleLazy 'dag/vim2hs', {'autoload': {'filetypes': ['haskell']}}
 NeoBundleLazy 'deris/vim-rengbang'
@@ -321,11 +321,6 @@ NeoBundleLazy 'ujihisa/ref-hoogle', {'autoload': {'on_source': ['vim-ref']}, 'di
 NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': ['cpp']}}
 NeoBundleLazy 'vim-jp/vital.vim'
 
-function! s:neco_lexima_on_sourced()
-  if neobundle#is_installed('neocomplete.vim') && neobundle#is_installed('lexima.vim') && neobundle#is_sourced('neocomplete.vim') && neobundle#is_sourced('lexima.vim')
-    call lexima#insmode#map_hook('before', '<CR>', "\<C-r>=neocomplete#close_popup()\<CR>")
-  endif
-endfunction
 
 nmap [prefix]u [unite]
 nnoremap [unite] <Nop>
@@ -701,17 +696,17 @@ if neobundle#tap('neocomplete.vim')
 
   inoremap <expr> <C-L> neocomplete#complete_common_string()
 
-  function! neobundle#tapped.hooks.on_source(bundle)
-    call s:neco_lexima_on_sourced()
-  endfunction
-
   call neobundle#untap()
 endif
 
 if neobundle#tap('lexima.vim')
+  let g:lexima_no_default_rules = 1
 
   function! neobundle#tapped.hooks.on_source(bundle)
-    call s:neco_lexima_on_sourced()
+    call lexima#set_default_rules()
+    if neobundle#is_installed('neocomplete.vim')
+      call lexima#insmode#map_hook('before', '<CR>', "\<C-r>=neocomplete#close_popup()\<CR>")
+    endif
   endfunction
 
   call neobundle#untap()
