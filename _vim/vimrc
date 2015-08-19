@@ -705,8 +705,8 @@ if neobundle#tap('lexima.vim')
   function! neobundle#tapped.hooks.on_source(bundle)
     call lexima#set_default_rules()
 
-    let n = neobundle#get('neocomplete.vim')
-    if !empty(n) && !n.disabled && neobundle#config#is_installed(n)
+    let n = neobundle#config#get('neocomplete.vim')
+    if !empty(n) && !n.disabled && isdirectory(n['path'])
       call lexima#insmode#map_hook('before', '<CR>', "\<C-r>=neocomplete#close_popup()\<CR>")
     endif
   endfunction
