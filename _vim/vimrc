@@ -330,12 +330,10 @@ if neobundle#tap('unite.vim')
   if executable('ag')
     let g:unite_source_grep_command = 'ag'
     let g:unite_source_grep_default_opts = ''
+    let g:unite_source_grep_default_opts = ' --vimgrep'
     let g:unite_source_grep_default_opts .= ' --all-types'
     let g:unite_source_grep_default_opts .= ' --hidden'
     let g:unite_source_grep_default_opts .= ' --ignore-case'
-    let g:unite_source_grep_default_opts .= ' --line-numbers'
-    let g:unite_source_grep_default_opts .= ' --nocolor'
-    let g:unite_source_grep_default_opts .= ' --nogroup'
     let g:unite_source_grep_default_opts .= ' --ignore ''.git'''
     let g:unite_source_grep_default_opts .= ' --ignore ''.hg'''
     let g:unite_source_grep_default_opts .= ' --ignore ''.svn'''
@@ -348,10 +346,8 @@ if neobundle#tap('unite.vim')
   nnoremap <silent> [unite]bu :<C-u>Unite neobundle/update:all<CR>
   nnoremap <silent> [unite]c :<C-u>Unite quickfix<CR>
   nnoremap <silent> [unite]fm :<C-u>Unite neomru/file<CR>
-  nnoremap <silent> [unite]ga :<C-u>Unite grep -no-quit -create -auto-preview -tab -no-empty<CR>
-  nnoremap <silent> [unite]gr :<C-u>Unite grep -no-quit -create -no-empty<CR>
-  nnoremap <silent> [unite]gv :<C-u>Unite vimgrep -no-quit -create -tab -no-empty<CR>
-  nnoremap <silent> [unite]gc :<C-u>Unite vimgrep:% -no-quit -create -tab -no-empty<CR>
+  nnoremap <silent> [unite]ga :<C-u>Unite grep -create -auto-preview -tab<CR>
+  nnoremap <silent> [unite]gr :<C-u>Unite grep -create<CR>
   nnoremap <silent> [unite]l :<C-u>Unite line<CR>
   nnoremap <silent> [unite]j :<C-u>Unite junkfile/new junkfile<CR>
   nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
@@ -368,6 +364,7 @@ if neobundle#tap('unite.vim')
   function! neobundle#tapped.hooks.on_source(bundle)
     call unite#custom#profile('default', 'context', { 'start_insert': 1, 'direction': 'botright'})
     call unite#custom#profile('source/line', 'context', { 'direction': 'topleft'})
+    call unite#custom#profile('source/grep', 'context', { 'no_quit' : 1, 'no_empty': 1 })
     call unite#custom#profile('source/neobundle/update', 'context', { 'start_insert': 0, })
   endfunction
 
