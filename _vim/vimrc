@@ -933,6 +933,11 @@ if neobundle#tap('vim-colors-solarized')
   call neobundle#untap()
 endif
 
+if !has('vim_starting') && neobundle#tap('indentLine')
+  IndentLinesReset
+  call neobundle#untap()
+endif
+
 highlight VimrcKeywordHighlight term=bold ctermfg=224 guifg=#ffd4c9
 highlight VimrcKeywordHighlightBold term=bold cterm=bold ctermfg=224 gui=bold guifg=#ffd4c9
 
