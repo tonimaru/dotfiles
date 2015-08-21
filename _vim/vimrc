@@ -258,7 +258,7 @@ NeoBundle 'Yggdroot/indentLine'
 NeoBundleFetch 'Shougo/neobundle.vim'
 NeoBundleLazy 'alpaca-tc/beautify.vim', {'build': {'others': 'npm i -g js-beautify'}, 'disabled': !executable('npm')}
 NeoBundleLazy 'cohama/agit.vim'
-NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1, 'function_prefixes': []}}
+NeoBundleLazy 'cohama/lexima.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'cohama/vim-hier', {'autoload': {'on_source': ['vim-watchdogs']}}
 NeoBundleLazy 'dag/vim2hs', {'autoload': {'filetypes': ['haskell']}}
 NeoBundleLazy 'deris/vim-rengbang'
