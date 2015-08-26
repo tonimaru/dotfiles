@@ -315,6 +315,7 @@ NeoBundleLazy 'thinca/vim-quickrun', {'complete' : 'customlist,quickrun#complete
 NeoBundleLazy 'thinca/vim-ref'
 NeoBundleLazy 'thinca/vim-scouter'
 NeoBundleLazy 'tonimaru/vim-qfecho', {'autoload': {'on_source': ['vim-watchdogs']}}
+NeoBundleLazy 'tonimaru/vim-unite-ilist', {'autoload': {'unite_sources': ['ilist']}}
 NeoBundleLazy 'tyru/capture.vim'
 NeoBundleLazy 'tyru/eskk.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'tyru/restart.vim', {'gui': 1}
@@ -349,6 +350,7 @@ if neobundle#tap('unite.vim')
   nnoremap <silent> [unite]fm :<C-u>Unite neomru/file<CR>
   nnoremap <silent> [unite]ga :<C-u>Unite grep -create -auto-preview -tab<CR>
   nnoremap <silent> [unite]gr :<C-u>Unite grep -create<CR>
+  nnoremap <silent> [unite]il :<C-u>Unite ilist<CR>
   nnoremap <silent> [unite]l :<C-u>Unite line<CR>
   nnoremap <silent> [unite]j :<C-u>Unite junkfile/new junkfile<CR>
   nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
@@ -365,6 +367,7 @@ if neobundle#tap('unite.vim')
   function! neobundle#tapped.hooks.on_post_source(bundle)
     call unite#custom#profile('default', 'context', { 'start_insert': 1, 'direction': 'botright'})
     call unite#custom#profile('source/line', 'context', { 'direction': 'topleft'})
+    call unite#custom#profile('source/ilist', 'context', { 'direction': 'topleft'})
     call unite#custom#profile('source/grep', 'context', { 'no_quit' : 1, 'no_empty': 1 })
     call unite#custom#profile('source/neobundle/update', 'context', { 'start_insert': 0, 'log': 1, ' multi_line': 1, })
   endfunction
