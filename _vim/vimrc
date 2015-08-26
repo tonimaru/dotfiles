@@ -172,11 +172,11 @@ function! s:operator_replace(type)
   let &selection = 'inclusive'
   set paste
 
-  let register = v:register !=# '' ? v:register : '"'
+  let reg = v:register !=# '' ? v:register : '"'
   if a:type =~# '\v\C^[vV]$'
-    execute printf('normal! `<%s`>"_c%s%s', a:type, "\<C-r>", register)
+    execute printf('normal! `<%s`>"_c%s%s', a:type, "\<C-r>", reg)
   else
-    execute printf('normal! `[v`]"_c%s%s', "\<C-r>", register)
+    execute printf('normal! `[v`]"_c%s%s', "\<C-r>", reg)
   endif
 
   let &paste = p_save
