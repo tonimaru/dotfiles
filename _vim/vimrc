@@ -361,7 +361,7 @@ if neobundle#tap('unite.vim')
     map <buffer><nowait> g<C-g> <Plug>(unite_all_exit)|
   endfunction
 
-  function! neobundle#tapped.hooks.on_source(bundle)
+  function! neobundle#tapped.hooks.on_post_source(bundle)
     call unite#custom#profile('default', 'context', { 'start_insert': 1, 'direction': 'botright'})
     call unite#custom#profile('source/line', 'context', { 'direction': 'topleft'})
     call unite#custom#profile('source/grep', 'context', { 'no_quit' : 1, 'no_empty': 1 })
@@ -403,7 +403,7 @@ if neobundle#tap('vimfiler.vim')
     map <buffer><nowait> q <Plug>(vimfiler_hide)
   endfunction
 
-  function! neobundle#tapped.hooks.on_source(bundle)
+  function! neobundle#tapped.hooks.on_post_source(bundle)
     NeoBundleSource vimshell.vim
   endfunction
 
@@ -627,7 +627,7 @@ if neobundle#tap('vim-watchdogs')
   let g:watchdogs_check_BufWritePost_enable = 1
   let g:watchdogs_check_BufWritePost_enable_on_wq = 0
 
-  function! neobundle#tapped.hooks.on_source(bundle)
+  function! neobundle#tapped.hooks.on_post_source(bundle)
     call watchdogs#setup(g:quickrun_config)
   endfunction
 
@@ -699,7 +699,7 @@ endif
 if neobundle#tap('lexima.vim')
   let g:lexima_no_default_rules = 1
 
-  function! neobundle#tapped.hooks.on_source(bundle)
+  function! neobundle#tapped.hooks.on_post_source(bundle)
     call lexima#set_default_rules()
 
     let n = neobundle#config#get('neocomplete.vim')
