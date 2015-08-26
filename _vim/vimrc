@@ -277,7 +277,7 @@ NeoBundleLazy 'kannokanno/vim-helpnew'
 NeoBundleLazy 'katono/rogue.vim'
 NeoBundleLazy 'KazuakiM/vim-qfsigns', {'autoload': {'on_source': ['vim-watchdogs']}}
 NeoBundleLazy 'kchmck/vim-coffee-script', {'autoload': {'filetypes': ['coffee']}}
-NeoBundleLazy 'lambdalisue/vim-gista', {'autoload': {'commands': ['Gista'], 'unite_sources': ['gista']}}
+NeoBundleLazy 'lambdalisue/vim-gista', {'autoload': {'unite_sources': ['gista']}}
 NeoBundleLazy 'leafgarland/typescript-vim', {'autoload': {'filetypes': ['typescript']}}
 NeoBundleLazy 'machakann/vim-sandwich', {'autoload': {'mappings': ['<Plug>(operator-sandwich']}}
 NeoBundleLazy 'marijnh/tern_for_vim', {'build': {'others': 'npm install && npm install tern-coffee'}, 'autoload': {'filetypes': ['javascript', 'coffee']}, 'disabled': !executable('npm')}
