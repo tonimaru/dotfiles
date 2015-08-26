@@ -315,6 +315,7 @@ NeoBundleLazy 'thinca/vim-quickrun', {'complete' : 'customlist,quickrun#complete
 NeoBundleLazy 'thinca/vim-ref'
 NeoBundleLazy 'thinca/vim-scouter'
 NeoBundleLazy 'tonimaru/vim-qfecho', {'autoload': {'on_source': ['vim-watchdogs']}}
+NeoBundleLazy 'tyru/capture.vim'
 NeoBundleLazy 'tyru/eskk.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'tyru/restart.vim', {'gui': 1}
 NeoBundleLazy 'ujihisa/ref-hoogle', {'autoload': {'on_source': ['vim-ref']}, 'disabled': !executable('cabal') || !executable('hoogle')}
