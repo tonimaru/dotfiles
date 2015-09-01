@@ -661,6 +661,8 @@ nmap [prefix]ref [ref]
 nnoremap [ref] <Nop>
 if neobundle#tap('vim-ref')
 
+  let g:ref_open = 'tabnew'
+
   nnoremap [ref]m :<C-u>Ref man<Space>
   nnoremap [ref]h :<C-u>Ref hoogle<Space>
 
