@@ -392,10 +392,8 @@ if neobundle#tap('vimfiler.vim')
   function! s:vimfiler_key_wrap(plug)
     if empty(vimfiler#get_marked_files())
       call feedkeys("\<Plug>(vimfiler_toggle_mark_current_line)", 'm')
-      call feedkeys(a:plug, 'm')
-    else
-      call feedkeys(a:plug, 'm')
     endif
+    call feedkeys(a:plug, 'm')
   endfunction
 
   function! s:ft_vimfiler()
