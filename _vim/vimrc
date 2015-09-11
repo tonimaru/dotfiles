@@ -283,7 +283,6 @@ NeoBundleLazy 'machakann/vim-sandwich', {'autoload': {'mappings': ['<Plug>(opera
 NeoBundleLazy 'marijnh/tern_for_vim', {'build': {'others': 'npm install && npm install tern-coffee'}, 'autoload': {'filetypes': ['javascript', 'coffee']}, 'disabled': !executable('npm')}
 NeoBundleLazy 'mattn/emmet-vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'mattn/webapi-vim'
-NeoBundleLazy 'mhinz/vim-sayonara'
 NeoBundleLazy 'osyo-manga/shabadou.vim', {'depends': ['thinca/vim-quickrun']}
 NeoBundleLazy 'osyo-manga/unite-quickfix', {'autoload': {'unite_sources': ['quickfix']}}
 NeoBundleLazy 'osyo-manga/unite-quickrun_config', {'depends': 'thinca/vim-quickrun', 'autoload': {'unite_sources': ['quickrun_config']}}
@@ -665,16 +664,6 @@ if neobundle#tap('vim-ref')
 
   nnoremap [ref]m :<C-u>Ref man<Space>
   nnoremap [ref]h :<C-u>Ref hoogle<Space>
-
-  call neobundle#untap()
-endif
-
-nmap [prefix]sa [sayonara]
-nnoremap [sayonara] <Nop>
-if neobundle#tap('vim-sayonara')
-
-  nnoremap <silent> [sayonara]y :<C-u>Sayonara<cr>
-  nnoremap <silent> [sayonara]; :<C-u>Sayonara!<cr>
 
   call neobundle#untap()
 endif
