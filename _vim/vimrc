@@ -249,7 +249,6 @@ NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'thinca/vim-prettyprint'
 NeoBundle 'thinca/vim-qfreplace'
 NeoBundle 'thinca/vim-template'
-NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'tyru/caw.vim'
 NeoBundle 'tyru/open-browser.vim'
 NeoBundle 'vim-jp/vimdoc-ja'
@@ -315,6 +314,7 @@ NeoBundleLazy 'thinca/vim-ref'
 NeoBundleLazy 'thinca/vim-scouter'
 NeoBundleLazy 'tonimaru/vim-qfecho', {'autoload': {'on_source': ['vim-watchdogs']}}
 NeoBundleLazy 'tonimaru/vim-unite-ilist', {'autoload': {'unite_sources': ['ilist']}}
+NeoBundleLazy 'tpope/vim-fugitive', {'augroup': 'fugitive', 'autoload': {'commands': ['Gblame', 'Gcd', 'Gpush', 'Gstatus', 'Gvdiff']}}
 NeoBundleLazy 'tyru/capture.vim'
 NeoBundleLazy 'tyru/eskk.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'tyru/restart.vim', {'gui': 1}
