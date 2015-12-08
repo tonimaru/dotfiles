@@ -322,6 +322,7 @@ NeoBundleLazy 'ujihisa/ref-hoogle', {'autoload': {'on_source': ['vim-ref']}, 'di
 NeoBundleLazy 'vim-jp/cpp-vim', {'autoload': {'filetypes': ['cpp']}}
 NeoBundleLazy 'vim-jp/vital.vim'
 
+silent! execute 'source' s:vimdir('local_neobundle.vim')
 
 nmap [prefix]u [unite]
 nnoremap [unite] <Nop>
@@ -1121,8 +1122,6 @@ if executable('git')
 endif
 
 let s:local_vimrc = s:vimdir('local_vimrc')
+silent! execute 'source' s:local_vimrc
 execute 'nnoremap' '[prefix]el' ':e' s:local_vimrc.'<CR>'
-if filereadable(s:local_vimrc)
-  execute 'source' s:local_vimrc
-endif
 
