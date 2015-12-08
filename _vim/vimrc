@@ -603,9 +603,9 @@ if neobundle#tap('vim-quickrun')
       " TODO libcxx path
       let clang_arg = isdirectory($HOME.'/local/llvm') ? [s:cxxdst, s:cxxstd, s:cxxlib] : [s:cxxdst, s:cxxstd]
 
-      let cpp_includes = join(map([$HOME.'/local/src/cpp/boost_1_58_0/', ], '''-I''.v:val'), ' ')
+      let cpp_includes = join(map([$HOME.'/local/src/cpp/boost_1_58_0/', ], '"-I".v:val'), ' ')
       let cpp_lib_path = '-L'.$HOME.'/local/src/cpp/boost_1_58_0/stage/clang/lib'
-      let cpp_libs = join(map(['boost_atomic', 'boost_thread', 'boost_system', 'python2.7' , 'pthread'], '''-l''.v:val'), ' ')
+      let cpp_libs = join(map(['boost_atomic', 'boost_thread', 'boost_system', 'python2.7' , 'pthread'], '"-l".v:val'), ' ')
       let cpp_opt = printf('%s %s %s', cpp_includes, cpp_lib_path, cpp_libs)
       call s:_set_quickrun_config({'name': 'cpp/clang++', 'config': {'command': s:clang_exe, 'cmdopt': cpp_opt}}, clang_arg)
     endif
@@ -1063,7 +1063,7 @@ if executable('git')
 
   function! MyDiff()
     let v = s:my_diff(v:fname_in, v:fname_new)
-    call writefile(split(v, '\n'), v:fname_out)
+    call writefile(split(v, "\n"), v:fname_out)
   endfunction
 
   function! s:my_diff(path1, path2)
