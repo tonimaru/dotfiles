@@ -917,7 +917,7 @@ runtime macros/matchit.vim
 
 filetype plugin indent on
 
-set synmaxcol=210
+set synmaxcol=310
 syntax on
 set background=dark
 
