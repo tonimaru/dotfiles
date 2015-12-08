@@ -445,6 +445,10 @@ if neobundle#tap('vim-fugitive')
   nnoremap [fugitive]s :<C-u>Gstatus<CR>
   vnoremap [fugitive]b :Gblame<CR>
 
+  function! neobundle#tapped.hooks.on_post_source(bundle)
+    doautoall fugitive BufReadPost
+  endfunction
+
   call neobundle#untap()
 endif
 
