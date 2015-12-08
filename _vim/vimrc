@@ -304,7 +304,7 @@ NeoBundleLazy 'Shougo/neocomplete.vim', {'autoload': {'insert': 1}, 'disabled': 
 NeoBundleLazy 'Shougo/neoinclude.vim', {'autoload': {'on_source': ['neocomplete.vim', 'deoplete.nvim']}}
 NeoBundleLazy 'Shougo/neosnippet.vim', {'autoload': {'insert': 1}}
 NeoBundleLazy 'Shougo/unite.vim'
-NeoBundleLazy 'Shougo/vimfiler.vim', {'depends': ['Shougo/unite.vim']}
+NeoBundleLazy 'Shougo/vimfiler.vim', {'autoload': {'unite_sources': ['bookmark']}, 'depends': ['Shougo/unite.vim']}
 NeoBundleLazy 'Shougo/vimproc.vim', {'build': {'others': 'make'}}
 NeoBundleLazy 'Shougo/vimshell.vim', {'depends': ['Shougo/vimproc.vim', 'Shougo/unite.vim']}
 NeoBundleLazy 'Shougo/vinarise.vim'
