@@ -134,6 +134,8 @@ if has('patch-7.4.785')
   set nofixeol
 endif
 
+set synmaxcol=310
+
 nnoremap j gj
 nnoremap gj j
 nnoremap k gk
@@ -917,7 +919,6 @@ runtime macros/matchit.vim
 
 filetype plugin indent on
 
-set synmaxcol=310
 syntax on
 set background=dark
 
