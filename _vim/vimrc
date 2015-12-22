@@ -895,11 +895,15 @@ if neobundle#tap('vim-qfecho')
   call neobundle#untap()
 endif
 
+if neobundle#exists_not_installed_bundles()
+  NeoBundleInstall
+endif
+
 call neobundle#end()
 
-runtime macros/matchit.vim
-
 filetype plugin indent on
+
+runtime macros/matchit.vim
 
 syntax on
 set background=dark
@@ -938,17 +942,6 @@ highlight DiffAdd term=bold ctermfg=Green ctermbg=DarkGreen guifg=Green
 highlight DiffChange term=bold ctermfg=Blue ctermbg=DarkBlue guifg=Blue
 highlight DiffDelete term=bold ctermfg=Magenta ctermbg=DarkRed guifg=Red
 highlight DiffText term=bold ctermfg=Cyan ctermbg=DarkCyan guifg=White
-
-Au VimEnter * call s:vimenter()
-function! s:vimenter()
-  NeoBundleCheck
-  if !has('patch-7.4.414')
-    NeoBundleSource
-  endif
-endfunction
-if !has('vim_starting')
-  call s:vimenter()
-endif
 
 " https://github.com/bronson/vim-trailing-whitespace
 " http://d.hatena.ne.jp/thinca/20110810/1312913305
