@@ -26,9 +26,8 @@ function! s:mkdir(path)
   endif
 endfunction
 
-let s:home = expand('~')
 let s:vimfiles_name = s:is_mswin ? 'vimfiles' : '.vim'
-let s:vimfiles = expand(printf('%s/%s', s:home, s:vimfiles_name))
+let s:vimfiles = expand(printf('%s/%s', $HOME, s:vimfiles_name))
 
 function! s:vimdir(dir)
   return expand(printf('%s/%s', s:vimfiles, a:dir))
@@ -100,27 +99,6 @@ endif
 
 if has('multi_lang')
   set helplang=ja,en
-endif
-
-if has('gui_running')
-  function! s:set_go()
-    for v in split('aPAefimgtTrRlLbhvpF', '\zs')
-      execute printf('set guioptions-=%s', v)
-    endfor
-    for v in split('cM', '\zs')
-      execute printf('set guioptions+=%s', v)
-    endfor
-  endfunction
-  call s:set_go()
-
-  if filereadable(expand(s:home . '/.fonts/RictyDiscord-Regular.ttf'))
-    set guifont=Ricty\ Discord\ 12
-    set guifontwide=Ricty\ Discord\ 12
-  endif
-
-  if exists('+guiheadroom')
-    set guiheadroom=0
-  endif
 endif
 
 if exists('+clipboard')

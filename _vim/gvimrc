@@ -1,0 +1,19 @@
+function! s:set_guioptions()
+  for v in split('aPAefimgtTrRlLbhvpF', '\zs')
+    execute printf('set guioptions-=%s', v)
+  endfor
+  for v in split('cM', '\zs')
+    execute printf('set guioptions+=%s', v)
+  endfor
+endfunction
+call s:set_guioptions()
+
+if filereadable(expand($HOME . '/.fonts/RictyDiscord-Regular.ttf'))
+  set guifont=Ricty\ Discord\ 12
+  set guifontwide=Ricty\ Discord\ 12
+endif
+
+if exists('+guiheadroom')
+  set guiheadroom=0
+endif
+
