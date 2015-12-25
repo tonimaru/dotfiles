@@ -112,6 +112,10 @@ if has('patch-7.4.785')
   set nofixeol
 endif
 
+if exists('+cindent')
+  set cinoptions+=t0
+endif
+
 set synmaxcol=310
 
 nnoremap j gj
