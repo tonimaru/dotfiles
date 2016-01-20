@@ -385,7 +385,7 @@ if neobundle#tap('vimfiler.vim')
 
   Au FileType vimfiler call s:ft_vimfiler()
   function! s:vimfiler_key_wrap(plug)
-    if empty(vimfiler#get_marked_files())
+    if empty(vimfiler#get_marked_files(b:vimfiler))
       call feedkeys("\<Plug>(vimfiler_toggle_mark_current_line)", 'm')
     endif
     call feedkeys(a:plug, 'm')
