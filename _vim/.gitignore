@@ -7,3 +7,5 @@
 !plugins.vim
 !quickrun_config.vim
 !watchdogs_config.vim
+!plugins.toml
+!plugins_settings.vim

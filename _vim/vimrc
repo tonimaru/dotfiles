@@ -181,7 +181,7 @@ endfunction
 nnoremap <silent> s :<C-u>set opfunc=<SID>operator_replace<CR>g@
 vnoremap <silent> s :<C-u>call <SID>operator_replace(visualmode())<CR>
 
-silent! execute 'source' expand('~/.vim/plugins.vim')
+execute 'source' expand('~/.vim/plugins.vim')
 
 runtime macros/matchit.vim
 
