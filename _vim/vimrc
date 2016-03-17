@@ -254,10 +254,3 @@ VimrcFixTrailingWhitespaceEnable
 let s:local_vimrc = s:vimdir('local_vimrc')
 silent! execute 'source' s:local_vimrc
 execute 'nnoremap' '[prefix]el' ':e' s:local_vimrc.'<CR>'
-
-function! s:sudo_write()
-silent w !sudo tee %
-silent e!
-endfunction
-command! SudoW call s:sudo_write()
-command! UndoAll silent u1|u
