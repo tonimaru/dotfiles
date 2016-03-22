@@ -118,10 +118,6 @@ if s:tap('vimfiler.vim')
 
     map <buffer><nowait> q <Plug>(vimfiler_hide)
   endfunction
-
-  function! s:{s:on_source}()
-    call dein#source('vimshell.vim')
-  endfunction
 endif
 
 nmap [prefix]vs [vimshell]

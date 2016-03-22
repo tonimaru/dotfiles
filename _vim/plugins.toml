@@ -252,6 +252,7 @@ repo = 'Shougo/unite.vim'
 [[plugins]]
 repo = 'Shougo/vimfiler.vim'
 depends = ['unite.vim']
+on_source = ['vimshell.vim']
 
 [[plugins]]
 repo = 'Shougo/vimproc.vim'
