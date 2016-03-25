@@ -17,6 +17,7 @@ endif
 let s:vimrcs = [
       \   '%',
       \   '~/.vim/plugins.toml',
+      \   '~/.vim/plugins_settings.vim',
       \   '~/.vim/local_plugins.toml',
       \   '~/.vim/local_plugins_settings.vim'
       \ ]
