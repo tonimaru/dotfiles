@@ -18,10 +18,12 @@ find $dotfiles_root_path -maxdepth 1 -name "_*" | while read src; do
 done
 
 # vim -> nvim
-ln -vsfn $dotfiles_root_path/_vim/vimrc $dotfiles_root_path/_vim/init.vim
 if [ -n "$XDG_CONFIG_HOME" ]; then
-  ln -vsfn $dotfiles_root_path/_vim $XDG_CONFIG_HOME/nvim
+  ln -vsfn $dotfiles_root_path/_vim/vimrc $XDG_CONFIG_HOME/nvim/init.vim
 else
-  ln -vsfn $dotfiles_root_path/_vim $HOME/.config/nvim
+  if [ ! -d "${HOME}/.config/nvim" ]; then
+    mkdir -p ${HOME}/.config/nvim
+  fi
+  ln -vsfn $dotfiles_root_path/_vim/vimrc $HOME/.config/nvim/init.vim
 fi
 
