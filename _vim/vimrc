@@ -135,14 +135,6 @@ nnoremap gj j
 nnoremap k gk
 nnoremap gk k
 
-nnoremap <Down> <C-w>j
-nnoremap <Up> <C-w>k
-nnoremap <Right> <C-w>l
-nnoremap <Left> <C-w>h
-
-nnoremap <S-Right> gt
-nnoremap <S-Left> gT
-
 nnoremap ; q:
 vnoremap ; q:
 nnoremap : ;
@@ -152,7 +144,7 @@ vnoremap q; :
 nnoremap q: <Nop>
 vnoremap q: <Nop>
 
-nnoremap <silent> <Esc><Esc> :nohls<CR>
+nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 
 map <Space> [prefix]
 noremap [prefix] <Nop>
@@ -181,7 +173,9 @@ endfunction
 nnoremap <silent> s :<C-u>set opfunc=<SID>operator_replace<CR>g@
 vnoremap <silent> s :<C-u>call <SID>operator_replace(visualmode())<CR>
 
-execute 'source' expand('~/.vim/plugins.vim')
+let s:plugins = s:vimdir('plugins.vim')
+silent! execute 'source' s:plugins
+execute 'nnoremap' '[prefix]ep' ':e' s:plugins.'<CR>'
 
 runtime macros/matchit.vim
 
@@ -254,3 +248,4 @@ VimrcFixTrailingWhitespaceEnable
 let s:local_vimrc = s:vimdir('local_vimrc')
 silent! execute 'source' s:local_vimrc
 execute 'nnoremap' '[prefix]el' ':e' s:local_vimrc.'<CR>'
+
