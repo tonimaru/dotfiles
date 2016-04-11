@@ -7,6 +7,9 @@ repo = 'altercation/vim-colors-solarized'
 [[plugins]]
 repo = 'basyura/J6uil.vim'
 lazy = 1
+hook_add = '''
+  let g:J6uil_display_icon = 1
+'''
 
 [[plugins]]
 repo = 'cohama/agit.vim'
@@ -14,6 +17,16 @@ repo = 'cohama/agit.vim'
 [[plugins]]
 repo = 'cohama/lexima.vim'
 on_i = 1
+hook_add = '''
+  let g:lexima_no_default_rules = 1
+'''
+hook_source = '''
+  call lexima#set_default_rules()
+  let n = dein#get('neocomplete.vim')
+  if !empty(n) && n['if'] && isdirectory(n['rtp'])
+    call lexima#insmode#map_hook('before', '<CR>', "\<C-r>=neocomplete#close_popup()\<CR>")
+  endif
+'''
 
 [[plugins]]
 repo = 'cohama/vim-hier'
@@ -22,6 +35,9 @@ on_source = ['vim-watchdogs']
 [[plugins]]
 repo = 'dag/vim2hs'
 on_ft = ['haskell']
+hook_add = '''
+  let g:haskell_conceal = 0
+'''
 
 [[plugins]]
 repo = 'daisuzu/translategoogle.vim'
@@ -44,6 +60,9 @@ repo = 'easymotion/vim-easymotion'
 [[plugins]]
 repo = 'elzr/vim-json'
 on_ft = ['json']
+hook_add = '''
+let g:vim_json_syntax_conceal = 0
+'''
 
 [[plugins]]
 repo = 'h1mesuke/vim-alignta'
@@ -55,6 +74,29 @@ on_ft = ['css']
 [[plugins]]
 repo = 'haya14busa/incsearch-easymotion.vim'
 on_source = ['incsearch.vim']
+hook_add = '''
+  map /  <Plug>(incsearch-forward)
+  map ?  <Plug>(incsearch-backward)
+  map g/ <Plug>(incsearch-stay)
+
+  nmap [prefix]/ [incsearch_/]
+  nmap [prefix]? [incsearch_?]
+  nmap [prefix]g/ [incsearch_g/]
+
+  function! s:incsearch_config(...) abort
+    return incsearch#util#deepextend(deepcopy({
+          \   'modules': [incsearch#config#easymotion#module({'overwin': 1})],
+          \   'keymap': {
+          \     "\<CR>": '<Over>(easymotion)'
+          \   },
+          \   'is_expr': 0
+          \ }), get(a:, 1, {}))
+  endfunction
+
+  noremap <silent><expr> [incsearch_/] incsearch#go(<SID>incsearch_config())
+  noremap <silent><expr> [incsearch_?] incsearch#go(<SID>incsearch_config({'command': '?'}))
+  noremap <silent><expr> [incsearch_g/] incsearch#go(<SID>incsearch_config({'is_stay': 1}))
+'''
 
 [[plugins]]
 repo = 'haya14busa/incsearch.vim'
@@ -63,6 +105,9 @@ on_map = '<Plug>'
 [[plugins]]
 repo = 'haya14busa/vim-asterisk'
 on_map = '<Plug>'
+hook_add = '''
+  let g:asterisk#keeppos = 1
+'''
 
 [[plugins]]
 repo = 'ingydotnet/yaml-vim'
@@ -87,6 +132,12 @@ repo = 'kana/vim-repeat'
 [[plugins]]
 repo = 'kana/vim-smartword'
 on_map = '<Plug>'
+hook_add = '''
+map w  <Plug>(smartword-w)
+map b  <Plug>(smartword-b)
+map e  <Plug>(smartword-e)
+map ge  <Plug>(smartword-ge)
+'''
 
 [[plugins]]
 repo = 'kana/vim-textobj-entire'
@@ -107,6 +158,9 @@ repo = 'kannokanno/vim-helpnew'
 
 [[plugins]]
 repo = 'katono/rogue.vim'
+hook_add = '''
+  let g:rogue#japanese = 1
+'''
 
 [[plugins]]
 repo = 'KazuakiM/vim-qfsigns'
@@ -124,6 +178,9 @@ repo = 'lambdalisue/vim-gita'
 
 [[plugins]]
 repo = 'lambdalisue/vim-unified-diff'
+hook_add = '''
+  set diffexpr=unified_diff#diffexpr()
+'''
 
 [[plugins]]
 repo = 'leafgarland/typescript-vim'
@@ -132,10 +189,28 @@ on_ft = ['typescript']
 [[plugins]]
 repo = 'machakann/vim-sandwich'
 on_map = '<Plug>(operator-sandwich'
+hook_add = '''
+  let g:operator_sandwich_no_default_key_mappings = 1
+
+  nmap ys <Plug>(operator-sandwich-add)
+  nmap ds <Plug>(operator-sandwich-delete)<Plug>(textobj-sandwich-query-a)
+  nmap cs <Plug>(operator-sandwich-replace)<Plug>(textobj-sandwich-query-a)
+  nmap dsb <Plug>(operator-sandwich-delete)<Plug>(textobj-sandwich-auto-a)
+  nmap csb <Plug>(operator-sandwich-replace)<Plug>(textobj-sandwich-auto-a)
+  xmap S <Plug>(operator-sandwich-add)
+  xmap D <Plug>(operator-sandwich-delete)<Plug>(textobj-sandwich-query-a)
+  xmap C <Plug>(operator-sandwich-replace)<Plug>(textobj-sandwich-query-a)
+'''
 
 [[plugins]]
 repo = 'machakann/vim-swap'
 on_map = '<Plug>'
+hook_add = '''
+  let g:swap_no_default_key_mappings = 1
+  nmap g< <Plug>(swap-prev)
+  nmap g> <Plug>(swap-next)
+  nmap gS <Plug>(swap-interactive)
+'''
 
 [[plugins]]
 repo = 'marijnh/tern_for_vim'
@@ -167,16 +242,46 @@ depends = ['vim-quickrun']
 [[plugins]]
 repo = 'osyo-manga/vim-anzu'
 on_map = '<Plug>'
+hook_add = '''
+  let g:anzu_status_format = '%p(%i/%l)'
+  let g:anzu_enable_CursorMoved_AnzuUpdateSearchStatus = 1
+'''
 
 [[plugins]]
 repo = 'osyo-manga/vim-brightest'
+hook_add = '''
+  let g:brightest#pattern = '\w\+'
+  let g:brightest#highlight = {}
+  let g:brightest#highlight['group'] = 'VimrcKeywordHighlightBold'
+  let g:brightest#highlight['format'] = '\v\C(^|\W\zs)%s(\ze\W|$)'
+  let g:brightest#enable_highlight_all_window = 1
+'''
 
 [[plugins]]
 repo = 'osyo-manga/vim-hopping'
+hook_add = '''
+  let g:hopping#keymapping = {
+        \   "\<C-n>" : '<Over>(hopping-next)',
+        \   "\<C-p>" : '<Over>(hopping-prev)',
+        \   "\<C-y>" : '<Over>(scroll-y)',
+        \   "\<C-u>" : '<Over>(scroll-u)',
+        \   "\<C-f>" : '<Over>(scroll-f)',
+        \   "\<C-e>" : '<Over>(scroll-e)',
+        \   "\<C-d>" : '<Over>(scroll-d)',
+        \   "\<C-b>" : '<Over>(scroll-b)',
+        \ }
+'''
 
 [[plugins]]
 repo = 'osyo-manga/vim-marching'
 on_ft = ['cpp']
+hook_add = '''
+  let g:marching_clang_command_option = '-std=c++1y'
+  let g:marching_enable_neocomplete = 1
+  if !executable('clang')
+    let g:marching_backend = 'sywnc_wandbox'
+  endif
+'''
 
 [[plugins]]
 repo = 'osyo-manga/vim-precious'
@@ -189,11 +294,25 @@ on_ft = ['c', 'cpp']
 
 [[plugins]]
 repo = 'osyo-manga/vim-textobj-multiblock'
+hook_add = '''
+omap ab <Plug>(textobj-multiblock-a)
+omap ib <Plug>(textobj-multiblock-i)
+'''
 
 [[plugins]]
 repo = 'osyo-manga/vim-watchdogs'
 depends = ['vim-quickrun', 'shabadou.vim', 'vimproc.vim']
-if = 1
+hook_add = '''
+  let g:watchdogs_check_BufWritePost_enable = 1
+  let g:watchdogs_check_BufWritePost_enable_on_wq = 0
+'''
+hook_source = '''
+  silent! execute 'source' expand('~/.vim/watchdogs_config.vim')
+  silent! execute 'source' expand('~/.vim/local_watchdogs_config.vim')
+  if has_key(g:, 'quickrun_config')
+    call watchdogs#setup(g:quickrun_config)
+  endif
+'''
 
 [[plugins]]
 repo = 'othree/html5.vim'
@@ -222,6 +341,10 @@ repo = 'Shougo/context_filetype.vim'
 repo = 'Shougo/deoplete.nvim'
 if = "has('nvim')"
 on_i = 1
+hook_add = '''
+  let g:deoplete#enable_at_startup = 1
+  let g:deoplete#enable_refresh_always = 1
+'''
 
 [[plugins]]
 repo = 'Shougo/junkfile.vim'
@@ -238,6 +361,23 @@ on_source = ['neocomplete.vim', 'deoplete.nvim']
 repo = 'Shougo/neocomplete.vim'
 if = "!has('nvim') && has('lua')"
 on_i = 1
+hook_add = '''
+  let g:neocomplete#enable_at_startup = 1
+  let g:neocomplete#enable_auto_select = 0
+
+  let g:neocomplete#enable_refresh_always = 1
+
+  let g:neocomplete#force_omni_input_patterns = get(g:, 'neocomplete#force_omni_input_patterns', {})
+  let g:neocomplete#force_omni_input_patterns['c'] = '\v\C%(<\h\w*>|]|\)|^)\zs\s*%(\.|-\>)'
+  let g:neocomplete#force_omni_input_patterns['cpp'] = '\v%(<\h\w*>|^|[;,()<>])\s*((::|\.|-\>)(<\h\w*>)?)+|^\s*<\h\w*>'
+
+  if executable('npm')
+    let g:neocomplete#force_omni_input_patterns['javascript'] = '[^. \t]\.\w*'
+    let g:neocomplete#force_omni_input_patterns['coffee'] = '[^. \t]\.\w*'
+  endif
+
+  inoremap <expr> <C-L> neocomplete#complete_common_string()
+'''
 
 [[plugins]]
 repo = 'Shougo/neoinclude.vim'
@@ -248,11 +388,67 @@ repo = 'Shougo/neomru.vim'
 
 [[plugins]]
 repo = 'Shougo/unite.vim'
+hook_add = '''
+  let g:unite_source_grep_max_candidates = 10000
+
+  if executable('hw')
+    let g:unite_source_grep_command = 'hw'
+    let g:unite_source_grep_default_opts = '-a -e -n --no-color --no-group'
+    let g:unite_source_grep_recursive_opt = ''
+  elseif executable('pt')
+    let g:unite_source_grep_command = 'pt'
+    let g:unite_source_grep_default_opts = '--nocolor --nogroup --hidden'
+    let g:unite_source_grep_recursive_opt = ''
+    let g:unite_source_grep_encoding = 'utf-8'
+  elseif executable('ag')
+    let g:unite_source_grep_command = 'ag'
+    let g:unite_source_grep_default_opts = ''
+    let g:unite_source_grep_default_opts .= ' --vimgrep'
+    let g:unite_source_grep_default_opts .= ' --all-types'
+    let g:unite_source_grep_default_opts .= ' --hidden'
+    let g:unite_source_grep_default_opts .= ' --ignore-case'
+    let g:unite_source_grep_default_opts .= ' --ignore ".git"'
+    let g:unite_source_grep_default_opts .= ' --ignore ".hg"'
+    let g:unite_source_grep_default_opts .= ' --ignore ".svn"'
+    let g:unite_source_grep_recursive_opt = ''
+  endif
+
+  let g:unite_source_find_max_candidates = 2000
+
+  nmap [prefix]u [unite]
+  nnoremap [unite] <Nop>
+  nnoremap <silent> [unite]bf :<C-u>Unite buffer<CR>
+  nnoremap <silent> [unite]c :<C-u>Unite quickfix<CR>
+  nnoremap <silent> [unite]fm :<C-u>Unite neomru/file<CR>
+  nnoremap <silent> [unite]ga :<C-u>Unite grep -create -auto-preview -tab<CR>
+  nnoremap <silent> [unite]gr :<C-u>Unite grep -create<CR>
+  nnoremap <silent> [unite]l :<C-u>Unite line<CR>
+  nnoremap <silent> [unite]j :<C-u>Unite junkfile/new junkfile<CR>
+  nnoremap <silent> [unite]q :<C-u>Unite quickrun_config<CR>
+'''
+hook_source = '''
+  call unite#custom#profile('default', 'context', { 'start_insert': 1, 'direction': 'botright' })
+  call unite#custom#profile('source/line', 'context', { 'direction': 'topleft' })
+  call unite#custom#profile('source/grep', 'context', { 'no_quit' : 1, 'no_empty': 1 })
+  call unite#custom#profile('source/neobundle/update', 'context', { 'start_insert': 0, 'log': 1, ' multi_line': 1, })
+'''
 
 [[plugins]]
 repo = 'Shougo/vimfiler.vim'
 depends = ['unite.vim']
 on_source = ['vimshell.vim']
+hook_add = '''
+  let g:vimfiler_safe_mode_by_default = 0
+  let g:vimfiler_enable_auto_cd       = 1
+
+  nmap [prefix]vf [vimfiler]
+  nnoremap [vimfiler] <Nop>
+  nnoremap <silent> [vimfiler]; :<C-u>VimFiler<CR>
+  nnoremap <silent> [vimfiler]+ :<C-u>VimFiler -create<CR>
+  nnoremap <silent> [vimfiler]p :<C-u>VimFiler -split<CR>
+  nnoremap <silent> [vimfiler]P :<C-u>VimFiler -create -split<CR>
+  nnoremap <silent> [vimfiler]j :<C-u>VimFilerExplorer<CR>
+'''
 
 [[plugins]]
 repo = 'Shougo/vimproc.vim'
@@ -261,6 +457,12 @@ build = 'make'
 [[plugins]]
 repo = 'Shougo/vimshell.vim'
 depends = ['vimproc.vim', 'unite.vim']
+hook_add = '''
+  nmap [prefix]vs [vimshell]
+  nnoremap [vimshell] <Nop>
+  nnoremap <silent> [vimshell]; :<C-u>VimShell<CR>
+  nnoremap <silent> [vimshell]+ :<C-u>VimShell -create<CR>
+'''
 
 [[plugins]]
 repo = 'Shougo/vinarise.vim'
@@ -268,6 +470,12 @@ repo = 'Shougo/vinarise.vim'
 [[plugins]]
 repo = 't9md/vim-textmanip'
 on_map = '<Plug>'
+hook_add = '''
+xmap <C-j> <Plug>(textmanip-move-down)
+xmap <C-k> <Plug>(textmanip-move-up)
+xmap <C-h> <Plug>(textmanip-move-left)
+xmap <C-l> <Plug>(textmanip-move-right)
+'''
 
 [[plugins]]
 repo = 'thinca/vim-prettyprint'
@@ -277,6 +485,15 @@ repo = 'thinca/vim-qfreplace'
 
 [[plugins]]
 repo = 'thinca/vim-quickrun'
+hook_add = '''
+  map [prefix]q [quickrun]
+  noremap [quickrun] <Nop>
+  nmap [quickrun] <Plug>(quickrun)
+'''
+hook_source = '''
+  silent! execute 'source' expand('~/.vim/quickrun_config.vim')
+  silent! execute 'source' expand('~/.vim/local_quickrun_config.vim')
+'''
 
 [[plugins]]
 repo = 'thinca/vim-ref'
@@ -290,10 +507,23 @@ repo = 'thinca/vim-template'
 [[plugins]]
 repo = 'tonimaru/vim-qfecho'
 on_source = ['vim-watchdogs']
+hook_add = '''
+  let g:qfecho_enable_at_startup = 1
+'''
 
 [[plugins]]
 repo = 'tpope/vim-fugitive'
 lazy = 0
+hook_add = '''
+  map [prefix]g [fugitive]
+  nnoremap [fugitive] <Nop>
+  nnoremap [fugitive]b :<C-u>Gblame<CR>
+  nnoremap [fugitive]cd :<C-u>Gcd<CR>
+  nnoremap [fugitive]d :<C-u>Gvdiff<CR>
+  nnoremap [fugitive]p :<C-u>Gpush origin master
+  nnoremap [fugitive]s :<C-u>Gstatus<CR>
+  vnoremap [fugitive]b :Gblame<CR>
+'''
 
 [[plugins]]
 repo = 'tyru/capture.vim'
@@ -305,6 +535,27 @@ repo = 'tyru/caw.vim'
 repo = 'tyru/eskk.vim'
 if = 1
 on_i = 1
+hook_add = '''
+let g:eskk#no_default_mappings = 1
+let g:eskk#enable_completion = 1
+let g:eskk#max_candidates = 100
+let g:eskk#start_completion_length = 2
+let g:eskk#auto_save_dictionary_at_exit = 0
+
+if executable('google-ime-skk')
+  let g:eskk#server = { 'host': 'localhost', 'port': 55100, }
+
+  call system('ps ax | grep google-ime-skk | grep -v grep')
+  if v:shell_error
+    silent! !google-ime-skk &
+  endif
+endif
+
+imap <C-X>j <Plug>(eskk:toggle)
+imap <C-X><C-J> <Plug>(eskk:toggle)
+cmap <C-X>j <Plug>(eskk:toggle)
+cmap <C-X><C-J> <Plug>(eskk:toggle)
+'''
 
 [[plugins]]
 repo = 'tyru/open-browser.vim'
@@ -312,6 +563,11 @@ repo = 'tyru/open-browser.vim'
 [[plugins]]
 repo = 'tyru/restart.vim'
 if = "has('gui_running')"
+hook_add = '''
+  map [prefix]res [restart]
+  noremap [restart] <Nop>
+  noremap <silent> [restart] :<C-u>Restart<CR>
+'''
 
 [[plugins]]
 repo = 'ujihisa/ref-hoogle'
