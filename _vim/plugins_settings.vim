@@ -21,8 +21,9 @@ endfunction
 function! s:def_hooks(event, name)
   let norm_name = s:dein_normalized_name(a:name)
   let s:on_{a:event} = norm_name . '_on_' . a:event
-  let fmt = 'AuDein User dein#%s#%s call s:call_if_exists(%s)"'
-  execute printf(fmt, a:event, a:name, string(s:on_{a:event}))
+  call dein#config({
+        \ 'hook_source': printf('call %s(%s)', string(function(s:call_if_exists)), string(s:on_{a:event}))
+        \ })
 endfunction
 
 function! s:tap(name) abort
