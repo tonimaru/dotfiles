@@ -213,38 +213,6 @@ highlight DiffChange term=bold ctermfg=Blue ctermbg=DarkBlue guifg=Blue
 highlight DiffDelete term=bold ctermfg=Magenta ctermbg=DarkRed guifg=Red
 highlight DiffText term=bold ctermfg=Cyan ctermbg=DarkCyan guifg=White
 
-" https://github.com/bronson/vim-trailing-whitespace
-" http://d.hatena.ne.jp/thinca/20110810/1312913305
-
-function! s:enable_auto_fix_trailing_whitespace()
-  call s:disable_auto_fix_trailing_whitespace()
-  autocmd my_vimrc_fix_trailing_whitespace BufWritePre * VimrcFixTrailingWhitespace
-endfunction
-
-function! s:disable_auto_fix_trailing_whitespace()
-  augroup my_vimrc_fix_trailing_whitespace
-    autocmd!
-  augroup END
-endfunction
-
-function! s:fix_trailing_whitespace(range_given, line1, line2)
-  if &filetype ==# 'markdown'
-    return
-  endif
-  let save_pos = getpos('.')
-  if a:range_given
-    execute printf('%d,%ds/\v\\@<!(\s|\t|　)+$//e', a:line1, a:line2)
-  else
-    execute '%s/\v\\@<!(\s|\t|　)+$//e'
-  endif
-  call setpos('.', save_pos)
-endfunction
-
-command! -range=0 VimrcFixTrailingWhitespace call s:fix_trailing_whitespace(<count>, <line1>, <line2>)
-command! VimrcFixTrailingWhitespaceEnable call s:enable_auto_fix_trailing_whitespace()
-command! VimrcFixTrailingWhitespaceDisable call s:disable_auto_fix_trailing_whitespace()
-VimrcFixTrailingWhitespaceEnable
-
 let s:local_vimrc = s:vimdir('local_vimrc')
 silent! execute 'source' s:local_vimrc
 execute 'nnoremap' '[prefix]el' ':e' s:local_vimrc.'<CR>'
