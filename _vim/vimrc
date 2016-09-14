@@ -181,19 +181,23 @@ if !has('gui_running')
   endif
 endif
 
-if !empty(globpath(&runtimepath, expand('colors/solarized.vim')))
+let s:has_solarized = empty(globpath(&runtimepath, expand('colors/solarized.vim')))
+if (!s:is_mswin || has('gui_running')) && !s:has_solarized
   if !has('gui_running')
     let g:solarized_termcolors=&t_Co
   endif
   colorscheme solarized
+
+  highlight VimrcKeywordHighlight term=bold ctermfg=224 guifg=#ffd4c9
+  highlight VimrcKeywordHighlightBold term=bold cterm=bold ctermfg=224 gui=bold guifg=#ffd4c9
+else
+  highlight VimrcKeywordHighlight term=bold cterm=none ctermfg=black ctermbg=lightyellow
+  highlight VimrcKeywordHighlightBold term=bold cterm=none ctermfg=black ctermbg=lightyellow
 endif
 
 if !has('vim_starting') && exists(':IndentLinesReset')
   IndentLinesReset
 endif
-
-highlight VimrcKeywordHighlight term=bold ctermfg=224 guifg=#ffd4c9
-highlight VimrcKeywordHighlightBold term=bold cterm=bold ctermfg=224 gui=bold guifg=#ffd4c9
 
 let g:hier_highlight_group_qf  = 'qf_error_ucurl'
 let g:hier_highlight_group_qfw = 'qf_warning_ucurl'

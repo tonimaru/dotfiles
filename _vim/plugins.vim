@@ -1,3 +1,10 @@
+let s:is_mswin = has('win95') || has('win16') || has('win32') || has('win64')
+let s:vimfiles_name = s:is_mswin ? 'vimfiles' : '.vim'
+let s:vimfiles = expand(printf('%s/%s', $HOME, s:vimfiles_name))
+function! s:vimdir(dir)
+  return expand(printf('%s/%s', s:vimfiles, a:dir))
+endfunction
+
 let s:base_path = expand('~/.local/share/dein')
 let s:dein_path = expand(s:base_path . '/repos/github.com/Shougo/dein.vim')
 
@@ -19,19 +26,19 @@ if has('vim_starting')
 endif
 
 let s:vimrcs = [
-      \   '%',
-      \   '~/.vim/plugins.toml',
-      \   '~/.vim/plugins_settings.vim',
-      \   '~/.vim/local_plugins.toml',
-      \   '~/.vim/local_plugins_settings.vim'
+      \   expand('%'),
+      \   s:vimdir('plugins.toml'),
+      \   s:vimdir('plugins_settings.vim'),
+      \   s:vimdir('local_plugins.toml'),
+      \   s:vimdir('local_plugins_settings.vim')
       \ ]
-call dein#begin(s:base_path, map(s:vimrcs, 'expand(v:val)'))
+call dein#begin(s:base_path, s:vimrcs)
 call dein#add('Shougo/dein.vim')
 
-if filereadable(expand('~/.vim/plugins.toml'))
-  call dein#load_toml(expand('~/.vim/plugins.toml'))
+if filereadable(s:vimdir('plugins.toml'))
+  call dein#load_toml(s:vimdir('plugins.toml'))
 endif
-silent! call dein#load_toml(expand('~/.vim/local_plugins.toml'))
+silent! call dein#load_toml(s:vimdir('local_plugins.toml'))
 
 silent! if dein#check_install()
   if has('vim_starting')
@@ -42,8 +49,8 @@ silent! if dein#check_install()
   endif
 endif
 
-execute 'source' expand('~/.vim/plugins_settings.vim')
-silent! execute 'source' expand('~/.vim/local_plugins_settings.vim')
+execute 'source' s:vimdir('plugins_settings.vim')
+silent! execute 'source' s:vimdir('local_plugins_settings.vim')
 
 call dein#end()
 

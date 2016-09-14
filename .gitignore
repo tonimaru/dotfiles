@@ -3,6 +3,7 @@
 !.gitignore
 
 !install.sh
+!install.bat
 !scripts/
 !_*
 _nvim

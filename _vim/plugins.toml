@@ -418,6 +418,9 @@ hook_add = '''
 [[plugins]]
 repo = 'Shougo/vimproc.vim'
 build = 'make'
+hook_add = '''
+let g:vimproc#download_windows_dll = 1
+'''
 
 [[plugins]]
 repo = 'Shougo/vimshell.vim'
