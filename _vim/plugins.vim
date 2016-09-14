@@ -1,4 +1,4 @@
-let s:base_path = expand('~/.cache/dein')
+let s:base_path = expand('~/.local/share/dein')
 let s:dein_path = expand(s:base_path . '/repos/github.com/Shougo/dein.vim')
 
 if !isdirectory(s:dein_path)
