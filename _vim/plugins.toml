@@ -135,6 +135,13 @@ repo = 'lambdalisue/vim-gista'
 
 [[plugins]]
 repo = 'lambdalisue/vim-gita'
+hook_add = '''
+  map [prefix]g [gita]
+  nnoremap [gita] <Nop>
+  nnoremap [gita]b :<C-u>Gita blame<CR>
+  nnoremap [gita]d :<C-u>Gita diff<CR>
+  nnoremap [gita]s :<C-u>Gita status<CR>
+'''
 
 [[plugins]]
 repo = 'lambdalisue/vim-unified-diff'
@@ -463,20 +470,6 @@ repo = 'tonimaru/vim-qfecho'
 on_source = ['vim-watchdogs']
 hook_add = '''
   let g:qfecho_enable_at_startup = 1
-'''
-
-[[plugins]]
-repo = 'tpope/vim-fugitive'
-lazy = 0
-hook_add = '''
-  map [prefix]g [fugitive]
-  nnoremap [fugitive] <Nop>
-  nnoremap [fugitive]b :<C-u>Gblame<CR>
-  nnoremap [fugitive]cd :<C-u>Gcd<CR>
-  nnoremap [fugitive]d :<C-u>Gvdiff<CR>
-  nnoremap [fugitive]p :<C-u>Gpush origin master
-  nnoremap [fugitive]s :<C-u>Gstatus<CR>
-  vnoremap [fugitive]b :Gblame<CR>
 '''
 
 [[plugins]]
