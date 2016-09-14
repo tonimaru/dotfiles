@@ -82,9 +82,6 @@ repo = 'ingydotnet/yaml-vim'
 repo = 'itchyny/lightline.vim'
 
 [[plugins]]
-repo = 'jelera/vim-javascript-syntax'
-
-[[plugins]]
 repo = 'kana/vim-niceblock'
 
 [[plugins]]
@@ -283,12 +280,10 @@ repo = 'othree/javascript-libraries-syntax.vim'
 
 [[plugins]]
 repo = 'othree/tern_for_vim_coffee'
-on_source = ['tern_for_vim']
-if = "executable('npm')"
+depends = ['tern_for_vim']
 
 [[plugins]]
-repo = 'pangloss/vim-javascript'
-on_source = ['vim-javascript-syntax']
+repo = 'othree/yajs.vim'
 
 [[plugins]]
 repo = 'rust-lang/rust.vim'
