@@ -135,15 +135,6 @@ nnoremap gj j
 nnoremap k gk
 nnoremap gk k
 
-nnoremap ; q:
-vnoremap ; q:
-nnoremap : ;
-vnoremap : ;
-nnoremap q; :
-vnoremap q; :
-nnoremap q: <Nop>
-vnoremap q: <Nop>
-
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 
 map <Space> [prefix]
