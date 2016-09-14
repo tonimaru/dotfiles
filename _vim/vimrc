@@ -85,6 +85,8 @@ set backspace=indent,eol,start
 
 set foldlevel=100
 
+set diffopt+=vertical
+
 execute printf('set verbosefile=%s', s:vimdir('verbosefile'))
 
 if has('extra_search')
