@@ -122,8 +122,8 @@ if exists('+clipboard')
   endif
 endif
 
-if has('patch-7.4.785')
-  set nofixeol
+if exists('+fixendofline')
+  set nofixendofline
 endif
 
 if exists('+cindent')
