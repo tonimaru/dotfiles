@@ -12,32 +12,28 @@ let g:quickrun_config['yaml/yaml2json'] = {'command': 'yaml2json', 'exec': '%c %
 
 let g:quickrun_config['scala'] = {'type': executable('scala') ? 'scala/process_manager' : ''}
 
-" FIXME: redesign
-let s:clang_exe = expand($HOME.'/local/llvm/bin/clang++')
-let s:clang_exe = executable(s:clang_exe) ? s:clang_exe : 'clang++'
-
 let  s:conf_base = {}
-function! s:conf_base.set_to(config) dict
-  return self.set_to_impl(deepcopy(a:config))
+function! s:conf_base.decorate(config) dict
+  return self.decorate_impl(deepcopy(a:config))
 endfunction
 
 function! s:new_conf(name, ...)
   let config = extend({'name': a:name}, s:conf_base)
   if a:0 != 0
-    let config['set_to_impl'] = a:1
+    let config['decorate_impl'] = a:1
   endif
   return config
 endfunction
 
 let s:pp = s:new_conf('pp')
-function! s:pp.set_to_impl(config) dict
+function! s:pp.decorate_impl(config) dict
   let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -E'
   let a:config['exec'] = '%c %o %s'
   return a:config
 endfunction
 
 let s:asm = s:new_conf('asm')
-function! s:asm.set_to_impl(config) dict
+function! s:asm.decorate_impl(config) dict
   let a:config['cmdopt'] = get(a:config, 'cmdopt', '').' -S'
   let a:config['exec'] = ['%c %o %s -o -']
   return a:config
@@ -81,40 +77,14 @@ let s:gnuxx1y  = s:new_conf('gnu++1y', function('s:std'))
 let s:gnuxx1z  = s:new_conf('gnu++1z', function('s:std'))
 let s:gnuxx98  = s:new_conf('gnu++98', function('s:std'))
 
-let s:libcxx_libsupcxx_path = expand($HOME.'/local/llvm/libcxx_libsupcxx')
-let s:libcxx_libcxxabi_path = expand($HOME.'/local/llvm/libcxx_libcxxabi')
-let s:libcxxabi_path = expand($HOME.'/local/llvm/libcxxabi')
-
-" TODO libcxx path
-let s:libcxx_libsupcxx = s:new_conf('libcxx_libsupcxx')
-function! s:libcxx_libsupcxx.set_to_impl(config) dict
-  let a:config['cmdopt'] = get(a:config, 'cmdopt', '').printf(' -stdlib=libc++ -I%s/include/c++/v1', s:libcxx_libsupcxx_path)
-
-  if a:config['cmdopt'] !~# '\v\C(^|\s+)-[ES](\s+|$)'
-    let a:config['cmdopt'] .= printf(' -L%s/lib', s:libcxx_libsupcxx_path)
-  endif
-  return a:config
-endfunction
-
-let s:libcxx_libcxxabi = s:new_conf('libcxx_libcxxabi')
-function! s:libcxx_libcxxabi.set_to_impl(config) dict
-  let a:config['cmdopt'] = get(a:config, 'cmdopt', '').printf(' -stdlib=libc++ -I%s/include/c++/v1', s:libcxx_libcxxabi_path)
-
-  if a:config['cmdopt'] !~# '\v\C(^|\s+)-[ES](\s+|$)'
-    let a:config['cmdopt'] .= printf(' -L%s/lib -L%s/lib -lc++abi', s:libcxx_libcxxabi_path, s:libcxxabi_path)
-  endif
-  return a:config
-endfunction
-
 let s:cdst = [s:pp, s:asm]
 let s:cstd = [s:c11, s:c1x, s:c89, s:c90, s:c99, s:c9x, s:gnu11, s:gnu1x, s:gnu89, s:gnu90, s:gnu99, s:gnu9x, s:iso9899_1990, s:iso9899_199409, s:iso9899_1999, s:iso9899_199x, s:iso9899_2011]
 
 let s:cxxdst = [s:pp, s:asm]
 let s:cxxstd = [s:cxx03, s:cxx0x, s:cxx11, s:cxx14, s:cxx1y, s:cxx1z, s:cxx98, s:gnuxx03, s:gnuxx0x, s:gnuxx11, s:gnuxx14, s:gnuxx1y, s:gnuxx1z, s:gnuxx98]
-let s:cxxlib = [s:libcxx_libsupcxx, s:libcxx_libcxxabi]
 
 function! s:_apply(current, arg)
-  let config = extend(a:arg.set_to(a:current['config']), {'type': a:current['name']}, 'force')
+  let config = extend(a:arg.decorate(a:current['config']), {'type': a:current['name']}, 'force')
   let name = printf('%s/%s', a:current['name'], a:arg['name'])
   return {'name': name, 'config': config}
 endfunction
@@ -147,10 +117,11 @@ function! s:set_quickrun_configs()
   if executable('g++')
     call s:_set_quickrun_config({'name': 'cpp/g++', 'config': {}}, [s:cxxdst, s:cxxstd])
   endif
-  if executable(s:clang_exe)
-    " TODO libcxx path
-    let clang_arg = isdirectory($HOME.'/local/llvm') ? [s:cxxdst, s:cxxstd, s:cxxlib] : [s:cxxdst, s:cxxstd]
-    call s:_set_quickrun_config({'name': 'cpp/clang++', 'config': {'command': s:clang_exe}}, clang_arg)
+  if executable('clang')
+    call s:_set_quickrun_config({'name': 'c/clang', 'config': {}}, [s:cdst, s:cstd])
+  endif
+  if executable('clang++')
+    call s:_set_quickrun_config({'name': 'cpp/clang++', 'config': {}}, [s:cxxdst, s:cxxstd])
   endif
 endfunction
 call s:set_quickrun_configs()
