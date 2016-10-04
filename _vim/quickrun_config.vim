@@ -2,6 +2,7 @@ let g:quickrun_config = get(g:, 'quickrun_config', {})
 
 let g:quickrun_config['_'] = {}
 let g:quickrun_config['_']['runner'] = 'job'
+let g:quickrun_config['_']['runner/job/interval'] = 33
 
 let g:quickrun_config['json'] = {'type': executable('jq') ? 'json/jq' : executable('json2yaml') ? 'json/json2yaml' : ''}
 let g:quickrun_config['json/jq'] = {'command': 'jq', 'exec': '%c "%o" %s', 'cmdopt': '.', 'outputter/buffer/filetype': 'json'}
