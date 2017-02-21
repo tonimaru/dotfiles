@@ -1,0 +1,4 @@
+{
+    "vim": "~/.vim",
+    "vim/vimrc": "~/.config/nvim/init.vim"
+}
