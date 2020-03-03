@@ -5,7 +5,6 @@
 !vimrc
 !gvimrc
 !plugins.vim
-!quickrun_config.vim
-!watchdogs_config.vim
-!plugins.toml
+!plugins_main.vim
 !plugins_settings.vim
+!quickrun_config.vim
