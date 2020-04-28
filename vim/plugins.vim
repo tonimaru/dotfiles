@@ -24,11 +24,16 @@ call dein#add('easymotion/vim-easymotion', {'hook_add': function('s:easymotion_h
 call dein#add('editorconfig/editorconfig-vim')
 call dein#add('elzr/vim-json', {'hook_add': { -> execute('let g:vim_json_syntax_conceal = 0') }})
 function! s:go_hook_add()
+  let g:go_version_warning = 0
+  let g:go_code_completion_enabled = 0
   let g:go_def_mapping_enabled = 0
   let g:go_fmt_autosave = 0
+  let g:go_imports_autosave = 0
+  let g:go_mod_fmt_autosave = 0
   let g:go_metalinter_autosave = 0
   let g:go_textobj_enabled = 0
   let g:go_doc_keywordprg_enabled = 0
+  let g:go_gopls_enabled = 0
 
   map [prefix]o [go]
   nnoremap [go] <Nop>
@@ -36,7 +41,6 @@ function! s:go_hook_add()
   nnoremap [go]f :<C-u>GoFillStruct<CR>
   nnoremap [go]a :<C-u>GoAlternate!<CR>
 endfunction
-AuPlug FileType go nnoremap <buffer> == :<C-u>GoImports<CR>
 call dein#add('fatih/vim-go', {'hook_add': function('s:go_hook_add')})
 call dein#add('griffinqiu/vim-coloresque')
 call dein#add('hail2u/vim-css3-syntax')
@@ -134,6 +138,7 @@ function! s:lsp_keymaps()
 endfunction
 if executable('gopls')
   AuPlug FileType go call s:lsp_keymaps()
+  AuPlug FileType go nnoremap <buffer> == :call CocAction('runCommand', 'editor.action.organizeImport')<CR>
 endif
 if executable('tsserver')
   AuPlug FileType typescript call s:lsp_keymaps()
