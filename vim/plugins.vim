@@ -8,6 +8,22 @@ else
 endif
 AuPlug VimEnter * call dein#call_hook('post_source')
 
+map [prefix]l [lang]
+nnoremap [lang] <Nop>
+
+function! s:lang_cmd(cmd, ...) abort
+  silent! write
+  let args = substitute(join(a:000), '\s\+$', '', '')
+  if has('terminal')
+      let cmd = 'terminal'
+  elseif has('nvim')
+      let cmd = 'noautocmd new | terminal'
+  else
+      let cmd = '!'
+  endif
+  execute cmd a:cmd args
+endfunction
+
 function! s:miniyank_hook_add()
   if has('nvim')
     map p <Plug>(miniyank-autoput)
@@ -18,7 +34,8 @@ call dein#add('bfredl/nvim-miniyank', {'hook_add': function('s:miniyank_hook_add
 call dein#add('buoto/gotests-vim')
 call dein#add('cocopon/iceberg.vim')
 function! s:easymotion_hook_add()
-  let g:EasyMotion_do_mapping = 1
+  let g:EasyMotion_do_mapping = 0
+  nmap m <Plug>(easymotion-s)
 endfunction
 call dein#add('easymotion/vim-easymotion', {'hook_add': function('s:easymotion_hook_add')})
 call dein#add('editorconfig/editorconfig-vim')
@@ -35,12 +52,31 @@ function! s:go_hook_add()
   let g:go_doc_keywordprg_enabled = 0
   let g:go_gopls_enabled = 0
 
-  map [prefix]o [go]
-  nnoremap [go] <Nop>
-  nnoremap [go]i :<C-u>GoIfErr<CR>
-  nnoremap [go]f :<C-u>GoFillStruct<CR>
-  nnoremap [go]a :<C-u>GoAlternate!<CR>
+  let g:go_term_mode = "vsplit"
 endfunction
+function s:go_root_dir()
+  let l:gomod = findfile('go.mod', ".;")
+  if filereadable(l:gomod)
+    return fnamemodify(l:gomod, ':h')
+  endif
+
+  let l:gitroot = system('git rev-parse --show-toplevel')
+  if v:shell_error == 0
+    return l:gitroot
+  endif
+
+  return expand('%:p')
+endfunction
+function! s:go_keymaps()
+  nnoremap <silent><buffer> [lang]q :<C-u>call <SID>lang_cmd('go run', <SID>go_root_dir())<CR>
+  nnoremap <silent><buffer> [lang]b :<C-u>call <SID>lang_cmd('go build -v -trimpath -p 4')<CR>
+  nnoremap <silent><buffer> [lang]a :<C-u>GoFillStruct<CR>
+  nnoremap <silent><buffer> [lang]s :<C-u>GoAlternate!<CR>
+  nnoremap <silent><buffer> [lang]t :<C-u>call <SID>lang_cmd('go test ./... -v -parallel 4 -count=1')<CR>
+  nnoremap <silent><buffer> [lang]f :<C-u>call <SID>lang_cmd('go test -v -run=' . expand("<cword>")))<CR>
+  nnoremap <silent><buffer> [lang]c :<C-u>GoCoverage<CR>
+endfunction
+AuPlug FileType go call s:go_keymaps()
 call dein#add('fatih/vim-go', {'hook_add': function('s:go_hook_add')})
 call dein#add('griffinqiu/vim-coloresque')
 call dein#add('hail2u/vim-css3-syntax')
@@ -54,6 +90,10 @@ call dein#add('haya14busa/vim-asterisk', {'on_map': '<Plug>', 'hook_add': functi
 call dein#add('iamcco/markdown-preview.nvim', {'on_ft': ['markdown', 'pandoc.markdown', 'rmd'], 'build': 'cd app & npm install' })
 call dein#add('ingydotnet/yaml-vim')
 call dein#add('itchyny/lightline.vim')
+function! s:vim_lsp_cxx_highlight_hook_add()
+  let g:lsp_cxx_hl_use_text_props = 1
+endfunction
+call dein#add('jackguo380/vim-lsp-cxx-highlight', {'hook_add': function('s:vim_lsp_cxx_highlight_hook_add')})
 call dein#add('kana/vim-niceblock')
 call dein#add('kana/vim-operator-user')
 call dein#add('kana/vim-repeat')
@@ -76,6 +116,10 @@ function! s:rogue_hook_add()
   let g:rogue#japanese = 1
 endfunction
 call dein#add('katono/rogue.vim', {'hook_add': function('s:rogue_hook_add')})
+function! s:neodark_hook_add()
+  let g:neodark#background = '#181818'
+endfunction
+call dein#add('KeitaNakamura/neodark.vim', {'hook_add': function('s:neodark_hook_add')})
 function! s:dirmark_hook_add()
   nnoremap <silent> [denite]bl :<C-u>Denite -default-action=cd dirmark<CR>
   nnoremap <silent> [denite]ba :<C-u>Denite dirmark/add<CR>
@@ -124,26 +168,43 @@ call dein#add('machakann/vim-swap', {'on_map': '<Plug>', 'hook_add': function('s
 call dein#add('mattn/emmet-vim', {'on_i': 1})
 call dein#add('mhinz/vim-signify')
 function! s:lsp_keymaps()
-  echom "s:lsp_keymaps()"
-  map [prefix]l [lsp]
-  nnoremap [lsp] <Nop>
-  nnoremap <silent> [lsp]r :<C-u>CocRestart<CR>
+  nnoremap <silent> [lang]r :<C-u>CocRestart<CR>
   nmap <buffer><silent> <C-]> <Plug>(coc-definition)
   nmap <buffer><silent> <C-^> <Plug>(coc-references)
-  nmap <silent><silent> K <Plug>(coc-type-definition)
   inoremap <buffer><silent><expr> <C-x><C-o> coc#refresh()
 
   nmap <buffer><silent> <C-j> <Plug>(coc-diagnostic-next)
   nmap <buffer><silent> <C-k> <Plug>(coc-diagnostic-prev)
+
+	inoremap <buffer><silent><expr> <C-j>
+	  \ pumvisible() ? coc#_select_confirm() :
+	  \ coc#expandableOrJumpable() ?
+	  \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+	  \ <SID>check_back_space() ? "\<C-j>" :
+	  \ coc#refresh()
+
+	function! s:check_back_space() abort
+	  let col = col('.') - 1
+	  return !col || getline('.')[col - 1]  =~# '\s'
+	endfunction
+
+  if &filetype == 'vim'
+  else
+    nmap <buffer><silent> K <Plug>(coc-type-definition)
+  endif
+
+  function! s:lsp_fmt() abort
+    if &filetype == 'go'
+      call CocAction('organizeImport')
+    endif
+    call CocAction('format')
+  endfunction
+  nnoremap <buffer><silent> == :call <SID>lsp_fmt()<CR>
 endfunction
-if executable('gopls')
-  AuPlug FileType go call s:lsp_keymaps()
-  AuPlug FileType go nnoremap <buffer> == :call CocAction('runCommand', 'editor.action.organizeImport')<CR>
-endif
-if executable('tsserver')
-  AuPlug FileType typescript call s:lsp_keymaps()
-endif
+AuPlug FileType c,cpp,go,json,rust,typescript,vim call s:lsp_keymaps()
+AuPlug FileType go nnoremap <buffer><silent> [lang]i :CocCommand go.impl.cursor<CR>
 call dein#add('neoclide/coc.nvim', {'merge':0, 'build': 'yarn install --frozen-lockfile'})
+call dein#add('octol/vim-cpp-enhanced-highlight')
 call dein#add('osyo-manga/unite-quickrun_config', {'depends': ['vim-quickrun']})
 function! s:textobj_multiblock_hook_add()
   omap ab <Plug>(textobj-multiblock-a)
@@ -157,12 +218,22 @@ call dein#add('posva/vim-vue')
 call dein#add('prettier/vim-prettier')
 call dein#add('roxma/nvim-yarp')
 call dein#add('roxma/vim-hug-neovim-rpc')
+function! s:rust_keymaps()
+  nnoremap <silent><buffer> [lang]q :<C-u>call <SID>lang_cmd('cargo', 'run')<CR>
+  nnoremap <silent><buffer> [lang]b :<C-u>call <SID>lang_cmd('cargo', 'build')<CR>
+  nnoremap <silent><buffer> [lang]t :<C-u>call <SID>lang_cmd('cargo', 'test -- --test-threads=4')<CR>
+endfunction
+AuPlug FileType rust call s:rust_keymaps()
 call dein#add('rust-lang/rust.vim')
 function! s:defx_hook_add()
   nmap [prefix]f [defx]
   nnoremap [defx] <Nop>
   nnoremap <silent> [defx]; :<C-u>Defx -auto-cd -show-ignored-files -resume<CR>
-  nnoremap <silent> [defx]+ :<C-u>Defx -auto-cd -show-ignored-files -new<CR>
+  nnoremap <silent> [defx]+n :<C-u>Defx -auto-cd -show-ignored-files -new<CR>
+  nnoremap <silent> [defx]+v :<C-u>Defx -auto-cd -show-ignored-files -new -split=vertical<CR>
+  nnoremap <silent> [defx]+s :<C-u>Defx -auto-cd -show-ignored-files -new -split=horizontal<CR>
+  nnoremap <silent> [defx]+t :<C-u>Defx -auto-cd -show-ignored-files -new -split=tab<CR>
+  nnoremap <silent> [defx]+f :<C-u>Defx -auto-cd -show-ignored-files -new -split=floating<CR>
 endfunction
 function! s:defx_config()
   nnoremap <silent><buffer> gr :<C-u>Denite -no-empty grep<CR>
@@ -177,6 +248,7 @@ function! s:defx_config()
   nnoremap <nowait><silent><buffer><expr> j line('.') == line('$') ? 'ggj' : 'j'
   nnoremap <nowait><silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
   nnoremap <nowait><silent><buffer><expr> l defx#do_action('open')
+  nnoremap <nowait><silent><buffer><expr> t defx#do_action('open', 'tabnew')
   nnoremap <nowait><silent><buffer><expr> D defx#do_action('new_directory')
   nnoremap <nowait><silent><buffer><expr> F defx#do_action('new_file')
   nnoremap <nowait><silent><buffer><expr> d defx#do_action('remove')
@@ -250,6 +322,9 @@ function! s:denite_config()
 
   nnoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
   nnoremap <silent><buffer><expr> p denite#do_map('do_action', 'preview')
+  nnoremap <silent><buffer><expr> d denite#do_map('do_action', 'delete')
+  nnoremap <silent><buffer><expr> y denite#do_map('do_action', 'yank')
+  nnoremap <silent><buffer><expr> c denite#do_map('do_action', 'cd')
 
   nnoremap <silent><buffer><expr> <Space> denite#do_map('toggle_select').'j'
   nnoremap <silent><buffer><expr> * denite#do_map('toggle_select_all')
@@ -275,9 +350,6 @@ function! s:neomru_hook_add()
 endfunction
 call dein#add('Shougo/neomru.vim', {'hook_add': function('s:neomru_hook_add')})
 call dein#add('Shougo/unite.vim')
-function! s:vimproc_hook_add()
-  let g:vimproc#download_windows_dll = 1
-endfunction
 call dein#add('Shougo/vinarise.vim')
 function! s:textmanip_hook_add()
   xmap <C-j> <Plug>(textmanip-move-down)
@@ -301,7 +373,10 @@ function! s:quickrun_hook_add()
   endif
 endfunction
 call dein#add('thinca/vim-quickrun', {'hook_add': function('s:quickrun_hook_add')})
-call dein#add('thinca/vim-ref')
+function! s:ref_hook_add()
+  let g:ref_man_cmd='man'
+endfunction
+call dein#add('thinca/vim-ref', {'hook_add': function('s:ref_hook_add')})
 function! s:template_hook_add()
   AuPlug FileType * silent execute 'TemplateLoad /filetype/' . &l:filetype
 endfunction
@@ -309,8 +384,5 @@ call dein#add('thinca/vim-template', {'hook_add': function('s:template_hook_add'
 call dein#add('tyru/caw.vim')
 call dein#add('tyru/open-browser.vim')
 call dein#add('tyru/open-browser-github.vim')
-call dein#add('vim-jp/vim-cpp')
 call dein#add('vim-jp/vimdoc-ja')
-call dein#add('vim-jp/vital.vim')
-call dein#add('vim/killersheep')
 call dein#add('Yggdroot/indentLine')

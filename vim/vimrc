@@ -4,18 +4,23 @@ set maxmempattern=2000
 set updatetime=2000
 
 if has("nvim")
-  let g:python_host_prog  = $HOME.'/.pyenv/shims/python2'
-  let g:python3_host_prog = $HOME.'/.pyenv/shims/python3'
   tnoremap <silent> <ESC> <C-\><C-n>
   tnoremap <silent> <M-Left> <Esc>b
   tnoremap <silent> <M-Right> <Esc>f
   set inccommand=split
 else
-  set pythondll=$HOME/.pyenv/versions/2.7.14/lib/libpython2.7.dylib
-  set pythonthreedll=$HOME/.pyenv/versions/3.6.4/lib/libpython3.6m.dylib
+  function! s:pydll(cmd, optname)
+    if isdirectory($PYENV_ROOT) && executable(a:cmd)
+      return
+    endif
+    let l:ver=substitute(system(a:cmd . ' -c "import platform; print(platform.python_version())"'), '\n$', '', '')
+    let l:dir=$PYENV_ROOT . '/versions/' . l:ver
+    let l:dll=substitute(system('find "' . l:dir . '" -name "libpython*.dylib"'))
+    eval('let &' . a:optname . '=' . l:dll)
+  endfunction
+  call s:pydll('python2', 'pythondll')
+  call s:pydll('python3', 'pythonthreedll')
 endif
-
-if has('python3') | endif
 
 if has('multi_byte')
   set encoding=utf-8
@@ -35,7 +40,6 @@ else
   command! -bang -nargs=* Au
 endif
 
-command! Ter terminal /bin/bash --login
 command! Cd cd %:p:h
 
 function! s:init_cmdwin()
@@ -58,6 +62,7 @@ function! s:CleanNoNameEmptyBuffers()
     endif
 endfunction
 Au CursorHold * call s:CleanNoNameEmptyBuffers()
+Au BufEnter * silent! if empty(&buftype) | lcd %:p:h | endif
 
 let s:is_mswin = has('win95') || has('win16') || has('win32') || has('win64')
 
@@ -159,6 +164,8 @@ if exists('+cindent')
   set cinoptions+=t0
 endif
 
+set formatoptions-=o
+
 set synmaxcol=2000
 
 set iskeyword-=.
@@ -220,10 +227,19 @@ if !has('gui_running')
   endif
 endif
 
-let s:has_iceberg = !empty(globpath(&runtimepath, expand('colors/iceberg.vim')))
-if (!s:is_mswin || has('gui_running')) && s:has_iceberg
-  colorscheme iceberg
-endif
+function! s:col()
+  let s:has_neodark = !empty(globpath(&runtimepath, expand('colors/neodark.vim')))
+  if (!s:is_mswin || has('gui_running')) && s:has_neodark
+    colorscheme neodark
+    return
+  endif
+  let s:has_iceberg = !empty(globpath(&runtimepath, expand('colors/iceberg.vim')))
+  if (!s:is_mswin || has('gui_running')) && s:has_iceberg
+    colorscheme iceberg
+    return
+  endif
+endfunction
+call s:col()
 
 if !has('vim_starting') && exists(':IndentLinesReset')
   IndentLinesReset
