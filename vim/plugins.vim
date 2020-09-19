@@ -67,13 +67,31 @@ function s:go_root_dir()
 
   return expand('%:p')
 endfunction
+function! s:go_current_func_name()
+  let orig_view = winsaveview()
+  try
+    let l:pattern = '\C'.'^\s*'.'func\>'.'\s\+'.'\((\w\+\s\+[^)]\+)\s\+\)\='.'\('.'[^(]\+'.'\)'.'\%('.'\s*'.'('.'\=\)'
+    if search(l:pattern, 'bW') == 0
+        return expand("<cword>")
+    endif
+
+    let m = matchlist(getline('.'), l:pattern)
+    if empty(m)
+      return NONE
+    endif
+
+    return m[2]
+  finally
+    call winrestview(orig_view)
+  endtry
+endfunction
 function! s:go_keymaps()
   nnoremap <silent><buffer> [lang]q :<C-u>call <SID>lang_cmd('go run', <SID>go_root_dir())<CR>
   nnoremap <silent><buffer> [lang]b :<C-u>call <SID>lang_cmd('go build -v -trimpath -p 4')<CR>
   nnoremap <silent><buffer> [lang]a :<C-u>GoFillStruct<CR>
   nnoremap <silent><buffer> [lang]s :<C-u>GoAlternate!<CR>
   nnoremap <silent><buffer> [lang]t :<C-u>call <SID>lang_cmd('go test ./... -v -parallel 4 -count=1')<CR>
-  nnoremap <silent><buffer> [lang]f :<C-u>call <SID>lang_cmd('go test -v -run=' . expand("<cword>")))<CR>
+  nnoremap <silent><buffer> [lang]f :<C-u>call <SID>lang_cmd('go test -v -run=' . <SID>go_current_func_name())<CR>
   nnoremap <silent><buffer> [lang]c :<C-u>GoCoverage<CR>
 endfunction
 AuPlug FileType go call s:go_keymaps()
