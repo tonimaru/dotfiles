@@ -56,7 +56,7 @@ if has('nvim')
   Au TermOpen * startinsert
 endif
 function! s:CleanNoNameEmptyBuffers()
-    let buffers = filter(range(1, bufnr('$')), 'buflisted(v:val) && empty(bufname(v:val)) && bufwinnr(v:val) < 0 && (getbufline(v:val, 1, "$") == [""])')
+    let buffers = filter(range(1, bufnr('$')), 'buflisted(v:val) && empty(bufname(v:val)) && bufwinnr(v:val) < 0 && (getbufline(v:val, 1, "$") == [""]) && getbufinfo(v:val)[0].changed == 0')
     if !empty(buffers)
         silent exe 'bd '.join(buffers, ' ')
     endif
@@ -96,7 +96,7 @@ if has('persistent_undo')
   execute printf('set undodir=%s', s:undo_dir)
 endif
 
-set number
+" set number
 
 set nowrap
 
@@ -131,10 +131,7 @@ if has('extra_search')
 endif
 
 if has('insert_expand')
-  set completeopt-=preview
-  if has('patch-7.4.775')
-    set completeopt+=noselect,noinsert
-  endif
+  set completeopt-=preview,longest,noselect,noinsert
 endif
 
 if has('smartindent')
@@ -179,8 +176,8 @@ nnoremap gk k
 
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 
-map <Space> [prefix]
-noremap [prefix] <Nop>
+nmap <Space> [prefix]
+nnoremap [prefix] <Nop>
 
 nnoremap <silent> [prefix]ee :<C-u>e $MYVIMRC<CR>
 nnoremap <silent> [prefix]er :<C-u>so $MYVIMRC<CR>
@@ -207,7 +204,7 @@ function! s:operator_replace(type)
   let &selection = sel_save
 endfunction
 nnoremap <silent> s :<C-u>set opfunc=<SID>operator_replace<CR>g@
-vnoremap <silent> s :<C-u>call <SID>operator_replace(visualmode())<CR>
+xnoremap <silent> s :<C-u>call <SID>operator_replace(visualmode())<CR>
 
 let s:plugins_main_source = s:vimdir('plugins_main.vim')
 execute 'source' s:plugins_main_source

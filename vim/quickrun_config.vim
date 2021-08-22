@@ -16,14 +16,6 @@ let g:quickrun_config['yaml/yaml2json'] = {'command': 'yaml2json', 'exec': '%c %
 
 let g:quickrun_config['scala'] = {'type': executable('scala') ? 'scala/process_manager' : ''}
 
-let g:quickrun_config['typescript'] = { 'type' : 'typescript/tsc' }
-let g:quickrun_config['typescript/tsc'] = {
-\   'command': 'tsc',
-\   'exec': ['%c --target ES6 %o %s', 'node %s:r.js'],
-\   'tempfile': '%{tempname()}.ts',
-\   'hook/sweep/files': ['%S:p:r.js'],
-\ }
-
 let g:quickrun_config['go'] = {
 \   'hook/output_encode/encoding': 'utf-8',
 \   'tempfile': '%{tempname()}.go',
@@ -154,4 +146,4 @@ function! s:set_quickrun_configs()
   endif
 endfunction
 call s:set_quickrun_configs()
-
+let g:quickrun_config['cpp'] = { 'type': 'cpp/clang++/c++14' }
