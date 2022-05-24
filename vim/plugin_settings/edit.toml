@@ -1,0 +1,75 @@
+[[plugins]]
+repo = 'bfredl/nvim-miniyank'
+hook_add = '''
+  nmap p <Plug>(miniyank-autoput)
+  nmap P <Plug>(miniyank-autoPut)
+  xmap p <Plug>(miniyank-autoput)
+  xmap P <Plug>(miniyank-autoPut)
+'''
+
+[[plugins]]
+repo = 'kana/vim-niceblock'
+
+[[plugins]]
+repo = 'kana/vim-operator-user'
+
+[[plugins]]
+repo = 'kana/vim-repeat'
+
+[[plugins]]
+repo = 'kana/vim-textobj-entire'
+
+[[plugins]]
+repo = 'kana/vim-textobj-line'
+
+[[plugins]]
+repo = 'kana/vim-textobj-user'
+
+[[plugins]]
+repo = 'machakann/vim-sandwich'
+hook_add = '''
+  let g:operator_sandwich_no_default_key_mappings = 1
+  nmap ys  <Plug>(operator-sandwich-add)
+  nmap ds  <Plug>(operator-sandwich-delete)<Plug>(textobj-sandwich-query-a)
+  nmap cs  <Plug>(operator-sandwich-replace)<Plug>(textobj-sandwich-query-a)
+  nmap dsb <Plug>(operator-sandwich-delete)<Plug>(textobj-sandwich-auto-a)
+  nmap csb <Plug>(operator-sandwich-replace)<Plug>(textobj-sandwich-auto-a)
+  xmap S   <Plug>(operator-sandwich-add)
+  xmap D   <Plug>(operator-sandwich-delete)<Plug>(textobj-sandwich-query-a)
+  xmap C   <Plug>(operator-sandwich-replace)<Plug>(textobj-sandwich-query-a)
+'''
+
+[[plugins]]
+repo = 'machakann/vim-swap'
+hook_add = '''
+  let g:swap_no_default_key_mappings = 1
+  nmap g< <Plug>(swap-prev)
+  nmap g> <Plug>(swap-next)
+  nmap gS <Plug>(swap-interactive)
+'''
+
+[[plugins]]
+repo = 'osyo-manga/vim-textobj-multiblock'
+hook_add = '''
+  omap ab <Plug>(textobj-multiblock-a)
+  omap ib <Plug>(textobj-multiblock-i)
+'''
+
+[[plugins]]
+repo = 't9md/vim-textmanip'
+hook_add = '''
+  xmap <C-j> <Plug>(textmanip-move-down)
+  xmap <C-k> <Plug>(textmanip-move-up)
+  xmap <C-h> <Plug>(textmanip-move-left)
+  xmap <C-l> <Plug>(textmanip-move-right)
+'''
+
+[[plugins]]
+repo = 'tyru/caw.vim'
+
+[[plugins]]
+repo = 'tyru/operator-camelize.vim'
+hook_add = '''
+  let g:operator_camelize_all_uppercase_action='lowercase'
+  map gs <Plug>(operator-camelize-toggle)
+'''

@@ -1,0 +1,90 @@
+hook_add = '''
+  unsilent luafile ~/.vim/plugin_settings/nvim_lsp.lua
+'''
+
+[[plugins]]
+repo = 'nvim-lua/plenary.nvim'
+
+[[plugins]]
+repo = 'mfussenegger/nvim-dap'
+
+[[plugins]]
+repo = 'lambdalisue/vim-quickrun-neovim-job'
+
+[[plugins]]
+repo = 'monaqa/dial.nvim'
+hook_add = '''
+  nmap <C-a> <Plug>(dial-increment)
+  nmap <C-x> <Plug>(dial-decrement)
+  vmap <C-a> <Plug>(dial-increment)
+  vmap <C-x> <Plug>(dial-decrement)
+  vmap g<C-a> g<Plug>(dial-increment)
+  vmap g<C-x> g<Plug>(dial-decrement)
+'''
+
+[[plugins]]
+repo = 'neovim/nvim-lspconfig'
+hook_post_source = '''
+  lua hook_post_source()
+'''
+
+[[plugins]]
+repo = 'williamboman/nvim-lsp-installer'
+depends = ['nvim-lspconfig']
+
+
+[[plugins]]
+repo = 'simrat39/rust-tools.nvim'
+
+[[plugins]]
+repo = 'nvim-treesitter/nvim-treesitter'
+hook_post_source = '''
+lua <<EOF
+  require'nvim-treesitter.configs'.setup {
+    highlight = {
+      enable = true
+    }
+  }
+EOF
+'''
+
+[[plugins]]
+repo = 'nvim-treesitter/playground'
+
+[[plugins]]
+repo = 'jose-elias-alvarez/nvim-lsp-ts-utils'
+[plugins.ftplugin]
+typescript = '''
+  function! s:typescript_run()
+    let l:nm = finddir('node_modules', ".;")
+    if executable('deno') && !isdirectory(l:nm)
+      call Terminal_exec('deno', 'run', expand('%:p'))
+      return
+    endif
+    if executable('ts-node')
+      call Terminal_exec('ts-node', expand('%:p'))
+      return
+    endif
+    echoerr 'please install deno or ts-node'
+  endfunction
+  nnoremap <silent><buffer> [lang]q <Cmd>call <SID>typescript_run()<CR>
+  nnoremap <silent><buffer> [lang]b <Cmd>call Terminal_exec('npm run build')<CR>
+  nnoremap <silent><buffer> [lang]t <Cmd>call Terminal_exec('npm test', '--', '--silent=false', expand('%:p'))<CR>
+  nnoremap <silent><buffer> [lang]w <Cmd>call Terminal_exec('npm run test:watch', '--', '--silent=false', '--verbose', 'true', '--findRelatedTests', expand('%:p'))<CR>
+'''
+
+[[plugins]]
+repo = 'scalameta/nvim-metals'
+hook_post_source = '''
+lua <<EOF
+  metals_config = require("metals").bare_config()
+  metals_config.on_attach = on_attach
+EOF
+'''
+[plugins.ftplugin]
+scala = '''
+  lua require('metals').initialize_or_attach(metals_config)
+'''
+sbt = '''
+  lua require('metals').initialize_or_attach(metals_config)
+'''

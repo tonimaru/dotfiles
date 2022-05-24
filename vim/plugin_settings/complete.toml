@@ -1,0 +1,83 @@
+[[plugins]]
+repo = 'rafamadriz/friendly-snippets'
+
+[[plugins]]
+repo = 'sdras/vue-vscode-snippets'
+
+[[plugins]]
+repo = 'hrsh7th/vim-vsnip'
+hook_add = '''
+  let l:snip_root = g:dein#_runtime_path . '/snippets'
+  let g:vsnip_snippet_dirs = [l:snip_root, l:snip_root . '/javascript', l:snip_root . 'vue']
+  let g:vsnip_filetypes = {
+    \   'typescript': ['javascript', 'typescript'],
+    \ }
+
+  imap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
+  smap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
+
+  imap <expr> <C-l> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-l>'
+  smap <expr> <C-l> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-l>'
+  imap <expr> <C-h> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-h>'
+  smap <expr> <C-h> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-h>'
+'''
+
+[[plugins]]
+repo = 'hrsh7th/vim-vsnip-integ'
+
+[[plugins]]
+repo = 'matsui54/denops-popup-preview.vim'
+hook_post_source = '''
+  call popup_preview#enable()
+'''
+
+[[plugins]]
+repo = 'matsui54/denops-signature_help'
+hook_post_source = '''
+  call signature_help#enable()
+'''
+
+[[plugins]]
+repo = 'Shougo/ddc-nvim-lsp'
+
+[[plugins]]
+repo = 'tani/ddc-fuzzy'
+
+[[plugins]]
+repo = 'LumaKernel/ddc-tabnine'
+
+[[plugins]]
+repo = 'Shougo/ddc.vim'
+hook_post_source = '''
+  call ddc#custom#patch_global('completionMenu', 'pum.vim')
+  call ddc#custom#patch_global('sources', ['nvim-lsp', 'vsnip', 'tabnine'])
+  call ddc#custom#patch_global('sourceOptions', {
+        \ '_': {
+        \   'matchers': ['matcher_fuzzy'],
+        \   'sorters': ['sorter_fuzzy'],
+        \   'converters': ['converter_fuzzy']
+        \ },
+        \ 'nvim-lsp': {
+        \   'mark': 'lsp',
+        \   'forceCompletionPattern': '\.|:|->|\\'
+        \ },
+        \ 'vsnip': {'mark': 'vsnip'},
+        \ 'tabnine': {
+        \   'mark': 'TN',
+        \   'maxCandidates': 5,
+        \   'isVolatile': v:true,
+        \ },
+        \ })
+  call ddc#enable()
+'''
+
+[[plugins]]
+repo = 'Shougo/pum.vim'
+hook_add = '''
+  inoremap <C-n> <Cmd>call pum#map#insert_relative(+1)<CR>
+  inoremap <C-p> <Cmd>call pum#map#insert_relative(-1)<CR>
+  inoremap <C-y> <Cmd>call pum#map#confirm()<CR>
+  inoremap <C-e> <Cmd>call pum#map#cancel()<CR>
+  Au User PumCompleteDone call vsnip_integ#on_complete_done(g:pum#completed_item)
+'''
+

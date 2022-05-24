@@ -6,5 +6,5 @@
 !gvimrc
 !plugins.vim
 !plugins_main.vim
-!plugins_settings.vim
 !quickrun_config.vim
+!plugin_settings

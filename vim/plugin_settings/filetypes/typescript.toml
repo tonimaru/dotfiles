@@ -1,0 +1,22 @@
+hook_add = '''
+function! s:typescript_run()
+  let l:nm = finddir('node_modules', ".;")
+  if executable('deno') && !isdirectory(l:nm)
+    call Terminal_exec('deno', 'run', expand('%:p'))
+    return
+  endif
+  if executable('ts-node')
+    call Terminal_exec('ts-node', expand('%:p'))
+    return
+  endif
+  echoerr 'please install deno or ts-node'
+endfunction
+'''
+
+[ftplugin]
+typescript = '''
+nnoremap <silent><buffer> [lang]q <Cmd>call <SID>typescript_run()<CR>
+nnoremap <silent><buffer> [lang]b <Cmd>call Terminal_exec('npm run build')<CR>
+nnoremap <silent><buffer> [lang]t <Cmd>call Terminal_exec('npm test', '--', '--silent=false', expand('%:p'))<CR>
+nnoremap <silent><buffer> [lang]w <Cmd>call Terminal_exec('npm run test:watch', '--', '--silent=false', '--verbose', 'true', '--findRelatedTests', expand('%:p'))<CR>
+'''

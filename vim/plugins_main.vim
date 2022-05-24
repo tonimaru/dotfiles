@@ -5,18 +5,20 @@ function! s:vimdir(dir)
   return expand(printf('%s/%s', s:vimfiles, a:dir))
 endfunction
 
+let g:dein#auto_recache = !has('win32')
+
 let s:base_path = expand('~/.local/share/dein')
 let s:dein_path = expand(s:base_path . '/repos/github.com/Shougo/dein.vim')
 
 if !isdirectory(s:dein_path)
-  if executable('git')
-    echo 'Install dein.'
-    silent execute printf('!mkdir -p %s', s:dein_path)
-    call system(printf('git clone https://github.com/Shougo/dein.vim.git %s', s:dein_path))
-    if v:shell_error
-      finish
-    endif
-  else
+  if !executable('git')
+    finish
+  endif
+
+  echo 'Install dein.'
+  silent execute printf('!mkdir -p %s', s:dein_path)
+  execute '!git clone https://github.com/Shougo/dein.vim.git' s:dein_path
+  if v:shell_error
     finish
   endif
 endif
@@ -25,24 +27,20 @@ if has('vim_starting')
   execute printf('set runtimepath+=%s', s:dein_path)
 endif
 
-let s:vimrcs = [
-      \   expand('%'),
-      \   s:vimdir('plugins.vim'),
-      \   s:vimdir('plugins_settings.vim'),
-      \   s:vimdir('local_plugins.vim'),
-      \   s:vimdir('local_plugins_settings.vim')
-      \ ]
-call dein#begin(s:base_path, s:vimrcs)
-call dein#add('Shougo/dein.vim')
+let s:plugins_path = s:vimdir('plugins.vim')
 
+let s:vimrcs = [expand('%'), s:plugins_path]
+let s:plugin_settings = split(system('find ' . s:vimdir('plugin_settings') . ' -type f'))
+call extend(s:vimrcs, s:plugin_settings)
+
+call dein#begin(s:base_path, s:vimrcs)
+
+call dein#add('Shougo/dein.vim')
 if filereadable(s:vimdir('plugins.vim'))
   execute 'source' s:vimdir('plugins.vim')
 endif
-if filereadable(s:vimdir('local_plugins.vim'))
-  execute 'source' s:vimdir('local_plugins.vim')
-endif
-execute 'source' s:vimdir('plugins_settings.vim')
-silent! execute 'source' s:vimdir('local_plugins_settings.vim')
+
+call dein#end()
 
 silent! if dein#check_install()
   if has('vim_starting')
@@ -53,11 +51,9 @@ silent! if dein#check_install()
   endif
 endif
 
-call dein#end()
-
 filetype plugin indent on
 
-execute 'source' s:vimdir('plugins.vim')
+execute 'nnoremap' '[prefix]ep' ':e' s:vimdir('plugins_main.vim').'<CR>'
 execute 'nnoremap' '[prefix]en' ':e' s:vimdir('plugins.vim').'<CR>'
 
 unlet s:dein_path

@@ -1,0 +1,85 @@
+[[plugins]]
+repo = 'Shougo/junkfile.vim'
+
+[[plugins]]
+repo = 'lambdalisue/mr.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-line'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-file'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-file_rec'
+
+[[plugins]]
+repo = 'shun/ddu-source-buffer'
+
+[[plugins]]
+repo = 'shun/ddu-source-rg'
+
+[[plugins]]
+repo = 'kuuote/ddu-source-mr'
+
+[[plugins]]
+repo = 'yuki-yano/ddu-filter-fzf'
+
+[[plugins]]
+repo = 'Shougo/ddu-kind-file'
+
+[[plugins]]
+repo = 'Shougo/ddu-ui-ff'
+[plugins.ftplugin]
+ddu-ff = '''
+nnoremap <buffer> <CR> <Cmd>call ddu#ui#ff#do_action('itemAction')<CR>
+nnoremap <buffer> i <Cmd>call ddu#ui#ff#do_action('openFilterWindow')<CR>
+nnoremap <buffer> p <Cmd>call ddu#ui#ff#do_action('preview')<CR>
+nnoremap <buffer> q <Cmd>call ddu#ui#ff#do_action('quit')<CR>
+'''
+ddu-ff-filter = '''
+inoremap <buffer> <CR> <Esc><Cmd>close<CR>
+nnoremap <buffer> <CR> <Cmd>close<CR>
+nnoremap <buffer> q <Cmd>close<CR>
+nnoremap <buffer> <nowait> <Esc> <Cmd>close<CR>
+'''
+
+[[plugins]]
+repo = 'Shougo/ddu-ui-filer'
+[plugins.ftplugin]
+ddu-filer = '''
+'''
+
+[[plugins]]
+repo = 'Shougo/ddu.vim'
+hook_add = '''
+nmap [prefix]d [ui]
+nnoremap [ui] <Nop>
+nnoremap <silent> [ui]b <Cmd>call ddu#start({'sources': [{'name': 'buffer'}]})<CR>
+nnoremap <silent> [ui]f <Cmd>call ddu#start({'sources': [{'name': 'file_rec', 'filterParams': {'path': Root_dir()}}]})<CR>
+nnoremap <silent> [ui]u <Cmd>call ddu#start({'sources': [{'name': 'mr'}]})<CR>
+nnoremap <silent> [ui]g <Cmd>DduRg<CR>
+nnoremap <silent> [ui]l <Cmd>call ddu#start({'sources': [{'name': 'line'}]})<CR>
+nnoremap <silent> [ui]r <Cmd>call ddu#start({'resume': v:true})<CR>
+nnoremap <silent> [ui]j <Cmd>call ddu#start({'sources': [{'name': 'junkfile'}], 'volatile': v:true})<CR>
+'''
+hook_post_source = '''
+  call ddu#custom#patch_global({
+      \   'ui': 'ff',
+      \   'sourceOptions': {
+      \     '_': {
+      \       'matchers': ['matcher_fzf'],
+      \     },
+      \   },
+      \   'kindOptions': {
+      \     'file': { 'defaultAction': 'open', },
+      \   }
+      \ })
+call ddu#custom#patch_local('grep', {
+      \   'sourceParams' : { 'rg' : { 'args': ['--column', '--no-heading', '--color', 'never'] } },
+      \   'uiParams': { 'ff': { 'startFilter': v:false, } },
+      \ })
+call ddu#custom#patch_local('line', {
+      \   'uiParams': { 'ff': { 'startFilter': v:true, } },
+      \ })
+'''

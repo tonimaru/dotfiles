@@ -1,7 +1,7 @@
 if 0 | finish | endif
 
 set maxmempattern=2000
-set updatetime=2000
+set updatetime=300
 
 if has("nvim")
   tnoremap <silent> <ESC> <C-\><C-n>
@@ -10,13 +10,13 @@ if has("nvim")
   set inccommand=split
 else
   function! s:pydll(cmd, optname)
-    if isdirectory($PYENV_ROOT) && executable(a:cmd)
+    if !isdirectory($PYENV_ROOT) || !executable(a:cmd)
       return
     endif
     let l:ver=substitute(system(a:cmd . ' -c "import platform; print(platform.python_version())"'), '\n$', '', '')
     let l:dir=$PYENV_ROOT . '/versions/' . l:ver
-    let l:dll=substitute(system('find "' . l:dir . '" -name "libpython*.dylib"'))
-    eval('let &' . a:optname . '=' . l:dll)
+    let l:dll=substitute(system('find "' . l:dir . '" -name "libpython*.dylib"'), '\n$', '', '')
+    eval('let &' . a:optname . '=' . '"' . l:dll . '"')
   endfunction
   call s:pydll('python2', 'pythondll')
   call s:pydll('python3', 'pythonthreedll')
@@ -31,16 +31,18 @@ endif
 
 scriptencoding utf-8
 
-if has('autocmd')
-  augroup my_vimrc
-    autocmd!
-  augroup END
-  command! -bang -nargs=* Au autocmd<bang> my_vimrc <args>
-else
-  command! -bang -nargs=* Au
-endif
+augroup my_vimrc
+  autocmd!
+augroup END
+command! -bang -nargs=* Au autocmd<bang> my_vimrc <args>
 
 command! Cd cd %:p:h
+
+function! s:uuid()
+  let uuid = system('uuidgen | tr "[A-Z]" "[a-z]" | tr -d "\n"')
+  exe "normal! i" . uuid . "\<Esc>"
+endfunction
+command! UUID call s:uuid()
 
 function! s:init_cmdwin()
   nnoremap <buffer><silent><nowait> <ESC> <C-w>c
@@ -62,7 +64,7 @@ function! s:CleanNoNameEmptyBuffers()
     endif
 endfunction
 Au CursorHold * call s:CleanNoNameEmptyBuffers()
-Au BufEnter * silent! if empty(&buftype) | lcd %:p:h | endif
+Au BufEnter * silent! if isdirectory(expand('%:p:h')) | silent! lcd %:p:h | endif
 
 let s:is_mswin = has('win95') || has('win16') || has('win32') || has('win64')
 
@@ -96,7 +98,8 @@ if has('persistent_undo')
   execute printf('set undodir=%s', s:undo_dir)
 endif
 
-" set number
+set number
+set signcolumn=number
 
 set nowrap
 
@@ -119,7 +122,7 @@ set backspace=indent,eol,start
 
 set foldlevel=100
 
-set diffopt+=vertical
+set diffopt+=vertical,algorithm:histogram,indent-heuristic
 
 execute printf('set verbosefile=%s', s:vimdir('verbosefile'))
 
@@ -132,6 +135,10 @@ endif
 
 if has('insert_expand')
   set completeopt-=preview,longest,noselect,noinsert
+endif
+
+if has('matchfuzzy')
+  set completeopt+=matchfuzzy
 endif
 
 if has('smartindent')
@@ -169,6 +176,8 @@ set iskeyword-=.
 set iskeyword-=#
 set iskeyword-=-
 
+set conceallevel=0
+
 nnoremap j gj
 nnoremap gj j
 nnoremap k gk
@@ -179,8 +188,10 @@ nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 nmap <Space> [prefix]
 nnoremap [prefix] <Nop>
 
-nnoremap <silent> [prefix]ee :<C-u>e $MYVIMRC<CR>
-nnoremap <silent> [prefix]er :<C-u>so $MYVIMRC<CR>
+nnoremap <silent> [prefix]ee <Cmd>e $MYVIMRC<CR>
+nnoremap <silent> [prefix]er <Cmd>so $MYVIMRC<CR>
+
+nnoremap <silent> <C-t> <C-w>n<Cmd>ter<CR>
 
 inoremap <expr> <C-g> pumvisible() ? "\<C-n>" : "\<C-g>"
 inoremap <expr> <C-t> pumvisible() ? "\<C-p>" : "\<C-t>"
@@ -203,12 +214,41 @@ function! s:operator_replace(type)
   let &paste = p_save
   let &selection = sel_save
 endfunction
-nnoremap <silent> s :<C-u>set opfunc=<SID>operator_replace<CR>g@
-xnoremap <silent> s :<C-u>call <SID>operator_replace(visualmode())<CR>
+nnoremap <silent> s <Cmd>set opfunc=<SID>operator_replace<CR>g@
+xnoremap <silent> s :call <SID>operator_replace(visualmode())<CR>
 
-let s:plugins_main_source = s:vimdir('plugins_main.vim')
-execute 'source' s:plugins_main_source
-execute 'nnoremap' '[prefix]ep' ':e' s:plugins_main_source.'<CR>'
+nmap [prefix]i [insert]
+nnoremap [insert] <Nop>
+
+nnoremap [insert]d a<C-r>=strftime('%F')<CR>
+nnoremap [insert]u <Cmd>UUID<CR>
+
+nmap [prefix]l [lang]
+nnoremap [lang] <Nop>
+
+function! Root_dir()
+  let l:gitroot = system('git rev-parse --show-toplevel')
+  if v:shell_error == 0
+    return l:gitroot
+  endif
+  return expand('%:p:h')
+endfunction
+
+function! Terminal_exec(cmd, ...) abort
+  silent! write
+  let l:args = substitute(join(a:000), '\s\+$', '', '')
+  if has('nvim')
+      let l:cmd = 'terminal'
+  elseif has('terminal')
+      let l:cmd = 'terminal ++curwin'
+  else
+      let l:cmd = '!'
+  endif
+  noautocmd new
+  execute l:cmd 'set' '-x' '&&' a:cmd l:args
+endfunction
+
+execute 'source' s:vimdir('plugins_main.vim')
 
 runtime macros/matchit.vim
 
@@ -225,14 +265,9 @@ if !has('gui_running')
 endif
 
 function! s:col()
-  let s:has_neodark = !empty(globpath(&runtimepath, expand('colors/neodark.vim')))
-  if (!s:is_mswin || has('gui_running')) && s:has_neodark
-    colorscheme neodark
-    return
-  endif
-  let s:has_iceberg = !empty(globpath(&runtimepath, expand('colors/iceberg.vim')))
-  if (!s:is_mswin || has('gui_running')) && s:has_iceberg
-    colorscheme iceberg
+  let l:has_codedark = !empty(globpath(&runtimepath, expand('colors/codedark.vim')))
+  if (!s:is_mswin || has('gui_running')) && l:has_codedark
+    colorscheme codedark
     return
   endif
 endfunction
@@ -246,3 +281,4 @@ let s:local_vimrc = s:vimdir('local_vimrc')
 silent! execute 'source' s:local_vimrc
 execute 'nnoremap' '[prefix]el' ':e' s:local_vimrc.'<CR>'
 
+highlight LineNr ctermfg=grey ctermbg=black guifg=grey guibg=black

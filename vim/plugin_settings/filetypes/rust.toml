@@ -1,0 +1,17 @@
+hook_add = '''
+function! s:rust_run()
+  let l:cargo = findfile('Cargo.toml', ".;")
+  if filereadable(l:cargo)
+    call Terminal_exec('cargo', 'run')
+    return
+  endif
+  call Terminal_exec('rustc', expand('%:p'), '&&', expand('%:p:r'), '&&', 'rm', expand('%:p:r'))
+endfunction
+'''
+[ftplugin]
+rust = '''
+nnoremap <silent><buffer> [lang]q <Cmd>call <SID>rust_run()<CR>
+nnoremap <silent><buffer> [lang]b <Cmd>call Terminal_exec('cargo', 'build')<CR>
+nnoremap <silent><buffer> [lang]t <Cmd>call Terminal_exec('cargo', 'test -- --test-threads=4 --nocapture')<CR>
+'''
+

@@ -1,0 +1,9 @@
+[[plugins]]
+repo = 'katono/rogue.vim'
+hook_add = '''
+  let g:rogue#japanese = 1
+'''
+
+[[plugins]]
+repo = 'vim-jp/vimdoc-ja'
+

@@ -1,0 +1,16 @@
+hook_add = '''
+function! s:json_pretty()
+  call Terminal_exec('cat', expand('%:p'), '|', 'npx -y strip-json-comments-cli', '|', 'jq')
+endfunction
+'''
+
+[ftplugin]
+json = '''
+nnoremap <silent><buffer> [lang]q <Cmd>call <SID>json_pretty()<CR>
+'''
+jsonc = '''
+nnoremap <silent><buffer> [lang]q <Cmd>call <SID>json_pretty()<CR>
+'''
+
+[[plugins]]
+repo = 'neoclide/jsonc.vim'

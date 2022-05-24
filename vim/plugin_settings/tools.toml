@@ -1,0 +1,114 @@
+[[plugins]]
+repo = 'Shougo/defx.nvim'
+hook_add = '''
+nnoremap <silent> [prefix]f <Cmd>Defx -auto-cd -show-ignored-files -resume<CR>
+nnoremap <silent> [prefix]F <Cmd>Defx -auto-cd -show-ignored-files -new<CR>
+
+function! s:ddu_file_rec(path, resume=v:false)
+  let l:src = { 'name': 'file_rec' }
+  if !empty(a:path)
+    let l:src['filterParams'] = { 'path': a:path }
+  endif
+  call ddu#start({'sources': [l:src], 'resume': a:resume})
+endfunction
+'''
+hook_post_source = '''
+  call defx#custom#option('_', { 'columns': 'mark:filename:type:size:time', })
+'''
+[plugins.ftplugin]
+defx = '''
+if exists('*ddu#start')
+  if exists(':DduRg')
+    nnoremap <silent><buffer> gr <Cmd>DduRg<CR>
+  endif
+  nnoremap <silent><buffer> f <Cmd>call ddu#start({'sources': [{'name': 'file_rec', 'filterParams': {'path': Root_dir()}}]})<CR>
+  nnoremap <silent><buffer> u <Cmd>call ddu#start({'sources': [{'name': 'mr'}]})<CR>
+  nnoremap <silent><buffer> r <Cmd>call ddu#start({'resume': v:true})<CR>
+endif
+nnoremap <nowait><silent><buffer><expr> . defx#do_action('toggle_ignored_files')
+nnoremap <nowait><silent><buffer><expr> c defx#do_action('copy')
+nnoremap <nowait><silent><buffer><expr> m defx#do_action('move')
+nnoremap <nowait><silent><buffer><expr> p defx#do_action('paste')
+nnoremap <nowait><silent><buffer><expr> h defx#do_action('cd', ['..'])
+nnoremap <nowait><silent><buffer><expr> j line('.') == line('$') ? 'ggj' : 'j'
+nnoremap <nowait><silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
+nnoremap <nowait><silent><buffer><expr> l defx#do_action('open')
+nnoremap <nowait><silent><buffer><expr> t defx#do_action('open', 'tabnew')
+nnoremap <nowait><silent><buffer><expr> D defx#do_action('new_directory')
+nnoremap <nowait><silent><buffer><expr> F defx#do_action('new_file')
+nnoremap <nowait><silent><buffer><expr> d defx#do_action('remove')
+nnoremap <nowait><silent><buffer><expr> r defx#do_action('rename')
+nnoremap <nowait><silent><buffer><expr> ~ defx#do_action('cd')
+nnoremap <nowait><silent><buffer><expr> \ defx#do_action('cd', ['/'])
+nnoremap <nowait><silent><buffer><expr> - defx#do_action('open_or_close_tree')
+nnoremap <nowait><silent><buffer><expr> q defx#do_action('quit')
+nnoremap <nowait><silent><buffer> Q <Cmd>bp\|bd #<CR>
+nnoremap <nowait><silent><buffer><expr> * defx#do_action('toggle_select_all')
+nnoremap <nowait><silent><buffer><expr> <CR> defx#do_action('open')
+nnoremap <nowait><silent><buffer><expr> ; defx#do_action('toggle_select') . 'j'
+nnoremap <nowait><silent><buffer><expr> <C-l> defx#do_action('redraw')
+nnoremap <nowait><silent><buffer><expr> <C-g> defx#do_action('print')
+nnoremap <nowait><silent><buffer><expr> y defx#do_action('yank_path')
+'''
+
+[[plugins]]
+repo = 'Shougo/vinarise.vim'
+
+[[plugins]]
+repo = 'skanehira/translate.vim'
+hook_add = '''
+  let g:translate_popup_window=0
+  vnoremap t <Cmd>Translate<CR>
+'''
+
+[[plugins]]
+repo = 'thinca/vim-prettyprint'
+
+[[plugins]]
+repo = 'thinca/vim-qfreplace'
+
+[[plugins]]
+repo = 'thinca/vim-quickrun'
+hook_add = '''
+  nnoremap [prefix]q <Cmd>QuickRun<CR>
+
+  if filereadable(expand('~/.vim/quickrun_config.vim'))
+    execute 'source' expand('~/.vim/quickrun_config.vim')
+  endif
+'''
+
+[[plugins]]
+repo = 'thinca/vim-ref'
+hook_add = '''
+  let g:ref_man_cmd='man'
+'''
+
+[[plugins]]
+repo = 'tyru/open-browser.vim'
+
+[[plugins]]
+repo = 'tyru/open-browser-github.vim'
+
+[[plugins]]
+repo = 'lambdalisue/gin.vim'
+hook_add = '''
+  function! s:gin_switch()
+    let input = input("branch name: ")
+    if len(input) != 0
+      execute 'Gin switch -c ' . input
+    endif
+  endfunction
+  nmap [prefix]g [gin]
+  nnoremap [gin] <Nop>
+  nnoremap [gin]cc <Cmd>call Terminal_exec('git', 'commit')<CR>
+  nnoremap [gin]ca <Cmd>call Terminal_exec('git', 'commit', '--amend')<CR>
+  nnoremap [gin]ce <Cmd>call Terminal_exec('git', 'commit', '--amend', '--no-edit')<CR>
+  nnoremap [gin]b <Cmd>GinBranch -a<CR>
+  nnoremap [gin]l <Cmd>call Terminal_exec('git', 'log')<CR>
+  nnoremap [gin]d <Cmd>GinDiff %<CR>
+  nnoremap [gin]s <Cmd>GinStatus<CR>
+  nnoremap [gin]w <Cmd>call <SID>gin_switch()<CR>
+  nnoremap [gin]p <Cmd>Gin pull --rebase<CR>
+  nnoremap [gin]u <Cmd>Gin push origin 
+  nnoremap [gin]f <Cmd>Gin fetch -p<CR>
+'''
