@@ -16,6 +16,7 @@ else
   call dein#load_toml(s:base_dir . 'vim.toml', {'merged': v:false})
 endif
 
+call dein#load_toml(s:base_dir . 'filetypes/clojure.toml')
 call dein#load_toml(s:base_dir . 'filetypes/go.toml')
 call dein#load_toml(s:base_dir . 'filetypes/html.toml')
 call dein#load_toml(s:base_dir . 'filetypes/json.toml')

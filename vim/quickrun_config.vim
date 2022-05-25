@@ -25,3 +25,8 @@ let g:quickrun_config['go'] = {
 \   'exec': 'GO111MODULE=off %c run %s:p:t %a',
 \   'command': 'go',
 \ }
+
+let g:quickrun_config['clojure'] = {
+\   'command': 'clj',
+\   'exec': '%c -M %s %a',
+\ }
