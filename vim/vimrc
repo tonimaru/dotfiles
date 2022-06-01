@@ -8,6 +8,8 @@ if has("nvim")
   tnoremap <silent> <M-Left> <Esc>b
   tnoremap <silent> <M-Right> <Esc>f
   set inccommand=split
+  let g:python3_host_prog = trim(system('which python3'))
+  let g:perl_host_prog = trim(system('which perl'))
 else
   function! s:pydll(cmd, optname)
     if !isdirectory($PYENV_ROOT) || !executable(a:cmd)
@@ -108,7 +110,7 @@ set hidden
 set keywordprg=
 
 set list
-set listchars=eol:$,tab:>-,trail:_,extends:>,precedes:>
+set listchars=eol:↴,tab:>-,trail:_,extends:>,precedes:>
 
 set tabstop=2 shiftwidth=2 softtabstop=2
 set expandtab smarttab
@@ -281,4 +283,4 @@ let s:local_vimrc = s:vimdir('local_vimrc')
 silent! execute 'source' s:local_vimrc
 execute 'nnoremap' '[prefix]el' ':e' s:local_vimrc.'<CR>'
 
-highlight LineNr ctermfg=grey ctermbg=black guifg=grey guibg=black
+highlight LineNr guifg=grey guibg=black

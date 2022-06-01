@@ -132,7 +132,7 @@ function attach_lsp(server_name)
       requested_server:install()
     end
     local server = nvim_lsp[server_name]
-    server.manager.try_add(bufnr)
+    server.manager.try_add()
   end
 end
 
