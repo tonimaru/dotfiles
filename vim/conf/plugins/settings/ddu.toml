@@ -1,0 +1,254 @@
+[[plugins]]
+repo = 'Shougo/ddu.vim'
+depends = 'denops.vim'
+hook_add = '''
+  function! DduRgFn()
+    call ddu#start({'name': 'grep', 'sources': [#{name: 'rg', params: #{input: input("search word: ")}}]})
+  endfunction
+  nnoremap <silent> gr <Cmd>call DduRgFn()<CR>
+  nnoremap <silent> gq <Cmd>call ddu#start(#{name: 'ghq'})<CR>
+  nnoremap <silent> [prefix]b <Cmd>call ddu#start(#{name: 'buffer'})<CR>
+  nnoremap <silent> [prefix]u <Cmd>call ddu#start(#{name: 'mr'})<CR>
+  nnoremap <silent> [prefix]j <Cmd>call ddu#start(#{name: 'junkfile'})<CR>
+  nnoremap <silent> [prefix]rp <Cmd>call ddu#start(#{name: 'grep', resume: v:true})<CR>
+  nnoremap <silent> [prefix]rb <Cmd>call ddu#start(#{name: 'buffer', resume: v:true})<CR>
+  nnoremap <silent> [prefix]df <Cmd>call ddu#start(#{name: 'filer'})<CR>
+  nnoremap <silent> [prefix]dl <Cmd>call ddu#start(#{name: 'line'})<CR>
+'''
+hook_source = '''
+  call ddu#custom#patch_global({
+      \   'ui': 'ff',
+      \   'sourceOptions': {
+      \     '_': {
+      \       'matchers': ['matcher_fzf'],
+      \     },
+      \   },
+      \   'kindOptions': {
+      \     'file': { 'defaultAction': 'open' },
+      \     'action': { 'defaultAction': 'do' },
+      \   },
+      \   'actionOptions': {
+      \     'narrow': {
+      \       'quit': v:false,
+      \     },
+      \   },
+      \   'uiParams': {
+      \     'filer': {
+      \       'split': 'none',
+      \       'sort': 'filename',
+      \     },
+      \   },
+      \ })
+  if has('nvim')
+    call ddu#custom#patch_global({
+        \   'uiParams': {
+        \     'ff': {
+        \       'split': 'floating',
+        \       'floatingBorder': 'single',
+        \       'winRow': -1,
+        \       'winCol': -1,
+        \       'winHeight': &lines - 5,
+        \       'previewFloating': v:true,
+        \       'previewFloatingBorder': 'single',
+        \       'previewVertical': v:true,
+        \       'previewWidth': &columns / 2 - 2,
+        \       'previewHeight': &lines - 5,
+        \     },
+        \   },
+        \ })
+  endif
+  call ddu#custom#patch_local('line', {
+      \   'sources': [{'name': 'line'}],
+      \ })
+  call ddu#custom#patch_local('buffer', {
+      \   'sources': [{'name': 'buffer'}],
+      \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
+      \ })
+  call ddu#custom#patch_local('mr', {
+      \   'sources': [{'name': 'mr'}],
+      \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
+      \ })
+  call ddu#custom#patch_local('junkfile', {
+      \   'sources': [{'name': 'junkfile'}],
+      \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
+      \   'volatile': v:true,
+      \ })
+  call ddu#custom#patch_local('filer', {
+      \   'ui': 'filer',
+      \   'sources': [{'name': 'file'}],
+      \   'sourceOptions': {
+      \     'file': {
+      \       'matchers': ['matcher_hidden'],
+      \       'columns': ['filename'],
+      \     },
+      \   },
+      \   'kindOptions': {
+      \     'file': {
+      \       'defaultAction': 'open',
+      \     },
+      \   },
+      \   'volatile': v:true,
+      \ })
+  call ddu#custom#patch_local('grep', {
+      \   'sourceParams' : { 'rg' : { 'args': ['--column', '--no-heading', '--color', 'never'] } },
+      \   'uiParams': { 'ff': { 'startFilter': v:false, 'autoAction': {'name': 'preview'}, } },
+      \ })
+  call ddu#custom#patch_local('line', {
+      \   'uiParams': {
+      \     'ff': {
+      \       'startFilter': v:true,
+      \       'winCol': &columns / 4,
+      \     },
+      \   },
+      \ })
+  call ddu#custom#patch_local('ghq', {
+      \   'sources': [{'name': 'ghq'}],
+      \   'kindOptions': {
+      \     'file': {
+      \       'defaultAction': 'cd',
+      \     },
+      \   },
+      \ })
+'''
+
+# source
+
+[[plugins]]
+repo = '4513ECHO/ddu-source-ghq'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-action'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-file'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-file_rec'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-line'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/junkfile.vim'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'kuuote/ddu-source-mr'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'lambdalisue/mr.vim'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'shun/ddu-source-buffer'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'shun/ddu-source-rg'
+on_source = 'ddu.vim'
+
+# filter
+
+[[plugins]]
+repo = 'yuki-yano/ddu-filter-fzf'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-filter-matcher_hidden'
+on_source = 'ddu.vim'
+
+# kind
+
+[[plugins]]
+repo = 'Shougo/ddu-kind-file'
+on_source = 'ddu.vim'
+
+# column
+
+[[plugins]]
+repo = 'Shougo/ddu-column-filename'
+on_source = 'ddu.vim'
+
+# ui
+
+[[plugins]]
+repo = 'Shougo/ddu-ui-ff'
+on_source = 'ddu.vim'
+[plugins.ftplugin]
+ddu-ff = '''
+  nnoremap <buffer> <CR> <Cmd>call ddu#ui#ff#do_action('itemAction')<CR>
+  nnoremap <buffer> a <Cmd>call ddu#ui#ff#do_action('chooseAction')<CR>
+  nnoremap <buffer> i <Cmd>call ddu#ui#ff#do_action('openFilterWindow')<CR>
+  nnoremap <buffer> p <Cmd>call ddu#ui#ff#do_action('preview')<CR>
+  nnoremap <buffer> q <Cmd>call ddu#ui#ff#do_action('quit')<CR>
+  nnoremap <buffer> * <Cmd>call ddu#ui#ff#do_action('toggleAllItems')<CR>
+  nnoremap <buffer> ; <Cmd>call ddu#ui#ff#do_action('toggleSelectItem')<CR>
+  nnoremap <buffer> r <Cmd>call ddu#ui#ff#do_action('itemAction', {'name': 'quickfix'})<CR>
+  nnoremap <buffer> d <Nop>
+  nnoremap <buffer> dd <Cmd>call ddu#ui#ff#do_action('itemAction', {'name': 'delete' })<CR>
+'''
+ddu-ff-filter = '''
+  inoremap <buffer> <CR> <Esc><Cmd>call ddu#ui#ff#close()<CR>
+  nnoremap <buffer> <CR> <Cmd>call ddu#ui#ff#close()<CR>
+  nnoremap <buffer> q <Cmd>call ddu#ui#ff#close()<CR>
+  nnoremap <buffer> <nowait> <Esc> <Cmd>call ddu#ui#ff#close()<CR>
+'''
+
+[[plugins]]
+repo = 'Shougo/ddu-ui-filer'
+on_source = 'ddu.vim'
+hook_source = '''
+  autocmd my_vimrc BufEnter ddu-filer-filer call ddu#ui#filer#do_action('checkItems')
+'''
+[plugins.ftplugin]
+ddu-filer = '''
+  function! ToggleHidden(name)
+    let current = ddu#custom#get_current(b:ddu_ui_name)
+    let source_options = get(current, 'sourceOptions', {})
+    let source_options_name = get(source_options, a:name, {})
+    let matchers = get(source_options_name, 'matchers', [])
+    call ddu#ui#filer#do_action('updateOptions', {
+        \   'sourceOptions': {
+        \     'file': { 'matchers': empty(matchers) ? ['matcher_hidden'] : [] },
+        \   },
+        \ })
+    call ddu#ui#filer#do_action('refreshItems')
+  endfunction
+  nnoremap <silent><buffer> . <Cmd>call ToggleHidden('file')<CR>
+  nnoremap <silent><buffer> c <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'copy'})<CR>
+  nnoremap <silent><buffer> m <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'move'})<CR>
+  nnoremap <silent><buffer> p <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'paste'})<CR>
+  nnoremap <silent><buffer> h <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow', 'params': {'path': '..'}})<CR>
+  nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
+  nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
+  nnoremap <silent><buffer><expr> l ddu#ui#filer#is_tree() ?
+        \ "<Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow'})<CR>" : 
+        \ "<Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'open'})<CR>"
+  nnoremap <silent><buffer><expr> <CR> ddu#ui#filer#get_item().kind == 'file' ?
+        \ ddu#ui#filer#is_tree() ?
+        \   "<Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow'})<CR>" : 
+        \   "<Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'open'})<CR>" :
+        \ "<Cmd>call ddu#ui#filer#do_action('itemAction')<CR>"
+  nnoremap <silent><buffer> w <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'open', 'params': {'command': 'split'}})<CR>
+  nnoremap <silent><buffer> t <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'open', 'params': {'command': 'tabnew'}})<CR>
+  nnoremap <nowait><silent><buffer> d <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'trash' })<CR>
+  nnoremap <silent><buffer> D <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'newDirectory'})<CR>
+  nnoremap <silent><buffer> F <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'newFile'})<CR>
+  nnoremap <silent><buffer> r <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'rename'})<CR>
+  nnoremap <silent><buffer> ~ <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow', 'params': {'path': $HOME}})<CR>
+  nnoremap <silent><buffer> \ <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow', 'params': {'path': '/'}})<CR>
+  nnoremap <silent><buffer> - <Cmd>call ddu#ui#filer#do_action('expandItem', {'mode': 'toggle'})<CR>
+  nnoremap <silent><buffer> q <Cmd>call ddu#ui#filer#do_action('quit')<CR>
+  nnoremap <silent><buffer> Q <Cmd>bp\|bd #<CR>
+  nnoremap <silent><buffer> * <Cmd>call ddu#ui#filer#do_action('toggleAllItems')<CR>
+  nnoremap <silent><buffer> ; <Cmd>call ddu#ui#filer#do_action('toggleSelectItem')<CR>
+  nnoremap <silent><buffer> <C-l> <Cmd>call ddu#ui#filer#do_action('checkItems')<CR>
+  nnoremap <silent><buffer> y <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'yank'})<CR>
+  nnoremap <silent><buffer> a <Cmd>call ddu#ui#filer#do_action('chooseAction')<CR>
+'''

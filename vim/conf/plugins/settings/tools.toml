@@ -1,0 +1,91 @@
+[[plugins]]
+repo = 'Shougo/vinarise.vim'
+
+[[plugins]]
+repo = 'skanehira/translate.vim'
+hook_add = '''
+  let g:translate_popup_window=0
+  vnoremap t <Cmd>Translate<CR>
+'''
+
+[[plugins]]
+repo = 'thinca/vim-prettyprint'
+
+[[plugins]]
+repo = 'thinca/vim-qfreplace'
+
+[[plugins]]
+repo = 'thinca/vim-quickrun'
+hook_add = '''
+  nnoremap [prefix]q <Cmd>QuickRun<CR>
+
+  let g:quickrun_config = get(g:, 'quickrun_config', {})
+  let g:quickrun_config['_'] = {}
+  if has('nvim')
+    let g:quickrun_config['_']['runner'] = 'neovim_job'
+  elseif exists('*ch_close_in')
+    let g:quickrun_config['_']['runner'] = 'job'
+    let g:quickrun_config['_']['runner/job/interval'] = 33
+  endif
+
+  let g:quickrun_config['json'] = {'type': executable('jq') ? 'json/jq' : executable('json2yaml') ? 'json/json2yaml' : ''}
+  let g:quickrun_config['json/jq'] = {'command': 'jq', 'exec': 'cat %s | %c "%o"', 'cmdopt': '.', 'outputter/buffer/filetype': 'json'}
+  let g:quickrun_config['json/json2yaml'] = {'command': 'json2yaml', 'exec': '%c %s', 'outputter/buffer/filetype': 'yaml'}
+
+  let g:quickrun_config['yaml'] = {'type': executable('yaml2json') ? 'yaml/yaml2json' : ''}
+  let g:quickrun_config['yaml/yaml2json'] = {'command': 'yaml2json', 'exec': '%c %s', 'outputter/buffer/filetype': 'json'}
+'''
+
+[[plugins]]
+repo = 'lambdalisue/vim-quickrun-neovim-job'
+if = "has('nvim')"
+on_source = 'vim-quickrun'
+
+[[plugins]]
+repo = 'thinca/vim-ref'
+hook_add = '''
+  let g:ref_man_cmd='man'
+'''
+
+[[plugins]]
+repo = 'tyru/open-browser.vim'
+on_cmd = [
+  'OpenBrowser',
+  'OpenBrowserSearch',
+  'OpenBrowserSmartSearch',
+]
+
+[[plugins]]
+repo = 'tyru/open-browser-github.vim'
+on_cmd = [
+  'OpenGithubFile',
+  'OpenGithubIssue',
+  'OpenGithubPullReq',
+  'OpenGithubProject',
+  'OpenGithubCommit',
+  'OpenGithubPullReq',
+]
+
+[[plugins]]
+repo = 'iamcco/markdown-preview.nvim'
+build = 'cd app && yarn install'
+on_cmd = [
+  'MarkdownPreview',
+  'MarkdownPreviewStop',
+  'MarkdownPreviewToggle',
+]
+hook_add = '''
+  let g:mkdp_theme = 'dark'
+'''
+
+[[plugins]]
+repo = 'junegunn/vim-easy-align'
+on_map = '<Plug>(EasyAlign)'
+hook_add = '''
+  xmap ga <Plug>(EasyAlign)
+  nmap ga <Plug>(EasyAlign)
+'''
+
+[[plugins]]
+repo = 'direnv/direnv.vim'
+on_event = 'VimEnter'

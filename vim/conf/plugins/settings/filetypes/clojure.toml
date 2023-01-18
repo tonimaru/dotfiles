@@ -1,0 +1,4 @@
+[ftplugin]
+clojure = '''
+nnoremap <silent><buffer> [prefix]q <Cmd>call Terminal_exec('lein run')<CR>
+'''

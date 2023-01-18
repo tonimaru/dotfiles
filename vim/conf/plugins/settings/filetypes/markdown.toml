@@ -1,2 +1,3 @@
 [[plugins]]
 repo = 'PratikBhusal/vim-grip'
+on_ft = 'markdown'

@@ -1,0 +1,42 @@
+[[plugins]]
+repo = 'lewis6991/gitsigns.nvim'
+if = "has('nvim')"
+on_event = 'BufEnter'
+lua_source = '''
+  require('gitsigns').setup()
+'''
+
+[[plugins]]
+repo = 'mhinz/vim-signify'
+if = "!has('nvim')"
+on_event = 'BufEnter'
+
+[[plugins]]
+repo = 'lambdalisue/gin.vim'
+depends = 'denops.vim'
+on_cmd = ['Gin', 'GinBranch', 'GinStatus', 'GinDiff']
+hook_add = '''
+  function! s:gin_switch()
+    let input = input("branch name: ")
+    if len(input) != 0
+      execute 'Gin switch -c ' . input
+    endif
+  endfunction
+  nnoremap gb <Cmd>GinBranch -a<CR>
+  nnoremap gs <Cmd>GinStatus<CR>
+
+  nnoremap gnc <Cmd>Gin commit<CR>
+  nnoremap gna <Cmd>Gin commit --amend<CR>
+  nnoremap gnC <Cmd>Gin commit --amend --no-edit<CR>
+  nnoremap gnl <Cmd>call Terminal_exec('git', 'log')<CR>
+  nnoremap gnd <Cmd>GinDiff<CR>
+  nnoremap gnD <Cmd>GinDiff %<CR>
+'''
+[plugins.ftplugin]
+gin-branch = '''
+  nmap <buffer> d <Plug>(gin-action-delete)
+  nmap <buffer> D <Plug>(gin-action-delete:force)
+  nmap <buffer> ? <Plug>(gin-action-help:all)
+  nmap <buffer> m <Plug>(gin-action-move)
+  nmap <buffer> N <Plug>(gin-action-new)
+'''

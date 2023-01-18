@@ -1,11 +1,20 @@
 [[plugins]]
 repo = 'andymass/vim-matchup'
+on_event = 'VimEnter'
 hook_add = '''
-  let g:matchup_matchparen_offscreen = {'method': 'popup'}
+  let g:matchup_matchparen_deferred = 1
+  let g:matchup_matchparen_offscreen = {}
+'''
+lua_source = '''
+  local success, conf = pcall(require, 'nvim-treesitter.configs')
+  if success then
+    conf.setup { matchup = { enable = true } }
+  end
 '''
 
 [[plugins]]
 repo = 'easymotion/vim-easymotion'
+on_map = '<Plug>(easymotion-'
 hook_add = '''
   let g:EasyMotion_do_mapping = 0
   nmap m <Plug>(easymotion-s)
@@ -13,6 +22,7 @@ hook_add = '''
 
 [[plugins]]
 repo = 'haya14busa/vim-asterisk'
+on_map = '<Plug>(asterisk-'
 hook_add = '''
   nmap *  <Plug>(asterisk-z*)
   nmap #  <Plug>(asterisk-z#)
@@ -26,6 +36,7 @@ hook_add = '''
 
 [[plugins]]
 repo = 'kana/vim-smartword'
+on_map = '<Plug>(smartword-'
 hook_add = '''
   nmap w  <Plug>(smartword-w)
   nmap b  <Plug>(smartword-b)

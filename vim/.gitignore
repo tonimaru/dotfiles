@@ -1,10 +1,6 @@
-/*
-/.*
-!.gitignore
-
-!vimrc
-!gvimrc
-!plugins.vim
-!plugins_main.vim
-!quickrun_config.vim
-!plugin_settings
+local_vimrc
+.netrwhist
+backup/
+swap/
+undo/
+verbosefile

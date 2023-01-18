@@ -1,0 +1,36 @@
+[[plugins]]
+repo = 'tomasiser/vim-code-dark'
+lazy = 0
+
+[[plugins]]
+repo = 'nvim-treesitter/nvim-treesitter'
+if = 'has("nvim")'
+on_event = ['BufRead', 'CursorHold']
+hook_post_update = 'TSUpdate'
+lua_source = '''
+  require'nvim-treesitter.configs'.setup {
+    highlight = {
+      enable = true,
+      disable = function(lang, bufnr)
+        return vim.api.nvim_buf_line_count(bufnr) > 50000
+      end,
+    },
+  }
+  local parser_config = require'nvim-treesitter.parsers'.get_parser_configs()
+  parser_config.gotmpl = {
+    install_info = {
+      url = "https://github.com/ngalaiko/tree-sitter-go-template",
+      files = {"src/parser.c"}
+    },
+    filetype = "gotmpl",
+    used_by = {"gohtmltmpl", "gotexttmpl", "gotmpl", "yaml"}
+  }
+  parser_config.bicep = {
+    install_info = {
+      url = "https://github.com/the-mikedavis/tree-sitter-bicep",
+      files = {"src/parser.c"},
+      branch = "main",
+    },
+    filetype = "bicep",
+  }
+'''

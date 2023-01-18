@@ -1,0 +1,46 @@
+[[plugins]]
+repo = 'kana/vim-textobj-user'
+
+[[plugins]]
+repo = 'kana/vim-textobj-entire'
+depends = 'vim-textobj-user'
+on_event = 'VimEnter'
+
+[[plugins]]
+repo = 'kana/vim-textobj-line'
+depends = 'vim-textobj-user'
+on_event = 'VimEnter'
+
+[[plugins]]
+repo = 'kana/vim-operator-user'
+
+[[plugins]]
+repo = 'kana/vim-operator-replace'
+depends = 'vim-operator-user'
+on_map = '<Plug>(operator-replace)'
+hook_add = '''
+  nmap s <Plug>(operator-replace)
+  xmap s <Plug>(operator-replace)
+'''
+
+[[plugins]]
+repo = 'machakann/vim-sandwich'
+on_map = '<Plug>(sandwich-'
+hook_add = '''
+  let g:operator_sandwich_no_default_key_mappings = 1
+  nmap ys <Plug>(sandwich-add)
+  nmap ds <Plug>(sandwich-delete)
+  nmap cs <Plug>(sandwich-replace)
+  xmap S <Plug>(sandwich-add)
+  xmap D <Plug>(sandwich-delete)
+  xmap C <Plug>(sandwich-replace)
+'''
+
+[[plugins]]
+repo = 'tyru/operator-camelize.vim'
+on_map = '<Plug>(operator-camelize-toggle)'
+hook_add = '''
+  let g:operator_camelize_all_uppercase_action='lowercase'
+  nmap [prefix]c <Plug>(operator-camelize-toggle)
+  vmap [prefix]c <Plug>(operator-camelize-toggle)
+'''

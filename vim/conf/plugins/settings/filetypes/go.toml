@@ -1,0 +1,46 @@
+hook_add = '''
+function! Go_root_dir()
+  let l:gomod = findfile('go.mod', ".;")
+  if filereadable(l:gomod)
+    return fnamemodify(l:gomod, ':h')
+  endif
+  return Root_dir()
+endfunction
+function! Go_current_func_name()
+  let orig_view = winsaveview()
+  try
+    let l:pattern = '\C'.'^\s*'.'func\>'.'\s\+'.'\((\w\+\s\+[^)]\+)\s\+\)\='.'\('.'[^(]\+'.'\)'.'\%('.'\s*'.'('.'\=\)'
+    if search(l:pattern, 'bW') == 0
+        return expand("<cword>")
+    endif
+
+    let m = matchlist(getline('.'), l:pattern)
+    if empty(m)
+      return NONE
+    endif
+
+    return m[2]
+  finally
+    call winrestview(orig_view)
+  endtry
+endfunction
+'''
+
+[ftplugin]
+go = '''
+nnoremap <silent><buffer> [prefix]q <Cmd>call Terminal_exec('cd', expand('%:p:h'), '&&', 'go run', expand('%'))<CR>
+nnoremap <silent><buffer> [prefix]tt <Cmd>call Terminal_exec('go test ./... -v -parallel 4 -count=1')<CR>
+nnoremap <silent><buffer> [prefix]tf <Cmd>call Terminal_exec('go test -v -run=' . Go_current_func_name())<CR>
+nnoremap <silent><buffer> [prefix]lb <Cmd>call Terminal_exec('go build -v -trimpath -p 4')<CR>
+'''
+
+[[plugins]]
+repo = 'buoto/gotests-vim'
+on_ft = 'go'
+
+[[plugins]]
+repo = 'kyoh86/vim-go-coverage'
+on_ft = 'go'
+hook_source = '''
+  nnoremap <silent><buffer> [lang]c <Cmd>GoCover<CR>
+'''

@@ -1,3 +1,0 @@
-[[plugins]]
-repo = 'roxma/nvim-yarp'
-repo = 'roxma/vim-hug-neovim-rpc'

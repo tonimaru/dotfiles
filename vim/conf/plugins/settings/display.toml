@@ -1,0 +1,36 @@
+[[plugins]]
+repo = 'nvim-tree/nvim-web-devicons'
+if = "has('nvim')"
+lua_source = '''
+  require('nvim-web-devicons').setup()
+'''
+
+[[plugins]]
+repo = 'nvim-lualine/lualine.nvim'
+depends = 'nvim-web-devicons'
+if = "has('nvim')"
+on_event = "VimEnter"
+lua_source = '''
+  require('lualine').setup {
+    options = {
+      icons_enabled = true,
+      theme = 'auto',
+      component_separators = { left = '|', right = '|' },
+      section_separators = { left = '', right = '' },
+      always_divide_middle = true,
+      globalstatus = false,
+    },
+  }
+'''
+
+[[plugins]]
+repo = 'itchyny/lightline.vim'
+if = "!has('nvim')"
+on_event = "VimEnter"
+
+[[plugins]]
+repo = 'Yggdroot/indentLine'
+on_event = 'VimEnter'
+hook_add = '''
+  let g:indentLine_setConceal = 0
+'''

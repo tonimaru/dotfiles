@@ -1,0 +1,194 @@
+[[plugins]]
+repo = 'nvim-lua/plenary.nvim'
+if = "has('nvim')"
+
+[[plugins]]
+repo = 'mfussenegger/nvim-dap'
+if = "has('nvim')"
+
+[[plugins]]
+repo = 'neovim/nvim-lspconfig'
+if = "has('nvim')"
+depends = [
+  'nvim-lsp-ts-utils',
+  'rust-tools.nvim',
+  'nvim-metals',
+]
+lua_source = '''
+  function has_value(tab, val)
+    for _, value in ipairs(tab) do
+      if value == val then
+        return true
+      end
+    end
+    return false
+  end
+
+  function lsp_client_settings(client)
+    if client.name == 'tsserver' then
+      local ts_utils = require("nvim-lsp-ts-utils")
+      ts_utils.setup({ filter_out_diagnostics_by_code = { 80001 } })
+      ts_utils.setup_client(client)
+      client.server_capabilities.document_formatting = false
+    elseif client.name == 'volar' then
+      client.server_capabilities.document_formatting = false
+    elseif client.name == 'intelephense' then
+      client.server_capabilities.document_formatting = false
+    end
+  end
+
+  function lsp_buf_keymap(bufnr)
+    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+
+    local opts = { noremap = true, silent = true }
+    buf_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+
+    buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+    buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+    buf_set_keymap('n', 'gI', '<cmd>lua vim.lsp.buf.implementation()<CR>', {})
+    buf_set_keymap('n', 'gT', '<cmd>lua vim.lsp.buf.type_definition()<CR>', {})
+    buf_set_keymap('n', 'gR', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+
+    buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+    buf_set_keymap('n', '[prefix]lr', '<cmd>lua vim.lsp.buf.rename()<CR>', {})
+    buf_set_keymap('n', '[prefix]la', '<cmd>lua vim.lsp.buf.code_action()<CR>', {})
+    buf_set_keymap('n', '<c-p>', '<cmd>lua vim.diagnostic.goto_prev({float=false})<CR>', opts)
+    buf_set_keymap('n', '<c-n>', '<cmd>lua vim.diagnostic.goto_next({float=false})<CR>', opts)
+    buf_set_keymap('n', '==', '<cmd>lua vim.lsp.buf.format()<CR>', opts)
+  end
+
+  function on_attach(client, bufnr)
+    lsp_client_settings(client)
+
+    local success, is_attached = pcall(vim.api.nvim_buf_get_var, bufnr, 'is_nivm_lsp_attached')
+    if success and is_attached or false then
+      return
+    end
+    vim.api.nvim_set_option('updatetime', 300)
+    vim.api.nvim_buf_set_var(bufnr, 'is_nivm_lsp_attached', true)
+
+    local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+    buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+    lsp_buf_keymap(bufnr)
+
+    vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+      group = 'my_vimrc',
+      pattern = { "*" },
+      callback = function()
+        vim.diagnostic.open_float(nil, { focus = false, scope = "cursor" })
+      end,
+    })
+  end
+
+  vim.diagnostic.config({
+    virtual_text = false,
+    update_in_insert = true,
+  })
+'''
+
+[[plugins]]
+repo = 'williamboman/mason-lspconfig.nvim'
+if = "has('nvim')"
+depends = [ 'nvim-lspconfig' ]
+lua_source = '''
+  local mlc = require("mason-lspconfig")
+  mlc.setup({
+    automatic_installation = true,
+    ensure_initialized = { "sumneko_lua" },
+  })
+
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+  local opts = {
+    ["denols"] = {
+      single_file_support = true,
+      init_options = {
+        lint = true,
+        unstable = true,
+      },
+    },
+    ["rust_analyzer"] = function()
+      require('rust-tools').setup({
+        server = {
+          on_attach = on_attach,
+          capabilities = capabilities,
+          standalone = true,
+          settings = {
+            ["rust-analyzer"] = {
+              cargo = {
+                allFeatures = true,
+                loadOutDirsFromCheck = true
+              },
+              procMacro = { enable = true },
+              checkOnSave = { command = "clippy" },
+            },
+          },
+        },
+      })
+    end,
+    ["sumneko_lua"] = {
+      settings = { Lua = { diagnostics = { globals = { 'vim' } } } },
+    },
+  }
+
+  mlc.setup_handlers({
+    function(server_name)
+      ---@type table<any, any>
+      local opt = {
+        on_attach = on_attach,
+        capabilities = capabilities,
+        autostart = not has_value({ "tsserver", "eslint", "denols" }, server_name),
+      }
+      if opts[server_name] ~= nil then
+        local exopt = opts[server_name]
+        if type(exopt) == "table" then
+          for k, v in pairs(exopt) do opt[k] = v end
+        elseif type(opts[server_name]) == "function" then
+          return exopt()
+        end
+      end
+      require("lspconfig")[server_name].setup(opt)
+    end,
+  })
+'''
+
+[[plugins]]
+repo = 'williamboman/mason.nvim'
+if = "has('nvim')"
+depends = ['mason-lspconfig.nvim']
+on_event = 'BufEnter'
+lua_source = '''
+  require("mason").setup()
+'''
+
+[[plugins]]
+repo = 'jose-elias-alvarez/nvim-lsp-ts-utils'
+if = "has('nvim')"
+
+[[plugins]]
+repo = 'simrat39/rust-tools.nvim'
+if = "has('nvim')"
+depends = ['plenary.nvim', 'nvim-dap']
+
+[[plugins]]
+repo = 'scalameta/nvim-metals'
+if = "has('nvim')"
+depends = ['plenary.nvim']
+[plugins.ftplugin]
+scala = '''
+lua << EOM
+  local metals_config = require("metals").bare_config()
+  metals_config.on_attach = on_attach
+  require('metals').initialize_or_attach(metals_config)
+EOM
+'''
+sbt = '''
+lua << EOM
+  local metals_config = require("metals").bare_config()
+  metals_config.on_attach = on_attach
+  require('metals').initialize_or_attach(metals_config)
+EOM
+'''

@@ -1,0 +1,49 @@
+[[plugins]]
+repo = 'roxma/nvim-yarp'
+if = "!has('nvim')"
+
+[[plugins]]
+repo = 'roxma/vim-hug-neovim-rpc'
+if = "!has('nvim')"
+
+[[plugins]]
+repo = 'Shougo/defx.nvim'
+depends = ['nvim-yarp', 'vim-hug-neovim-rpc']
+on_cmd = 'Defx'
+hook_add = '''
+nnoremap <silent> [prefix]f <Cmd>Defx -auto-cd -show-ignored-files -resume<CR>
+nnoremap <silent> [prefix]F <Cmd>Defx -auto-cd -show-ignored-files -new<CR>
+'''
+hook_source = '''
+  call defx#custom#option('_', { 'columns': 'mark:filename:type:size:time', })
+'''
+[plugins.ftplugin]
+defx = '''
+nnoremap <silent><buffer> f <Cmd>call ddu#start({'sources': [{'name': 'file_rec'}]})<CR>
+nnoremap <silent><buffer> u <Cmd>call ddu#start({'sources': [{'name': 'mr'}]})<CR>
+
+nnoremap <nowait><silent><buffer><expr> . defx#do_action('toggle_ignored_files')
+nnoremap <nowait><silent><buffer><expr> c defx#do_action('copy')
+nnoremap <nowait><silent><buffer><expr> m defx#do_action('move')
+nnoremap <nowait><silent><buffer><expr> p defx#do_action('paste')
+nnoremap <nowait><silent><buffer><expr> h defx#do_action('cd', ['..'])
+nnoremap <nowait><silent><buffer><expr> j line('.') == line('$') ? 'ggj' : 'j'
+nnoremap <nowait><silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
+nnoremap <nowait><silent><buffer><expr> l defx#do_action('open')
+nnoremap <nowait><silent><buffer><expr> t defx#do_action('open', 'tabnew')
+nnoremap <nowait><silent><buffer><expr> D defx#do_action('new_directory')
+nnoremap <nowait><silent><buffer><expr> F defx#do_action('new_file')
+nnoremap <nowait><silent><buffer><expr> d defx#do_action('remove')
+nnoremap <nowait><silent><buffer><expr> r defx#do_action('rename')
+nnoremap <nowait><silent><buffer><expr> ~ defx#do_action('cd')
+nnoremap <nowait><silent><buffer><expr> \ defx#do_action('cd', ['/'])
+nnoremap <nowait><silent><buffer><expr> - defx#do_action('open_or_close_tree')
+nnoremap <nowait><silent><buffer><expr> q defx#do_action('quit')
+nnoremap <nowait><silent><buffer> Q <Cmd>bp\|bd #<CR>
+nnoremap <nowait><silent><buffer><expr> * defx#do_action('toggle_select_all')
+nnoremap <nowait><silent><buffer><expr> <CR> defx#do_action('open')
+nnoremap <nowait><silent><buffer><expr> ; defx#do_action('toggle_select') . 'j'
+nnoremap <nowait><silent><buffer><expr> <C-l> defx#do_action('redraw')
+nnoremap <nowait><silent><buffer><expr> <C-g> defx#do_action('print')
+nnoremap <nowait><silent><buffer><expr> y defx#do_action('yank_path')
+'''

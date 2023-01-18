@@ -6,11 +6,12 @@ endfunction
 
 [ftplugin]
 json = '''
-nnoremap <silent><buffer> [lang]q <Cmd>call <SID>json_pretty()<CR>
+nnoremap <silent><buffer> [prefix]q <Cmd>call <SID>json_pretty()<CR>
 '''
 jsonc = '''
-nnoremap <silent><buffer> [lang]q <Cmd>call <SID>json_pretty()<CR>
+nnoremap <silent><buffer> [prefix]q <Cmd>call <SID>json_pretty()<CR>
 '''
 
 [[plugins]]
 repo = 'neoclide/jsonc.vim'
+on_ft = ['json', 'jsonc']

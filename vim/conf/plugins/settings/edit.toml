@@ -1,0 +1,50 @@
+[[plugins]]
+repo = 'kana/vim-niceblock'
+on_event = 'VimEnter'
+
+[[plugins]]
+repo = 'kana/vim-repeat'
+on_event = 'VimEnter'
+
+[[plugins]]
+repo = 'machakann/vim-swap'
+on_map = '<Plug>(swap-interactive)'
+hook_add = '''
+  let g:swap_no_default_key_mappings = 1
+  nmap S <Plug>(swap-interactive)
+'''
+
+[[plugins]]
+repo = 't9md/vim-textmanip'
+hook_add = '''
+  xmap <C-j> <Plug>(textmanip-move-down)
+  xmap <C-k> <Plug>(textmanip-move-up)
+  xmap <C-h> <Plug>(textmanip-move-left)
+  xmap <C-l> <Plug>(textmanip-move-right)
+'''
+
+[[plugins]]
+repo = 'tomtom/tcomment_vim'
+
+[[plugins]]
+repo = 'bfredl/nvim-miniyank'
+if = 'has("nvim")'
+on_map = '<Plug>(miniyank-'
+hook_add = '''
+  nmap p <Plug>(miniyank-autoput)
+  nmap P <Plug>(miniyank-autoPut)
+  xmap p <Plug>(miniyank-autoput)
+  xmap P <Plug>(miniyank-autoPut)
+'''
+
+[[plugins]]
+repo = 'monaqa/dial.nvim'
+on_map = '<Plug>(dial-'
+hook_add = '''
+  nmap <C-a> <Plug>(dial-increment)
+  nmap <C-x> <Plug>(dial-decrement)
+  vmap <C-a> <Plug>(dial-increment)
+  vmap <C-x> <Plug>(dial-decrement)
+  vmap g<C-a> g<Plug>(dial-increment)
+  vmap g<C-x> g<Plug>(dial-decrement)
+'''
