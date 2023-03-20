@@ -57,6 +57,9 @@ on_cmd = [
 
 [[plugins]]
 repo = 'tyru/open-browser-github.vim'
+depends = [
+  'open-browser.vim',
+]
 on_cmd = [
   'OpenGithubFile',
   'OpenGithubIssue',
@@ -86,6 +89,9 @@ hook_add = '''
   nmap ga <Plug>(EasyAlign)
 '''
 
-[[plugins]]
-repo = 'direnv/direnv.vim'
-on_event = 'VimEnter'
+# [[plugins]]
+# repo = 'direnv/direnv.vim'
+# hook_add = '''
+# let g:direnv_silent_load = 1
+# '''
+# on_event = 'VimEnter'

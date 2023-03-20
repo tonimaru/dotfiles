@@ -15,7 +15,7 @@ set hidden
 set keywordprg=
 set list
 set listchars=eol:↴,tab:>-,trail:_,extends:>,precedes:>
-set tabstop=2 shiftwidth=2 softtabstop=2
+set tabstop=4 shiftwidth=4 softtabstop=4
 set expandtab smarttab
 set autoindent
 set ignorecase smartcase

@@ -1,7 +1,11 @@
-execute 'source' fnamemodify($MYVIMRC, ":p:h").'/'.'conf/options.vim'
-execute 'source' fnamemodify($MYVIMRC, ":p:h").'/'.'conf/maps.vim'
-execute 'source' fnamemodify($MYVIMRC, ":p:h").'/'.'conf/autocmds.vim'
-execute 'source' fnamemodify($MYVIMRC, ":p:h").'/'.'conf/functions.vim'
-execute 'source' fnamemodify($MYVIMRC, ":p:h").'/'.'conf/plugins/init.vim'
+let s:dir = fnamemodify($MYVIMRC, ":p:h")
+
+execute 'source' s:dir.'/'.'conf/options.vim'
+execute 'source' s:dir.'/'.'conf/maps.vim'
+execute 'source' s:dir.'/'.'conf/autocmds.vim'
+execute 'source' s:dir.'/'.'conf/functions.vim'
+execute 'source' s:dir.'/'.'conf/plugins/init.vim'
 
 highlight LineNr guifg=grey guibg=black
+
+unlet s:dir

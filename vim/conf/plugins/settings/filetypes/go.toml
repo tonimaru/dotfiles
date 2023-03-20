@@ -29,9 +29,8 @@ endfunction
 [ftplugin]
 go = '''
 nnoremap <silent><buffer> [prefix]q <Cmd>call Terminal_exec('cd', expand('%:p:h'), '&&', 'go run', expand('%'))<CR>
-nnoremap <silent><buffer> [prefix]tt <Cmd>call Terminal_exec('go test ./... -v -parallel 4 -count=1')<CR>
-nnoremap <silent><buffer> [prefix]tf <Cmd>call Terminal_exec('go test -v -run=' . Go_current_func_name())<CR>
-nnoremap <silent><buffer> [prefix]lb <Cmd>call Terminal_exec('go build -v -trimpath -p 4')<CR>
+nnoremap <silent><buffer> [prefix]t <Cmd>call Terminal_exec('cd', Go_root_dir(), '&&', 'go test ./... -v -parallel 4 -count=1')<CR>
+nnoremap <silent><buffer> [prefix]lf <Cmd>call Terminal_exec('go test -v -run=' . Go_current_func_name())<CR>
 '''
 
 [[plugins]]
@@ -42,5 +41,5 @@ on_ft = 'go'
 repo = 'kyoh86/vim-go-coverage'
 on_ft = 'go'
 hook_source = '''
-  nnoremap <silent><buffer> [lang]c <Cmd>GoCover<CR>
+  nnoremap <silent><buffer> [prefix]lc <Cmd>GoCover<CR>
 '''

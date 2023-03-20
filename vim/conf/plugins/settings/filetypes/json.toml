@@ -1,15 +1,15 @@
 hook_add = '''
-function! s:json_pretty()
+function! Json_pretty()
   call Terminal_exec('cat', expand('%:p'), '|', 'npx -y strip-json-comments-cli', '|', 'jq')
 endfunction
 '''
 
 [ftplugin]
 json = '''
-nnoremap <silent><buffer> [prefix]q <Cmd>call <SID>json_pretty()<CR>
+nnoremap <silent><buffer> [prefix]q <Cmd>call Json_pretty()<CR>
 '''
 jsonc = '''
-nnoremap <silent><buffer> [prefix]q <Cmd>call <SID>json_pretty()<CR>
+nnoremap <silent><buffer> [prefix]q <Cmd>call Json_pretty()<CR>
 '''
 
 [[plugins]]

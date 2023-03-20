@@ -38,7 +38,8 @@ hook_add = '''
 
 [[plugins]]
 repo = 'tyru/operator-camelize.vim'
-on_map = '<Plug>(operator-camelize-toggle)'
+depends = 'vim-operator-user'
+on_map = '<Plug>(operator-camelize-'
 hook_add = '''
   let g:operator_camelize_all_uppercase_action='lowercase'
   nmap [prefix]c <Plug>(operator-camelize-toggle)

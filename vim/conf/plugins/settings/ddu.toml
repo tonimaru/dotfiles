@@ -3,7 +3,7 @@ repo = 'Shougo/ddu.vim'
 depends = 'denops.vim'
 hook_add = '''
   function! DduRgFn()
-    call ddu#start({'name': 'grep', 'sources': [#{name: 'rg', params: #{input: input("search word: ")}}]})
+    call ddu#start({'volatile': v:true, 'name': 'grep', 'sources': [#{name: 'rg', options: #{matchers: []}}]})
   endfunction
   nnoremap <silent> gr <Cmd>call DduRgFn()<CR>
   nnoremap <silent> gq <Cmd>call ddu#start(#{name: 'ghq'})<CR>
@@ -50,7 +50,7 @@ hook_source = '''
         \       'winHeight': &lines - 5,
         \       'previewFloating': v:true,
         \       'previewFloatingBorder': 'single',
-        \       'previewVertical': v:true,
+        \       'previewSplit': 'vertical',
         \       'previewWidth': &columns / 2 - 2,
         \       'previewHeight': &lines - 5,
         \     },
@@ -90,8 +90,8 @@ hook_source = '''
       \   'volatile': v:true,
       \ })
   call ddu#custom#patch_local('grep', {
-      \   'sourceParams' : { 'rg' : { 'args': ['--column', '--no-heading', '--color', 'never'] } },
-      \   'uiParams': { 'ff': { 'startFilter': v:false, 'autoAction': {'name': 'preview'}, } },
+      \   'sourceParams' : { 'rg' : { 'args': ['-i', '--column', '--no-heading', '--color', 'never'] } },
+      \   'uiParams': { 'ff': { 'startFilter': v:true, 'autoAction': {'name': 'preview'}, } },
       \ })
   call ddu#custom#patch_local('line', {
       \   'uiParams': {

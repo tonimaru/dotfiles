@@ -13,6 +13,12 @@ endfunction
 
 autocmd my_vimrc FileType help noremap <buffer><nowait> q <C-w>c
 
+function! s:ft_go()
+  setlocal noexpandtab
+  setlocal tabstop=2 shiftwidth=2 softtabstop=2
+endfunction
+autocmd my_vimrc FileType go call s:ft_go()
+
 autocmd my_vimrc WinEnter * checktime
 
 autocmd my_vimrc BufNewFile,BufRead *.tmpl call s:ft_gotmpl()

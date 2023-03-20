@@ -14,7 +14,7 @@ on_event = 'BufEnter'
 [[plugins]]
 repo = 'lambdalisue/gin.vim'
 depends = 'denops.vim'
-on_cmd = ['Gin', 'GinBranch', 'GinStatus', 'GinDiff']
+on_cmd = ['Gin', 'GinBranch', 'GinStatus', 'GinDiff', 'GinLog']
 hook_add = '''
   function! s:gin_switch()
     let input = input("branch name: ")
@@ -28,7 +28,7 @@ hook_add = '''
   nnoremap gnc <Cmd>Gin commit<CR>
   nnoremap gna <Cmd>Gin commit --amend<CR>
   nnoremap gnC <Cmd>Gin commit --amend --no-edit<CR>
-  nnoremap gnl <Cmd>call Terminal_exec('git', 'log')<CR>
+  nnoremap gnl <Cmd>GinLog<CR>
   nnoremap gnd <Cmd>GinDiff<CR>
   nnoremap gnD <Cmd>GinDiff %<CR>
 '''
