@@ -36,6 +36,10 @@ nnoremap <silent><buffer> [prefix]lf <Cmd>call Terminal_exec('go test -v -run=' 
 [[plugins]]
 repo = 'buoto/gotests-vim'
 on_ft = 'go'
+hook_add = '''
+let g:gotests_template_dir=''
+let g:gotests_template=''
+'''
 
 [[plugins]]
 repo = 'kyoh86/vim-go-coverage'

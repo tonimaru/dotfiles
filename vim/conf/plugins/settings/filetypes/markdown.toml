@@ -1,3 +1,7 @@
 [[plugins]]
 repo = 'PratikBhusal/vim-grip'
 on_ft = 'markdown'
+
+[[plugins]]
+repo = 'dhruvasagar/vim-table-mode'
+on_ft = 'markdown'

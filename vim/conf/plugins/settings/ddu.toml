@@ -10,8 +10,8 @@ hook_add = '''
   nnoremap <silent> [prefix]b <Cmd>call ddu#start(#{name: 'buffer'})<CR>
   nnoremap <silent> [prefix]u <Cmd>call ddu#start(#{name: 'mr'})<CR>
   nnoremap <silent> [prefix]j <Cmd>call ddu#start(#{name: 'junkfile'})<CR>
-  nnoremap <silent> [prefix]rp <Cmd>call ddu#start(#{name: 'grep', resume: v:true})<CR>
-  nnoremap <silent> [prefix]rb <Cmd>call ddu#start(#{name: 'buffer', resume: v:true})<CR>
+  nnoremap <silent> [prefix]rp <Cmd>call ddu#start(#{name: 'grep', resume: v:true, uiParams: #{ff: #{ startFilter: v:false}}})<CR>
+  nnoremap <silent> [prefix]rb <Cmd>call ddu#start(#{name: 'buffer', resume: v:true, uiParams: #{ff: #{ startFilter: v:false}}})<CR>
   nnoremap <silent> [prefix]df <Cmd>call ddu#start(#{name: 'filer'})<CR>
   nnoremap <silent> [prefix]dl <Cmd>call ddu#start(#{name: 'line'})<CR>
 '''
@@ -194,10 +194,10 @@ ddu-ff = '''
   nnoremap <buffer> dd <Cmd>call ddu#ui#ff#do_action('itemAction', {'name': 'delete' })<CR>
 '''
 ddu-ff-filter = '''
-  inoremap <buffer> <CR> <Esc><Cmd>call ddu#ui#ff#close()<CR>
-  nnoremap <buffer> <CR> <Cmd>call ddu#ui#ff#close()<CR>
-  nnoremap <buffer> q <Cmd>call ddu#ui#ff#close()<CR>
-  nnoremap <buffer> <nowait> <Esc> <Cmd>call ddu#ui#ff#close()<CR>
+  inoremap <buffer> <CR> <Esc><Cmd>call ddu#ui#ff#do_action('closeFilterWindow')<CR>
+  nnoremap <buffer> <CR> <Cmd>call ddu#ui#ff#do_action('closeFilterWindow')<CR>
+  nnoremap <buffer> q <Cmd>call ddu#ui#ff#do_action('closeFilterWindow')<CR>
+  nnoremap <buffer> <nowait> <Esc> <Cmd>call ddu#ui#ff#do_action('closeFilterWindow')<CR>
 '''
 
 [[plugins]]

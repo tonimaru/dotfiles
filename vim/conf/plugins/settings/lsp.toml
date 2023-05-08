@@ -91,7 +91,8 @@ lua_source = '''
 [[plugins]]
 repo = 'williamboman/mason-lspconfig.nvim'
 if = "has('nvim')"
-depends = [ 'nvim-lspconfig' ]
+depends = [ 'nvim-lspconfig', 'mason.nvim' ]
+on_event = 'BufEnter'
 lua_source = '''
   local mlc = require("mason-lspconfig")
   mlc.setup({
@@ -132,6 +133,16 @@ lua_source = '''
     ["sumneko_lua"] = {
       settings = { Lua = { diagnostics = { globals = { 'vim' } } } },
     },
+    ["yamlls"] = {
+        settings = {
+            yaml = {
+                format = {
+                    enable = true,
+                },
+                keyOrdering = false,
+            },
+        },
+    },
   }
 
   mlc.setup_handlers({
@@ -158,8 +169,6 @@ lua_source = '''
 [[plugins]]
 repo = 'williamboman/mason.nvim'
 if = "has('nvim')"
-depends = ['mason-lspconfig.nvim']
-on_event = 'BufEnter'
 lua_source = '''
   require("mason").setup()
 '''

@@ -41,7 +41,7 @@ hook_add = '''
 
 [[plugins]]
 repo = 'monaqa/dial.nvim'
-on_map = '<Plug>(dial-'
+on_event = 'VimEnter'
 hook_add = '''
   nmap <C-a> <Plug>(dial-increment)
   nmap <C-x> <Plug>(dial-decrement)

@@ -22,6 +22,16 @@ hook_add = '''
       execute 'Gin switch -c ' . input
     endif
   endfunction
+  function! s:gin_push()
+    let l:remote=trim(system("git remote get-url origin")).": "
+    let l:branch=trim(system("git branch --show-current"))
+    let l:in = input(l:remote, l:branch)
+    execute "Gin push origin " . trim(l:in)
+  endfunction
+  function! s:gin_switch()
+    let l:in = input("Branch Name: ", "")
+    execute "Gin switch -c " . trim(l:in)
+  endfunction
   nnoremap gb <Cmd>GinBranch -a<CR>
   nnoremap gs <Cmd>GinStatus<CR>
 
@@ -31,10 +41,15 @@ hook_add = '''
   nnoremap gnl <Cmd>GinLog<CR>
   nnoremap gnd <Cmd>GinDiff<CR>
   nnoremap gnD <Cmd>GinDiff %<CR>
+  nnoremap gnP <Cmd>call <SID>gin_push()<CR>
+  nnoremap gnp <Cmd>Gin pull<CR>
+  nnoremap gnf <Cmd>Gin fetch -p<CR>
+  nnoremap gns <Cmd>call <SID>gin_switch()<CR>
 '''
 [plugins.ftplugin]
 gin-branch = '''
-  nmap <buffer> d <Plug>(gin-action-delete)
+  nmap <buffer> dd <Plug>(gin-action-delete)
+  nmap <buffer> ds <Plug>(gin-action-diff:smart)
   nmap <buffer> D <Plug>(gin-action-delete:force)
   nmap <buffer> ? <Plug>(gin-action-help:all)
   nmap <buffer> m <Plug>(gin-action-move)
