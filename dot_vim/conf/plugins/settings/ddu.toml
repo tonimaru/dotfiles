@@ -3,7 +3,7 @@ repo = 'Shougo/ddu.vim'
 depends = 'denops.vim'
 hook_add = '''
   function! DduRgFn()
-    call ddu#start({'volatile': v:true, 'name': 'grep', 'sources': [#{name: 'rg', options: #{matchers: []}}]})
+    call ddu#start({'name': 'grep', 'sources': [#{name: 'rg', options: #{matchers: []}}]})
   endfunction
   nnoremap <silent> gr <Cmd>call DduRgFn()<CR>
   nnoremap <silent> gq <Cmd>call ddu#start(#{name: 'ghq'})<CR>
@@ -21,6 +21,15 @@ hook_source = '''
       \   'sourceOptions': {
       \     '_': {
       \       'matchers': ['matcher_fzf'],
+      \     },
+      \     'junkfile': {
+      \       'volatile': v:true,
+      \     },
+      \     'rg': {
+      \       'volatile': v:true,
+      \     },
+      \     'filer': {
+      \       'volatile': v:true,
       \     },
       \   },
       \   'kindOptions': {
@@ -71,7 +80,6 @@ hook_source = '''
   call ddu#custom#patch_local('junkfile', {
       \   'sources': [{'name': 'junkfile'}],
       \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
-      \   'volatile': v:true,
       \ })
   call ddu#custom#patch_local('filer', {
       \   'ui': 'filer',
@@ -87,7 +95,6 @@ hook_source = '''
       \       'defaultAction': 'open',
       \     },
       \   },
-      \   'volatile': v:true,
       \ })
   call ddu#custom#patch_local('grep', {
       \   'sourceParams' : { 'rg' : { 'args': ['-i', '--column', '--no-heading', '--color', 'never'] } },
