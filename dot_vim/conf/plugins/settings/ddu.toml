@@ -2,7 +2,7 @@
 repo = 'Shougo/ddu.vim'
 depends = 'denops.vim'
 hook_add = '''
-  function! DduRgFn()
+  function! DduRgFn() abort
     call ddu#start({'name': 'grep', 'sources': [#{name: 'rg', options: #{matchers: []}}]})
   endfunction
   nnoremap <silent> gr <Cmd>call DduRgFn()<CR>
@@ -14,6 +14,7 @@ hook_add = '''
   nnoremap <silent> [prefix]rb <Cmd>call ddu#start(#{name: 'buffer', resume: v:true, uiParams: #{ff: #{ startFilter: v:false}}})<CR>
   nnoremap <silent> [prefix]df <Cmd>call ddu#start(#{name: 'filer'})<CR>
   nnoremap <silent> [prefix]dl <Cmd>call ddu#start(#{name: 'line'})<CR>
+  nnoremap <silent> [prefix]dc <Cmd>call ddu#start(#{name: 'chezmoi'})<CR>
 '''
 hook_source = '''
   call ddu#custom#patch_global({
@@ -28,22 +29,14 @@ hook_source = '''
       \     'rg': {
       \       'volatile': v:true,
       \     },
-      \     'filer': {
-      \       'volatile': v:true,
-      \     },
       \   },
       \   'kindOptions': {
       \     'file': { 'defaultAction': 'open' },
       \     'action': { 'defaultAction': 'do' },
       \   },
-      \   'actionOptions': {
-      \     'narrow': {
-      \       'quit': v:false,
-      \     },
-      \   },
       \   'uiParams': {
       \     'filer': {
-      \       'split': 'none',
+      \       'split': 'no',
       \       'sort': 'filename',
       \     },
       \   },
@@ -57,11 +50,13 @@ hook_source = '''
         \       'winRow': -1,
         \       'winCol': -1,
         \       'winHeight': &lines - 5,
+        \       'startAutoAction': v:true,
         \       'previewFloating': v:true,
         \       'previewFloatingBorder': 'single',
         \       'previewSplit': 'vertical',
         \       'previewWidth': &columns / 2 - 2,
         \       'previewHeight': &lines - 5,
+        \       'filterFloatingPosition': 'bottom',
         \     },
         \   },
         \ })
@@ -108,21 +103,32 @@ hook_source = '''
       \     },
       \   },
       \ })
-  call ddu#custom#patch_local('ghq', {
-      \   'sources': [{'name': 'ghq'}],
-      \   'kindOptions': {
-      \     'file': {
-      \       'defaultAction': 'cd',
-      \     },
-      \   },
-      \ })
+  if executable('ghq')
+      let ghq_root = trim(system('ghq root'))
+      call ddu#custom#patch_local('ghq', #{
+          \   sources: [#{name: 'file_external'}],
+          \   sourceOptions: #{file_external: #{path: ghq_root}},
+          \   sourceParams: #{file_external: #{cmd: ['ghq', 'list', '-p']}},
+          \   kindOptions: #{ file: #{ defaultAction: 'cd' } },
+          \ })
+  endif
+  if executable('chezmoi')
+      let chezmoi_src_path = trim(system('chezmoi source-path'))
+      call ddu#custom#patch_local('chezmoi', #{
+          \   sources: [#{name: 'file_external'}],
+          \   sourceOptions: #{file_external: #{path: chezmoi_src_path}},
+          \   sourceParams: #{
+          \     file_external: #{
+          \       cmd: executable('fd')
+          \         ? ['fd', '.', '-t', 'f', '-H', '-E', '.git', chezmoi_src_path]
+          \         : ['find', chezmoi_src_path, '-type', 'f', '-a', '-not', '-path', '*/.git/*'],
+          \     },
+          \   },
+          \ })
+  endif
 '''
 
 # source
-
-[[plugins]]
-repo = '4513ECHO/ddu-source-ghq'
-on_source = 'ddu.vim'
 
 [[plugins]]
 repo = 'Shougo/ddu-source-action'
@@ -158,6 +164,10 @@ on_source = 'ddu.vim'
 
 [[plugins]]
 repo = 'shun/ddu-source-rg'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'matsui54/ddu-source-file_external'
 on_source = 'ddu.vim'
 
 # filter
@@ -215,17 +225,29 @@ hook_source = '''
 '''
 [plugins.ftplugin]
 ddu-filer = '''
-  function! ToggleHidden(name)
-    let current = ddu#custom#get_current(b:ddu_ui_name)
-    let source_options = get(current, 'sourceOptions', {})
-    let source_options_name = get(source_options, a:name, {})
-    let matchers = get(source_options_name, 'matchers', [])
+  function! ToggleHidden(name) abort
+    let cur = ddu#custom#get_current(b:ddu_ui_name)
+    let matchers = cur
+        \ ->get('sourceOptions', {})
+        \ ->get(a:name, {})
+        \ ->get('matchers', [])
+    let foundIdx = matchers->index('matcher_hidden')
+    if foundIdx >= 0
+        call remove(matchers, foundIdx)
+    else 
+        call add(matchers, 'matcher_hidden')
+    endif
+    let sources = cur->get('sources', [])
+    for source in sources
+        if source.name == a:name
+            let opts = source->get('options', {})
+            call extend(opts, #{matchers: matchers})
+        endif
+    endfor
     call ddu#ui#filer#do_action('updateOptions', {
-        \   'sourceOptions': {
-        \     'file': { 'matchers': empty(matchers) ? ['matcher_hidden'] : [] },
-        \   },
+        \   'sourceOptions': { a:name: { 'matchers': matchers } },
+        \   'sources': sources,
         \ })
-    call ddu#ui#filer#do_action('refreshItems')
   endfunction
   nnoremap <silent><buffer> . <Cmd>call ToggleHidden('file')<CR>
   nnoremap <silent><buffer> c <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'copy'})<CR>
@@ -234,11 +256,11 @@ ddu-filer = '''
   nnoremap <silent><buffer> h <Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow', 'params': {'path': '..'}})<CR>
   nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
   nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
-  nnoremap <silent><buffer><expr> l ddu#ui#filer#is_tree() ?
+  nnoremap <silent><buffer><expr> l ddu#ui#get_item()->get('isTree', v:false) ?
         \ "<Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow'})<CR>" : 
         \ "<Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'open'})<CR>"
   nnoremap <silent><buffer><expr> <CR> ddu#ui#filer#get_item().kind == 'file' ?
-        \ ddu#ui#filer#is_tree() ?
+        \ ddu#ui#get_item()->get('isTree', v:false) ?
         \   "<Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow'})<CR>" : 
         \   "<Cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'open'})<CR>" :
         \ "<Cmd>call ddu#ui#filer#do_action('itemAction')<CR>"

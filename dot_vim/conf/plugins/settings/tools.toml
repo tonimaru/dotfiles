@@ -88,10 +88,3 @@ hook_add = '''
   xmap ga <Plug>(EasyAlign)
   nmap ga <Plug>(EasyAlign)
 '''
-
-# [[plugins]]
-# repo = 'direnv/direnv.vim'
-# hook_add = '''
-# let g:direnv_silent_load = 1
-# '''
-# on_event = 'VimEnter'

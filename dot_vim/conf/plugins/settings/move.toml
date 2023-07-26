@@ -13,11 +13,10 @@ lua_source = '''
 '''
 
 [[plugins]]
-repo = 'easymotion/vim-easymotion'
-on_map = '<Plug>(easymotion-'
+repo = "yuki-yano/fuzzy-motion.vim"
+on_cmd = "FuzzyMotion"
 hook_add = '''
-  let g:EasyMotion_do_mapping = 0
-  nmap m <Plug>(easymotion-s)
+  nmap m <Cmd>FuzzyMotion<CR>
 '''
 
 [[plugins]]
