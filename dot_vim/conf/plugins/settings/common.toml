@@ -2,6 +2,20 @@
 repo = 'vim-denops/denops.vim'
 
 [[plugins]]
+repo = 'matsui54/denops-popup-preview.vim'
+depends = [ 'denops.vim' ]
+hook_post_source = '''
+  autocmd my_vimrc User DenopsPluginPost:popup_preview * ++once call popup_preview#enable()
+'''
+
+[[plugins]]
+repo = 'matsui54/denops-signature_help'
+depends = [ 'denops.vim' ]
+hook_post_source = '''
+  autocmd my_vimrc User DenopsPluginPost:signature_help * ++once call signature_help#enable()
+'''
+
+[[plugins]]
 repo = 'Shougo/context_filetype.vim'
 hook_source = '''
   let g:context_filetype#ignore_patterns = #{
