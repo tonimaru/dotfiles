@@ -1,6 +1,6 @@
 [[plugins]]
 repo = 'andymass/vim-matchup'
-on_event = 'VimEnter'
+on_event = ['CursorHold', 'CursorMoved', 'ModeChanged', 'BufReadPost']
 hook_add = '''
   let g:matchup_matchparen_deferred = 1
   let g:matchup_matchparen_offscreen = {}

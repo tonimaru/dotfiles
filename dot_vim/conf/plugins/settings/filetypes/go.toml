@@ -1,36 +1,71 @@
 hook_add = '''
-function! Go_root_dir()
-  let l:gomod = findfile('go.mod', ".;")
-  if filereadable(l:gomod)
-    return fnamemodify(l:gomod, ':h')
+function! Go_alternate_Switch(bang, cmd) abort
+  let file = expand('%')
+  if empty(file)
+    call go#util#EchoError("no buffer name")
+    return
+  elseif file =~# '^\f\+_test\.go$'
+    let l:root = split(file, '_test.go$')[0]
+    let l:alt_file = l:root . ".go"
+  elseif file =~# '^\f\+\.go$'
+    let l:root = split(file, ".go$")[0]
+    let l:alt_file = l:root . '_test.go'
+  else
+    call go#util#EchoError("not a go file")
+    return
   endif
-  return Root_dir()
-endfunction
-function! Go_current_func_name()
-  let orig_view = winsaveview()
-  try
-    let l:pattern = '\C'.'^\s*'.'func\>'.'\s\+'.'\((\w\+\s\+[^)]\+)\s\+\)\='.'\('.'[^(]\+'.'\)'.'\%('.'\s*'.'('.'\=\)'
-    if search(l:pattern, 'bW') == 0
-        return expand("<cword>")
+  if !filereadable(alt_file) && !bufexists(alt_file) && !a:bang
+    call go#util#EchoError("couldn't find ".alt_file)
+    return
+  elseif empty(a:cmd)
+    if !alt_file->bufnr()->win_findbuf()->get(0, -1)->win_gotoid()
+      execute ":" . go#config#AlternateMode() . " " . alt_file
     endif
-
-    let m = matchlist(getline('.'), l:pattern)
-    if empty(m)
-      return NONE
+  else
+    if !alt_file->bufnr()->win_findbuf()->get(0, -1)->win_gotoid()
+      execute ":" . a:cmd . " " . alt_file
     endif
-
-    return m[2]
-  finally
-    call winrestview(orig_view)
-  endtry
+  endif
 endfunction
 '''
 
-[ftplugin]
+[[plugins]]
+repo = 'fatih/vim-go'
+on_ft = 'go'
+on_cmd = ['GoInstallBinaries', 'GoUpdateBinaries']
+hook_add = '''
+let g:go_code_completion_enabled = 0
+let g:go_play_browser_command = ''
+let g:go_play_open_browser = 1
+let g:go_auto_type_info = 0
+let g:go_auto_sameids = 0
+let g:go_fmt_autosave = 0
+let g:go_imports_autosave = 0
+let g:go_mod_fmt_autosave = 0
+let g:go_doc_keywordprg_enabled = 0
+let g:go_def_mapping_enabled = 0
+let g:go_textobj_enabled = 0
+let g:go_metalinter_autosave = 0
+let g:go_asmfmt_autosave = 0
+let g:go_gopls_enabled = 0
+let g:go_diagnostics_enabled = 0
+let g:go_template_autocreate = 0
+" let g:go_echo_command_info = 1
+" let g:go_echo_go_info = 1
+if has('nvim')
+  let g:go_term_enabled = 1
+  let g:go_term_reuse = 1
+endif
+'''
+[plugins.ftplugin]
 go = '''
-nnoremap <silent><buffer> [prefix]q <Cmd>call Terminal_exec('cd', expand('%:p:h'), '&&', 'go run', expand('%'))<CR>
-nnoremap <silent><buffer> [prefix]t <Cmd>call Terminal_exec('cd', Go_root_dir(), '&&', 'go test ./... -v -parallel 4 -count=1')<CR>
-nnoremap <silent><buffer> [prefix]lf <Cmd>call Terminal_exec('go test -v -run=' . Go_current_func_name())<CR>
+  nmap <silent><buffer> [prefix]q <Plug>(go-run)<Esc>
+  nmap <silent><buffer> [prefix]t <Plug>(go-test)<Esc>
+  nmap <silent><buffer> [prefix]lf <Plug>(go-test-func)<Esc>
+  nmap <silent><buffer> [prefix]lc <Plug>(go-coverage-toggle)
+  nmap <silent><buffer> [prefix]ls <Cmd>call Go_alternate_Switch(v:false, "vsplit")<CR>
+  nmap <silent><buffer> [prefix]ie <Plug>(go-iferr)
+  inoremap <silent><buffer> <C-e> <ESC><Cmd>GoIfErr<CR>
 '''
 
 [[plugins]]
@@ -40,10 +75,13 @@ hook_add = '''
 let g:gotests_template_dir=''
 let g:gotests_template=''
 '''
-
-[[plugins]]
-repo = 'kyoh86/vim-go-coverage'
-on_ft = 'go'
-hook_source = '''
-  nnoremap <silent><buffer> [prefix]lc <Cmd>GoCover<CR>
+hook_post_update = '''
+call system("go install github.com/cweill/gotests/gotests@latest")
 '''
+
+# [[plugins]]
+# repo = 'kyoh86/vim-go-coverage'
+# on_ft = 'go'
+# hook_source = '''
+#   nnoremap <silent><buffer> [prefix]lc <Cmd>GoCover<CR>
+# '''

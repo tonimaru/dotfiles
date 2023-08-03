@@ -4,12 +4,12 @@ repo = 'kana/vim-textobj-user'
 [[plugins]]
 repo = 'kana/vim-textobj-entire'
 depends = 'vim-textobj-user'
-on_event = 'VimEnter'
+on_event = ['CursorHold', 'CursorMoved', 'ModeChanged', 'BufReadPost']
 
 [[plugins]]
 repo = 'kana/vim-textobj-line'
 depends = 'vim-textobj-user'
-on_event = 'VimEnter'
+on_event = ['CursorHold', 'CursorMoved', 'ModeChanged', 'BufReadPost']
 
 [[plugins]]
 repo = 'kana/vim-operator-user'

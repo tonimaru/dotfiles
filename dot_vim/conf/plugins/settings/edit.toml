@@ -1,10 +1,10 @@
 [[plugins]]
 repo = 'kana/vim-niceblock'
-on_event = 'VimEnter'
+on_event = ['CursorHold', 'CursorMoved', 'ModeChanged']
 
 [[plugins]]
 repo = 'kana/vim-repeat'
-on_event = 'VimEnter'
+on_event = ['CursorHold', 'CursorMoved', 'ModeChanged']
 
 [[plugins]]
 repo = 'machakann/vim-swap'
@@ -26,7 +26,7 @@ hook_add = '''
 
 [[plugins]]
 repo = 'tomtom/tcomment_vim'
-on_event = 'VimEnter'
+on_event = ['CursorHold', 'CursorMoved', 'ModeChanged']
 
 [[plugins]]
 repo = 'bfredl/nvim-miniyank'
@@ -41,7 +41,9 @@ hook_add = '''
 
 [[plugins]]
 repo = 'monaqa/dial.nvim'
-on_event = 'VimEnter'
+if = 'has("nvim")'
+on_event = ['CursorHold', 'CursorMoved', 'ModeChanged']
+on_map = '<Plug>(dial-'
 hook_add = '''
   nmap <C-a> <Plug>(dial-increment)
   nmap <C-x> <Plug>(dial-decrement)

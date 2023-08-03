@@ -1,5 +1,7 @@
 [[plugins]]
 repo = 'katono/rogue.vim'
+if = 'has("nvim") || has("lua")'
 hook_add = '''
   let g:rogue#japanese = 1
 '''
+lazy = false

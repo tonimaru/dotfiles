@@ -32,49 +32,48 @@ function! s:ft_gotmpl() abort
   endif
 endfunction
 
-autocmd my_vimrc BufEnter * silent! if isdirectory(expand('%:p:h')) | silent! lcd %:p:h | endif
+function! s:lazy_init() abort
+  autocmd my_vimrc BufEnter * silent! if isdirectory(expand('%:p:h')) | silent! lcd %:p:h | endif
 
-autocmd my_vimrc CursorHold * call s:clean_no_name_empty_buffers()
-function! s:clean_no_name_empty_buffers() abort
-    let buffers = filter(range(1, bufnr('$')), 'buflisted(v:val) && empty(bufname(v:val)) && bufwinnr(v:val) < 0 && (getbufline(v:val, 1, "$") == [""]) && getbufinfo(v:val)[0].changed == 0 && &buftype != "terminal"')
-    if !empty(buffers)
-        silent exe 'bd '.join(buffers, ' ')
+  if has('nvim')
+    autocmd my_vimrc TermOpen * startinsert
+    autocmd my_vimrc TermOpen * ++once call s:term_init()
+    function! s:term_init() abort
+      tnoremap <silent> <ESC> <C-\><C-n>
+      tnoremap <silent> <M-Left> <Esc>b
+      tnoremap <silent> <M-Right> <Esc>f
+    endfunction
+  end
+
+  autocmd my_vimrc CursorHold * call s:clean_no_name_empty_buffers()
+  function! s:clean_no_name_empty_buffers() abort
+      let buffers = filter(range(1, bufnr('$')), 'buflisted(v:val) && empty(bufname(v:val)) && bufwinnr(v:val) < 0 && (getbufline(v:val, 1, "$") == [""]) && getbufinfo(v:val)[0].changed == 0 && &buftype != "terminal"')
+      if !empty(buffers)
+          silent exe 'bd '.join(buffers, ' ')
+      endif
+  endfunction
+
+  if executable('chezmoi')
+    function! s:chezmoi_apply(file) abort
+      let cmd = ['chezmoi', 'apply', '--source-path', a:file]
+      if has('nvim')
+        call jobstart(cmd)
+      else
+        call job_start(cmd)
+      endif
+    endfunction
+    function! s:chezmoi_autocmd(source_path) abort
+      if a:source_path == ''
+        return
+      endif
+      execute 'autocmd my_vimrc BufWritePost ' . a:source_path . '/* call s:chezmoi_apply(expand("<afile>:p"))'
+    endfunction
+    if has('nvim')
+      call jobstart(['chezmoi', 'source-path'], #{on_stdout: {ch, data, name -> s:chezmoi_autocmd(trim(join(data)))}})
+    else
+      call job_start(['chezmoi', 'source-path'], #{out_cb: {ch, msg -> s:chezmoi_autocmd(trim(msg))}})
     endif
+  endif
 endfunction
 
-if has('nvim')
-  autocmd my_vimrc BufEnter * call timer_start(10, function("s:set_updatetime"))
-  function! s:set_updatetime(id) abort
-    if get(b:, "is_nivm_lsp_attached", v:false)
-      set updatetime=300
-    else
-      set updatetime=4000
-    endif
-  endfunction
-
-  autocmd my_vimrc TermOpen * startinsert
-end
-
-if executable('chezmoi')
-  function! s:chezmoi_apply(file) abort
-    let cmd = ['chezmoi', 'apply', '--source-path', a:file]
-    if has('nvim')
-      call jobstart(cmd)
-    else
-      call job_start(cmd)
-    endif
-  endfunction
-  function! s:chezmoi_autocmd(source_path) abort
-    if a:source_path == ''
-      return
-    endif
-    execute 'autocmd my_vimrc BufWritePost ' . a:source_path . '/* call s:chezmoi_apply(expand("<afile>:p"))'
-  endfunction
-  if has('nvim')
-    call jobstart(['chezmoi', 'source-path'], #{on_stdout: {ch, data, name -> s:chezmoi_autocmd(trim(join(data)))}})
-  else
-    call job_start(['chezmoi', 'source-path'], #{out_cb: {ch, msg -> s:chezmoi_autocmd(trim(msg))}})
-  endif
-endif
-
-command! -bang -nargs=* Au autocmd<bang> my_vimrc <args>
+au BufReadPost * ++once call s:lazy_init()

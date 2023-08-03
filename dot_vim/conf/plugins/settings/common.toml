@@ -11,4 +11,4 @@ hook_source = '''
 
 [[plugins]]
 repo = 'vim-jp/vimdoc-ja'
-lazy = false
+on_event = 'VimEnter'

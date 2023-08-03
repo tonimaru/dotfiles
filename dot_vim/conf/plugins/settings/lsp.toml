@@ -43,6 +43,7 @@ lua_source = '''
     local opts = { noremap = true, silent = true }
     buf_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
 
+    buf_set_keymap('n', 'gl', '<cmd>lua vim.diagnostic.open_float(nil, { focus = false, scope = "cursor" })<CR>', opts)
     buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
     buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
     buf_set_keymap('n', 'gI', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
@@ -72,18 +73,9 @@ lua_source = '''
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
     lsp_buf_keymap(bufnr)
-
-    vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-      group = 'my_vimrc',
-      pattern = { "*" },
-      callback = function()
-        vim.diagnostic.open_float(nil, { focus = false, scope = "cursor" })
-      end,
-    })
   end
 
   vim.diagnostic.config({
-    virtual_text = false,
     update_in_insert = true,
   })
 '''
@@ -92,7 +84,7 @@ lua_source = '''
 repo = 'williamboman/mason-lspconfig.nvim'
 if = "has('nvim')"
 depends = [ 'nvim-lspconfig', 'mason.nvim' ]
-on_event = 'BufEnter'
+on_event = ['FileType']
 lua_source = '''
   local mlc = require("mason-lspconfig")
   mlc.setup({
@@ -178,6 +170,7 @@ lua_source = '''
 [[plugins]]
 repo = 'williamboman/mason.nvim'
 if = "has('nvim')"
+on_cmd = ['Mason']
 lua_source = '''
   require("mason").setup()
 '''

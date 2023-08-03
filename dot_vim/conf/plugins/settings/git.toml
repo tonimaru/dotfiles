@@ -1,7 +1,7 @@
 [[plugins]]
 repo = 'lewis6991/gitsigns.nvim'
 if = "has('nvim')"
-on_event = 'BufEnter'
+on_event = ['BufReadPost']
 lua_source = '''
   require('gitsigns').setup()
 '''
@@ -9,7 +9,7 @@ lua_source = '''
 [[plugins]]
 repo = 'mhinz/vim-signify'
 if = "!has('nvim')"
-on_event = 'BufEnter'
+on_event = ['BufReadPost']
 
 [[plugins]]
 repo = 'lambdalisue/gin.vim'

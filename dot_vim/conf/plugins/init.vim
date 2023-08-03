@@ -57,8 +57,8 @@ if dein#load_state(s:dein_base)
   call dein#save_state()
 endif
 
-if has('filetype') | filetype indent plugin on | endif
-if has('syntax') | syntax on | endif
+if exists(':filetype') | filetype indent plugin on | endif
+if exists(':syntax') | syntax on | endif
 
 if !empty(globpath(&runtimepath, expand('colors/codedark.vim')))
   colorscheme codedark

@@ -1,7 +1,7 @@
 [[plugins]]
 repo = 'Shougo/ddc.vim'
-depends = ['context_filetype.vim', 'denops.vim', 'pum.vim']
-on_event = ['InsertEnter', 'CursorHold']
+depends = ['context_filetype.vim', 'denops.vim', 'pum.vim', 'vim-vsnip']
+on_event = ['InsertEnter']
 hook_add = '''
   function! CommandlinePre() abort
     cnoremap <C-n> <Cmd>call pum#map#insert_relative(+1)<CR>
@@ -18,10 +18,13 @@ hook_add = '''
     silent! cunmap <C-e>
   endfunction
   nnoremap : <Cmd>call CommandlinePre()<CR>:
+  inoremap <expr> <C-x><C-o> ddc#map#manual_complete()
 '''
-hook_source = '''
+hook_post_source = '''
   call ddc#custom#patch_global('ui', 'pum')
   call ddc#custom#patch_global('sources', ['around', 'file', 'vsnip'])
+  call ddc#custom#patch_global('backspaceCompletion', v:true)
+  call ddc#custom#patch_global('autoCompleteDelay', 66)
   call ddc#custom#patch_global('sourceOptions', {
       \   '_': {
       \     'matchers': ['matcher_fuzzy'],
@@ -35,6 +38,7 @@ hook_source = '''
       \   },
       \   'around': {
       \     'mark': 'around',
+      \     'maxItems': 3,
       \   },
       \   'cmdline': {
       \     'mark': 'cmdline',
@@ -51,12 +55,14 @@ hook_source = '''
       \   },
       \   'nvim-lsp': {
       \     'mark': 'lsp',
-      \     'forceCompletionPattern': '\.|:|->|\\',
-      \     'minAutoCompleteLength': 1,
+      \     'maxItems': 10,
+      \     'forceCompletionPattern': '\.\w*|:\w*|->\w*|\\\w*',
+      \     'minAutoCompleteLength': 0,
       \     'dup': 'keep',
       \   },
       \   'vsnip': {
       \     'mark': 'vsnip',
+      \     'maxItems': 5,
       \     'dup': 'keep',
       \     'minAutoCompleteLength': 1,
       \   },
@@ -127,7 +133,6 @@ repo = 'hrsh7th/vim-vsnip'
 depends = [
   'friendly-snippets',
   'vue-vscode-snippets',
-  'vim-goiferr-snippets',
 ]
 hook_source = '''
   let g:vsnip_snippet_dirs = get(g:, 'vsnip_snippet_dirs', []) + globpath(&runtimepath, 'snippets', 1, 1)
@@ -166,14 +171,14 @@ hook_add = '''
 [[plugins]]
 repo = 'matsui54/denops-popup-preview.vim'
 depends = [ 'denops.vim' ]
-on_event = 'TextChangedI'
-hook_source = 'call popup_preview#enable()'
+hook_post_source = 'call popup_preview#enable()'
+on_source = 'ddc.vim'
 
 [[plugins]]
 repo = 'matsui54/denops-signature_help'
 depends = [ 'denops.vim' ]
-on_event = 'TextChangedI'
-hook_add = 'call signature_help#enable()'
+hook_post_source = 'call signature_help#enable()'
+on_source = 'ddc.vim'
 
 # source
 

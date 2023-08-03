@@ -5,7 +5,8 @@ lazy = 0
 [[plugins]]
 repo = 'nvim-treesitter/nvim-treesitter'
 if = 'has("nvim")'
-on_event = ['BufRead', 'CursorHold']
+on_event = ['FileType']
+on_cmd = ["TSInstall", "TSUpdate"]
 hook_post_update = 'TSUpdate'
 lua_source = '''
   require'nvim-treesitter.configs'.setup {

@@ -21,7 +21,7 @@ set autoindent
 set ignorecase smartcase
 set laststatus=2
 set backspace=indent,eol,start
-set foldlevel=100
+set nofoldenable
 set mouse=
 set incsearch
 set smartindent
@@ -58,12 +58,11 @@ endif
 if has("nvim")
   set backupdir-=.
   set inccommand=split
-  let g:python3_host_prog = trim(system('which python3'))
-  let g:perl_host_prog = trim(system('which perl'))
 else
   execute "set directory=" .. fnamemodify($MYVIMRC, ":p:h") .. "/swap"
   execute "set backupdir=" .. fnamemodify($MYVIMRC, ":p:h") .. "/backup"
   execute "set undodir=" .. fnamemodify($MYVIMRC, ":p:h") .. "/undo"
+  set timeoutlen=50
   function! s:pydll(cmd, optname)
     if !isdirectory($PYENV_ROOT) || !executable(a:cmd)
       return
