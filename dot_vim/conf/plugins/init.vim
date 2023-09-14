@@ -1,29 +1,8 @@
 let s:dein_base = $HOME .'/.cache/dein'
 let s:dein_src = s:dein_base . "/repos/github.com/Shougo/dein.vim"
 
-let s:tomls = [
-  \ 'settings/common.toml',
-  \ 'settings/color.toml',
-  \ 'settings/display.toml',
-  \ 'settings/text.toml',
-  \ 'settings/edit.toml',
-  \ 'settings/move.toml',
-  \ 'settings/ddc.toml',
-  \ 'settings/ddu.toml',
-  \ 'settings/filer.toml',
-  \ 'settings/git.toml',
-  \ 'settings/lsp.toml',
-  \ 'settings/tools.toml',
-  \ 'settings/toy.toml',
-  \ 'settings/filetypes/bicep.toml',
-  \ 'settings/filetypes/clojure.toml',
-  \ 'settings/filetypes/go.toml',
-  \ 'settings/filetypes/html.toml',
-  \ 'settings/filetypes/json.toml',
-  \ 'settings/filetypes/markdown.toml',
-  \ 'settings/filetypes/rust.toml',
-  \ 'settings/filetypes/typescript.toml',
-  \ ]
+let s:proot = fnamemodify($MYVIMRC, ":p:h") . '/conf/plugins/'
+let s:tomls = glob(s:proot . "settings/**/*.toml")->split("\n")
 
 if !isdirectory(s:dein_src)
   if !executable('git')
@@ -47,11 +26,13 @@ if dein#load_state(s:dein_base)
   call dein#begin(s:dein_base, s:tomls)
   call dein#add(s:dein_src, #{merge: v:false})
 
-  let s:proot = fnamemodify($MYVIMRC, ":p:h") . '/conf/plugins/'
-
   for toml in s:tomls
-    call dein#load_toml(s:proot . toml, #{lazy: 1})
+    call dein#load_toml(toml, #{lazy: 1})
   endfor
+
+  if filereadable(s:proot . "/local.vim")
+    execute "source" s:proot . "/local.vim"
+  endif
 
   call dein#end()
   call dein#save_state()

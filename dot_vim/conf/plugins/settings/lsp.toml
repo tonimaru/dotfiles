@@ -30,10 +30,10 @@ lua_source = '''
       ts_utils.setup({ filter_out_diagnostics_by_code = { 80001 } })
       ts_utils.setup_client(client)
       client.server_capabilities.document_formatting = false
-    elseif client.name == 'volar' then
+      client.server_capabilities.document_range_formatting = false
+    elseif client.name == 'eslint' or client.name == 'volar' or client.name == 'intelephense' then
       client.server_capabilities.document_formatting = false
-    elseif client.name == 'intelephense' then
-      client.server_capabilities.document_formatting = false
+      client.server_capabilities.document_range_formatting = false
     end
   end
 
@@ -55,7 +55,7 @@ lua_source = '''
     buf_set_keymap('n', '[prefix]la', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     buf_set_keymap('n', '<c-p>', '<cmd>lua vim.diagnostic.goto_prev({float=false})<CR>', opts)
     buf_set_keymap('n', '<c-n>', '<cmd>lua vim.diagnostic.goto_next({float=false})<CR>', opts)
-    buf_set_keymap('n', '==', '<cmd>lua vim.lsp.buf.format()<CR>', opts)
+    buf_set_keymap('n', '==', '<cmd>lua vim.lsp.buf.format({filter = function(client) return client.name ~= "tsserver" end})<CR>', opts)
   end
 
   function on_attach(client, bufnr)
@@ -95,7 +95,15 @@ lua_source = '''
   local capabilities = vim.lsp.protocol.make_client_capabilities()
   capabilities.textDocument.completion.completionItem.snippetSupport = true
 
+  lspconfig = require("lspconfig")
   local opts = {
+    ["tsserver"] = {
+      single_file_support = false,
+      root_dir = lspconfig.util.root_pattern("package.json"),
+    },
+    ["eslint"] = {
+      root_dir = lspconfig.util.root_pattern(".eslintrc.*", "package.json"),
+    },
     ["lua_ls"] = {
       settings = {
         Lua = {
@@ -106,10 +114,20 @@ lua_source = '''
       },
     },
     ["denols"] = {
-      single_file_support = true,
+      single_file_support = false,
+      root_dir = lspconfig.util.root_pattern("deno.json", "denops"),
       init_options = {
         lint = true,
         unstable = true,
+        suggest = {
+          imports = {
+            hosts = {
+              ["https://deno.land"] = true,
+              ["https://cdn.nest.land"] = true,
+              ["https://crux.land"] = true,
+            },
+          },
+        },
       },
     },
     ["rust_analyzer"] = function()
@@ -152,7 +170,6 @@ lua_source = '''
       local opt = {
         on_attach = on_attach,
         capabilities = capabilities,
-        autostart = not has_value({ "tsserver", "eslint", "denols" }, server_name),
       }
       if opts[server_name] ~= nil then
         local exopt = opts[server_name]
@@ -162,7 +179,8 @@ lua_source = '''
           return exopt()
         end
       end
-      require("lspconfig")[server_name].setup(opt)
+      lspconfig = require("lspconfig")
+      lspconfig[server_name].setup(opt)
     end,
   })
 '''

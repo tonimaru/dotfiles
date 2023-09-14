@@ -1,6 +1,10 @@
 [[plugins]]
 repo = 'PratikBhusal/vim-grip'
 on_ft = 'markdown'
+on_cmd = ['GripStart']
+hook_add = '''
+let g:grip_default_map = 0
+'''
 
 [[plugins]]
 repo = 'dhruvasagar/vim-table-mode'

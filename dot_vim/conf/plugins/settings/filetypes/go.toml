@@ -52,9 +52,12 @@ let g:go_diagnostics_enabled = 0
 let g:go_template_autocreate = 0
 " let g:go_echo_command_info = 1
 " let g:go_echo_go_info = 1
+let g:go_jump_to_error = 0
 if has('nvim')
+  let g:go_term_mode = 'split'
   let g:go_term_enabled = 1
   let g:go_term_reuse = 1
+  let g:go_term_close_on_exit = 0
 endif
 '''
 [plugins.ftplugin]
@@ -63,7 +66,8 @@ go = '''
   nmap <silent><buffer> [prefix]t <Plug>(go-test)<Esc>
   nmap <silent><buffer> [prefix]lf <Plug>(go-test-func)<Esc>
   nmap <silent><buffer> [prefix]lc <Plug>(go-coverage-toggle)
-  nmap <silent><buffer> [prefix]ls <Cmd>call Go_alternate_Switch(v:false, "vsplit")<CR>
+  nmap <silent><buffer> [prefix]ls <Cmd>call Go_alternate_Switch(v:false, "edit")<CR>
+  nmap <silent><buffer> [prefix]lS <Cmd>call Go_alternate_Switch(v:false, "vsplit")<CR>
   nmap <silent><buffer> [prefix]ie <Plug>(go-iferr)
   inoremap <silent><buffer> <C-e> <ESC><Cmd>GoIfErr<CR>
 '''

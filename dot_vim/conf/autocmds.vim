@@ -32,18 +32,18 @@ function! s:ft_gotmpl() abort
   endif
 endfunction
 
+if has('nvim')
+  autocmd my_vimrc TermOpen * startinsert
+  autocmd my_vimrc TermOpen * ++once call s:term_init()
+  function! s:term_init() abort
+    tnoremap <silent> <ESC> <C-\><C-n>
+    tnoremap <silent> <M-Left> <Esc>b
+    tnoremap <silent> <M-Right> <Esc>f
+  endfunction
+endif
+
 function! s:lazy_init() abort
   autocmd my_vimrc BufEnter * silent! if isdirectory(expand('%:p:h')) | silent! lcd %:p:h | endif
-
-  if has('nvim')
-    autocmd my_vimrc TermOpen * startinsert
-    autocmd my_vimrc TermOpen * ++once call s:term_init()
-    function! s:term_init() abort
-      tnoremap <silent> <ESC> <C-\><C-n>
-      tnoremap <silent> <M-Left> <Esc>b
-      tnoremap <silent> <M-Right> <Esc>f
-    endfunction
-  end
 
   autocmd my_vimrc CursorHold * call s:clean_no_name_empty_buffers()
   function! s:clean_no_name_empty_buffers() abort

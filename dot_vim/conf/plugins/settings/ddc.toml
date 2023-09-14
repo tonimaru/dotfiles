@@ -55,14 +55,14 @@ hook_post_source = '''
       \   },
       \   'nvim-lsp': {
       \     'mark': 'lsp',
-      \     'maxItems': 10,
+      \     'maxItems': 50,
       \     'forceCompletionPattern': '\.\w*|:\w*|->\w*|\\\w*',
       \     'minAutoCompleteLength': 0,
       \     'dup': 'keep',
       \   },
       \   'vsnip': {
       \     'mark': 'vsnip',
-      \     'maxItems': 5,
+      \     'maxItems': 10,
       \     'dup': 'keep',
       \     'minAutoCompleteLength': 1,
       \   },
@@ -103,6 +103,8 @@ hook_post_source = '''
       \   'lua',
       \   'markdown',
       \   'sh',
+      \   'typescript',
+      \   'typescriptreact',
       \   'vim',
       \   'yaml',
       \ ], 'sources', [

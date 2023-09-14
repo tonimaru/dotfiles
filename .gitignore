@@ -4,3 +4,4 @@ dot_vim/backup/
 dot_vim/swap/
 dot_vim/undo/
 dot_vim/verbosefile
+dot_vim/conf/plugins/settings/local.toml
