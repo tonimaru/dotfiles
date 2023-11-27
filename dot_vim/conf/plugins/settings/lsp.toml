@@ -162,6 +162,9 @@ lua_source = '''
             },
         },
     },
+    ["golangci_lint_ls"] = {
+        filetypes = {'go'}
+    },
   }
 
   mlc.setup_handlers({
