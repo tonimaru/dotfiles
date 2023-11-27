@@ -7,6 +7,27 @@ repo = 'mfussenegger/nvim-dap'
 if = "has('nvim')"
 
 [[plugins]]
+repo = 'jose-elias-alvarez/null-ls.nvim'
+if = "has('nvim')"
+lua_source = '''
+  require("null-ls").setup()
+'''
+
+[[plugins]]
+repo = 'jay-babu/mason-null-ls.nvim'
+if = "has('nvim')"
+depends = [
+  'mason.nvim',
+  'null-ls.nvim',
+]
+lua_source = '''
+  require("mason-null-ls").setup({
+    automatic_setup = true,
+    handlers = {},
+  })
+'''
+
+[[plugins]]
 repo = 'neovim/nvim-lspconfig'
 if = "has('nvim')"
 depends = [
@@ -83,7 +104,7 @@ lua_source = '''
 [[plugins]]
 repo = 'williamboman/mason-lspconfig.nvim'
 if = "has('nvim')"
-depends = [ 'nvim-lspconfig', 'mason.nvim' ]
+depends = [ 'mason-null-ls.nvim', 'nvim-lspconfig', 'mason.nvim' ]
 on_event = ['FileType']
 lua_source = '''
   local mlc = require("mason-lspconfig")
