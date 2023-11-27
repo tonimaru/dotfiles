@@ -63,9 +63,9 @@ endif
 [plugins.ftplugin]
 go = '''
   nmap <silent><buffer> [prefix]q <Plug>(go-run)<Esc>
-  nmap <silent><buffer> [prefix]t <Plug>(go-test)<Esc>
-  nmap <silent><buffer> [prefix]lf <Plug>(go-test-func)<Esc>
-  nmap <silent><buffer> [prefix]lc <Plug>(go-coverage-toggle)
+  nnoremap <silent><buffer> [prefix]t  <Cmd>call go#test#Test(1, 0, "-v", "-count=1")<CR><Esc>
+  nnoremap <silent><buffer> [prefix]lf <Cmd>call go#test#Func(1, "-v", "-count=1")<CR><Esc>
+  nnoremap <silent><buffer> [prefix]lc <Cmd>call go#coverage#BufferToggle(0, "-count=1")<CR><Esc>
   nmap <silent><buffer> [prefix]ls <Cmd>call Go_alternate_Switch(v:false, "edit")<CR>
   nmap <silent><buffer> [prefix]lS <Cmd>call Go_alternate_Switch(v:false, "vsplit")<CR>
   nmap <silent><buffer> [prefix]ie <Plug>(go-iferr)
