@@ -23,7 +23,14 @@ depends = [
 lua_source = '''
   require("mason-null-ls").setup({
     automatic_setup = true,
-    handlers = {},
+    handlers = {
+        prettierd = function(source_name, methods)
+            local null_ls = require('null-ls')
+            null_ls.register(null_ls.builtins.formatting.prettierd.with {
+                extra_filetypes = { "graphql" },
+            })
+        end,
+    },
   })
 '''
 
@@ -76,7 +83,8 @@ lua_source = '''
     buf_set_keymap('n', '[prefix]la', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     buf_set_keymap('n', '<c-p>', '<cmd>lua vim.diagnostic.goto_prev({float=false})<CR>', opts)
     buf_set_keymap('n', '<c-n>', '<cmd>lua vim.diagnostic.goto_next({float=false})<CR>', opts)
-    buf_set_keymap('n', '==', '<cmd>lua vim.lsp.buf.format({filter = function(client) return client.name ~= "tsserver" end})<CR>', opts)
+    ignore_fmts = { ["tsserver"] = true }
+    buf_set_keymap('n', '==', '<cmd>lua vim.lsp.buf.format({filter = function(client) return not ignore_fmts[client.name] end})<CR>', opts)
   end
 
   function on_attach(client, bufnr)
@@ -185,6 +193,20 @@ lua_source = '''
     },
     ["golangci_lint_ls"] = {
         filetypes = {'go'}
+    },
+    ["pylsp"]  = {
+        settings = {
+            pylsp = {
+                plugins = {
+                    pycodestyle = {
+                        ignore = {'E501'},
+                    },
+                },
+            },
+        },
+    },
+    ["graphql"] = {
+        root_dir = lspconfig.util.root_pattern("package.json", "go.mod", ".git"),
     },
   }
 
