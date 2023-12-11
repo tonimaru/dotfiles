@@ -22,7 +22,7 @@ hook_add = '''
 '''
 hook_post_source = '''
   call ddc#custom#patch_global('ui', 'pum')
-  call ddc#custom#patch_global('sources', ['around', 'file', 'vsnip'])
+  call ddc#custom#patch_global('sources', ['file', 'vsnip', 'around'])
   call ddc#custom#patch_global('backspaceCompletion', v:true)
   call ddc#custom#patch_global('autoCompleteDelay', 66)
   call ddc#custom#patch_global('sourceOptions', {
@@ -109,9 +109,9 @@ hook_post_source = '''
       \   'yaml',
       \ ], 'sources', [
       \   'nvim-lsp',
+      \   'file',
       \   'vsnip',
       \   'around',
-      \   'file',
       \ ])
   endif
 
