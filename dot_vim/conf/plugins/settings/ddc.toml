@@ -53,7 +53,7 @@ hook_post_source = '''
       \   'line': {
       \     'mark': 'line',
       \   },
-      \   'nvim-lsp': {
+      \   'lsp': {
       \     'mark': 'lsp',
       \     'maxItems': 50,
       \     'forceCompletionPattern': '\.\w*|:\w*|->\w*|\\\w*',
@@ -69,7 +69,7 @@ hook_post_source = '''
       \ })
 
   call ddc#custom#patch_global('sourceParams', {
-    \   'nvim-lsp': {
+    \   'lsp': {
     \     'snippetEngine': denops#callback#register({ body -> vsnip#anonymous(body) }),
     \     'enableResolveItem': v:true,
     \     'enableAdditionalTextEdit': v:true,
@@ -108,7 +108,7 @@ hook_post_source = '''
       \   'vim',
       \   'yaml',
       \ ], 'sources', [
-      \   'nvim-lsp',
+      \   'lsp',
       \   'file',
       \   'vsnip',
       \   'around',
@@ -197,7 +197,7 @@ repo = 'Shougo/ddc-source-line'
 on_source = 'ddc.vim'
 
 [[plugins]]
-repo = 'Shougo/ddc-source-nvim-lsp'
+repo = 'Shougo/ddc-source-lsp'
 on_source = 'ddc.vim'
 
 [[plugins]]
