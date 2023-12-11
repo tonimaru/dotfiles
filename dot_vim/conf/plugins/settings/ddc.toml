@@ -55,7 +55,7 @@ hook_post_source = '''
       \   },
       \   'lsp': {
       \     'mark': 'lsp',
-      \     'maxItems': 50,
+      \     'isVolatile': v:true,
       \     'forceCompletionPattern': '\.\w*|:\w*|->\w*|\\\w*',
       \     'minAutoCompleteLength': 0,
       \     'dup': 'keep',
@@ -70,9 +70,11 @@ hook_post_source = '''
 
   call ddc#custom#patch_global('sourceParams', {
     \   'lsp': {
+    \     'lspEngine': 'nvim-lsp',
     \     'snippetEngine': denops#callback#register({ body -> vsnip#anonymous(body) }),
     \     'enableResolveItem': v:true,
     \     'enableAdditionalTextEdit': v:true,
+    \     'confirmBehavior': 'replace',
     \   },
     \   'line': {
     \     'maxSize': 1000,
