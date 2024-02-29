@@ -27,9 +27,7 @@ hook_post_source = '''
   call ddc#custom#patch_global('autoCompleteDelay', 66)
   call ddc#custom#patch_global('sourceOptions', {
       \   '_': {
-      \     'matchers': ['matcher_fuzzy'],
-      \     'sorters': ['sorter_fuzzy'],
-      \     'converters': ['converter_fuzzy']
+      \     'matchers': ['matcher_vimregexp'],
       \   },
       \   'file': {
       \     'mark': 'file',
@@ -152,7 +150,6 @@ repo = 'Shougo/pum.vim'
 hook_add = '''
   inoremap <C-n> <Cmd>call pum#map#select_relative(+1)<CR>
   inoremap <C-p> <Cmd>call pum#map#select_relative(-1)<CR>
-  inoremap <C-y> <Cmd>call pum#map#confirm()<CR>
   inoremap <C-e> <Cmd>call pum#map#cancel()<CR>
 
   imap <expr> <C-j>
@@ -213,7 +210,7 @@ on_source = 'ddc.vim'
 # matcher
 
 [[plugins]]
-repo = 'tani/ddc-fuzzy'
+repo = 'Shougo/ddc-filter-matcher_vimregexp'
 on_source = 'ddc.vim'
 
 # ui
