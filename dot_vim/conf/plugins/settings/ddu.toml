@@ -11,8 +11,8 @@ hook_add = '''
   nnoremap <silent> [prefix]u <Cmd>call ddu#start(#{name: 'mru'})<CR>
   nnoremap <silent> [prefix]w <Cmd>call ddu#start(#{name: 'mrw'})<CR>
   nnoremap <silent> [prefix]j <Cmd>call ddu#start(#{name: 'junkfile'})<CR>
-  nnoremap <silent> [prefix]rp <Cmd>call ddu#start(#{name: 'grep', resume: v:true, uiParams: #{ff: #{ startFilter: v:false}}})<CR>
-  nnoremap <silent> [prefix]rb <Cmd>call ddu#start(#{name: 'buffer', resume: v:true, uiParams: #{ff: #{ startFilter: v:false}}})<CR>
+  nnoremap <silent> [prefix]rp <Cmd>call ddu#start(#{name: 'grep', resume: v:true})<CR>
+  nnoremap <silent> [prefix]rb <Cmd>call ddu#start(#{name: 'buffer', resume: v:true})<CR>
   nnoremap <silent> [prefix]df <Cmd>call ddu#start(#{name: 'filer'})<CR>
   nnoremap <silent> [prefix]dl <Cmd>call ddu#start(#{name: 'line'})<CR>
   nnoremap <silent> [prefix]dc <Cmd>call ddu#start(#{name: 'chezmoi'})<CR>
@@ -103,12 +103,11 @@ hook_source = '''
   call ddu#custom#patch_local('grep', #{
       \   sources: [#{name: 'rg', options: #{matchers: [], maxItems: 100}}],
       \   sourceParams : #{rg: #{args: ['-i', '--column', '--no-heading', '--color', 'never']}},
-      \   uiParams: #{ff: #{startFilter: v:true, autoAction: #{name: 'preview'}}},
+      \   uiParams: #{ff: #{autoAction: #{name: 'preview'}}},
       \ })
   call ddu#custom#patch_local('line', {
       \   'uiParams': {
       \     'ff': {
-      \       'startFilter': v:true,
       \       'winCol': &columns / 4,
       \     },
       \   },
