@@ -101,7 +101,7 @@ hook_source = '''
       \   },
       \ })
   call ddu#custom#patch_local('grep', #{
-      \   sources: [#{name: 'rg', options: #{matchers: [], maxItems: 100}}],
+      \   sources: [#{name: 'rg', options: #{matchers: []}}],
       \   sourceParams : #{rg: #{args: ['-i', '--column', '--no-heading', '--color', 'never']}},
       \   uiParams: #{ff: #{autoAction: #{name: 'preview'}}},
       \ })
