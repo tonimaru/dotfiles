@@ -8,7 +8,8 @@ hook_add = '''
   nnoremap <silent> gr <Cmd>call DduRgFn()<CR>
   nnoremap <silent> gq <Cmd>call ddu#start(#{name: 'ghq'})<CR>
   nnoremap <silent> [prefix]b <Cmd>call ddu#start(#{name: 'buffer'})<CR>
-  nnoremap <silent> [prefix]u <Cmd>call ddu#start(#{name: 'mr'})<CR>
+  nnoremap <silent> [prefix]u <Cmd>call ddu#start(#{name: 'mru'})<CR>
+  nnoremap <silent> [prefix]w <Cmd>call ddu#start(#{name: 'mrw'})<CR>
   nnoremap <silent> [prefix]j <Cmd>call ddu#start(#{name: 'junkfile'})<CR>
   nnoremap <silent> [prefix]rp <Cmd>call ddu#start(#{name: 'grep', resume: v:true, uiParams: #{ff: #{ startFilter: v:false}}})<CR>
   nnoremap <silent> [prefix]rb <Cmd>call ddu#start(#{name: 'buffer', resume: v:true, uiParams: #{ff: #{ startFilter: v:false}}})<CR>
@@ -68,8 +69,12 @@ hook_source = '''
       \   'sources': [{'name': 'buffer'}],
       \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
       \ })
-  call ddu#custom#patch_local('mr', {
+  call ddu#custom#patch_local('mru', {
       \   'sources': [{'name': 'mr'}],
+      \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
+      \ })
+  call ddu#custom#patch_local('mrw', {
+      \   'sources': [{'name': 'mr', 'params': {'kind': 'mrw'}}],
       \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
       \ })
   call ddu#custom#patch_local('junkfile', {
