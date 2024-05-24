@@ -81,6 +81,10 @@ hook_source = '''
       \   'sources': [{'name': 'junkfile'}],
       \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
       \ })
+  call ddu#custom#patch_local('git_stash', {
+      \   'sources': [{ 'name': 'git_stash' }],
+      \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
+      \ })
   call ddu#custom#patch_local('filer', {
       \   'ui': 'filer',
       \   'sources': [{'name': 'file'}],
@@ -180,6 +184,10 @@ on_source = 'ddu.vim'
 
 [[plugins]]
 repo = 'matsui54/ddu-source-file_external'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'peacock0803sz/ddu-source-git_stash'
 on_source = 'ddu.vim'
 
 # filter
