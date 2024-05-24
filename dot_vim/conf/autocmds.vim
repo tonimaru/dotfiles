@@ -55,7 +55,7 @@ function! s:lazy_init() abort
 
   if executable('chezmoi')
     function! s:chezmoi_apply(file) abort
-      let cmd = ['chezmoi', 'apply', '--source-path', a:file]
+      let cmd = ['chezmoi', 'apply', '--force', '--source-path', a:file]
       if has('nvim')
         call jobstart(cmd)
       else
