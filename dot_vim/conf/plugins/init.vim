@@ -41,8 +41,8 @@ endif
 if exists(':filetype') | filetype indent plugin on | endif
 if exists(':syntax') | syntax on | endif
 
-if !empty(globpath(&runtimepath, expand('colors/codedark.vim')))
-  colorscheme codedark
+if !empty(globpath(&runtimepath, expand('colors/tokyonight-night.lua')))
+  colorscheme tokyonight-night
 endif
 
 if dein#check_install()
