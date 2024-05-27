@@ -2,18 +2,47 @@
 repo = 'Shougo/ddu.vim'
 depends = 'denops.vim'
 hook_add = '''
-  function! DduRgFn() abort
-    call ddu#start({'name': 'grep'})
-  endfunction
-  nnoremap <silent> gr <Cmd>call DduRgFn()<CR>
-  nnoremap <silent> gq <Cmd>call ddu#start(#{name: 'ghq'})<CR>
-  nnoremap <silent> [prefix]b <Cmd>call ddu#start(#{name: 'buffer'})<CR>
-  nnoremap <silent> [prefix]u <Cmd>call ddu#start(#{name: 'mru'})<CR>
-  nnoremap <silent> [prefix]w <Cmd>call ddu#start(#{name: 'mrw'})<CR>
-  nnoremap <silent> [prefix]j <Cmd>call ddu#start(#{name: 'junkfile'})<CR>
-  nnoremap <silent> [prefix]df <Cmd>call ddu#start(#{name: 'filer'})<CR>
-  nnoremap <silent> [prefix]dl <Cmd>call ddu#start(#{name: 'line'})<CR>
-  nnoremap <silent> [prefix]dc <Cmd>call ddu#start(#{name: 'chezmoi'})<CR>
+  nnoremap <silent> [prefix]b <Cmd>call ddu#start(#{sources: [#{name: 'buffer'}], uiParams: #{ff: #{autoAction: #{name: 'preview'}}}})<CR>
+  nnoremap <silent> [prefix]u <Cmd>call ddu#start(#{sources: [#{name: 'mr'}], uiParams: #{ff: #{autoAction: #{name: 'preview'}}}})<CR>
+  nnoremap <silent> [prefix]w <Cmd>call ddu#start(#{sources: [#{name: 'mr', params: #{kind: 'mrw'}}], uiParams: #{ff: #{autoAction: #{name: 'preview'}}}})<CR>
+  nnoremap <silent> [prefix]j <Cmd>call ddu#start(#{sources: [#{name: 'junkfile'}], uiParams: #{ff: #{autoAction: #{name: 'preview'}}}})<CR>
+
+  nnoremap <silent> [prefix]df <Cmd>call ddu#start(#{sources: [#{name: 'file'}], ui: 'filer'})<CR>
+  nnoremap <silent> [prefix]dl <Cmd>call ddu#start(#{sources: [#{name: 'line'}], uiParams: #{ff: #{winCol: &columns / 4}}})<CR>
+  nnoremap <silent> [prefix]dgs <Cmd>call ddu#start(#{sources: [#{name: 'git_stash'}], uiParams: #{ff: #{autoAction: #{name: 'preview'}}}})<CR>
+
+  if executable('rg')
+      nnoremap <silent> gr <Cmd>call ddu#start(#{
+          \   sources: [#{name: 'rg', options: #{matchers: []}}],
+          \   sourceParams : #{rg: #{args: ['-i', '--column', '--no-heading', '--color', 'never']}},
+          \   uiParams: #{ff: #{autoAction: #{name: 'preview'}}},
+          \ })<CR>
+  endif
+
+  if executable('ghq')
+      let ghq_root = trim(system('ghq root'))
+      nnoremap <silent> gq <Cmd>call ddu#start(#{
+          \   sources: [#{name: 'file_external'}],
+          \   sourceOptions: #{file_external: #{path: ghq_root}},
+          \   sourceParams: #{file_external: #{cmd: ['ghq', 'list', '-p']}},
+          \   kindOptions: #{ file: #{ defaultAction: 'cd' } },
+          \ })<CR>
+  endif
+
+  if executable('chezmoi')
+      let chezmoi_src_path = trim(system('chezmoi source-path'))
+      nnoremap <silent> gh <Cmd>call ddu#start(#{
+          \   sources: [#{name: 'file_external'}],
+          \   sourceOptions: #{file_external: #{path: chezmoi_src_path}},
+          \   sourceParams: #{
+          \     file_external: #{
+          \       cmd: executable('fd')
+          \         ? ['fd', '.', '-t', 'f', '-H', '-E', '.git', chezmoi_src_path]
+          \         : ['find', chezmoi_src_path, '-type', 'f', '-a', '-not', '-path', '*/.git/*'],
+          \     },
+          \   },
+          \ })<CR>
+  endif
 '''
 hook_source = '''
   call ddu#custom#patch_global({
@@ -27,6 +56,10 @@ hook_source = '''
       \     },
       \     'rg': {
       \       'volatile': v:true,
+      \     },
+      \     'file': {
+      \       'matchers': ['matcher_hidden'],
+      \       'columns': ['filename'],
       \     },
       \   },
       \   'kindOptions': {
@@ -60,84 +93,11 @@ hook_source = '''
         \   },
         \ })
   endif
-  call ddu#custom#patch_local('line', {
-      \   'sources': [{'name': 'line'}],
-      \ })
-  call ddu#custom#patch_local('buffer', {
-      \   'sources': [{'name': 'buffer'}],
-      \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
-      \ })
-  call ddu#custom#patch_local('mru', {
-      \   'sources': [{'name': 'mr'}],
-      \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
-      \ })
-  call ddu#custom#patch_local('mrw', {
-      \   'sources': [{'name': 'mr', 'params': {'kind': 'mrw'}}],
-      \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
-      \ })
-  call ddu#custom#patch_local('junkfile', {
-      \   'sources': [{'name': 'junkfile'}],
-      \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
-      \ })
-  call ddu#custom#patch_local('git_stash', {
-      \   'sources': [{ 'name': 'git_stash' }],
-      \   'uiParams': {'ff': {'autoAction': {'name': 'preview'}}},
-      \ })
-  call ddu#custom#patch_local('filer', {
-      \   'ui': 'filer',
-      \   'sources': [{'name': 'file'}],
-      \   'sourceOptions': {
-      \     'file': {
-      \       'matchers': ['matcher_hidden'],
-      \       'columns': ['filename'],
-      \     },
-      \   },
-      \   'kindOptions': {
-      \     'file': {
-      \       'defaultAction': 'open',
-      \     },
-      \   },
-      \ })
-  call ddu#custom#patch_local('grep', #{
-      \   sources: [#{name: 'rg', options: #{matchers: []}}],
-      \   sourceParams : #{rg: #{args: ['-i', '--column', '--no-heading', '--color', 'never']}},
-      \   uiParams: #{ff: #{autoAction: #{name: 'preview'}}},
-      \ })
-  call ddu#custom#patch_local('line', {
-      \   'uiParams': {
-      \     'ff': {
-      \       'winCol': &columns / 4,
-      \     },
-      \   },
-      \ })
-  if executable('ghq')
-      let ghq_root = trim(system('ghq root'))
-      call ddu#custom#patch_local('ghq', #{
-          \   sources: [#{name: 'file_external'}],
-          \   sourceOptions: #{file_external: #{path: ghq_root}},
-          \   sourceParams: #{file_external: #{cmd: ['ghq', 'list', '-p']}},
-          \   kindOptions: #{ file: #{ defaultAction: 'cd' } },
-          \ })
-  endif
-  if executable('chezmoi')
-      let chezmoi_src_path = trim(system('chezmoi source-path'))
-      call ddu#custom#patch_local('chezmoi', #{
-          \   sources: [#{name: 'file_external'}],
-          \   sourceOptions: #{file_external: #{path: chezmoi_src_path}},
-          \   sourceParams: #{
-          \     file_external: #{
-          \       cmd: executable('fd')
-          \         ? ['fd', '.', '-t', 'f', '-H', '-E', '.git', chezmoi_src_path]
-          \         : ['find', chezmoi_src_path, '-type', 'f', '-a', '-not', '-path', '*/.git/*'],
-          \     },
-          \   },
-          \ })
-  endif
   call ddu#custom#action('kind', 'file', 'filer', { args -> OpenFiler(args) })
   function! OpenFiler(args)
     const path = a:args.items[0].action.path
     const directory = isdirectory(path) ? path : fnamemodify(path, ':h')
-    call ddu#start(#{name: 'filer', sourceOptions: #{file: #{path:directory}}})
+    call ddu#start(#{sources: [#{name: 'file', options: #{path: directory}}], ui: 'filer'})
   endfunction
 '''
 
