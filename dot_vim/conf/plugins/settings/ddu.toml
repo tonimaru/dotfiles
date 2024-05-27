@@ -2,20 +2,19 @@
 repo = 'Shougo/ddu.vim'
 depends = 'denops.vim'
 hook_add = '''
-  nnoremap <silent> [prefix]b <Cmd>call ddu#start(#{sources: [#{name: 'buffer'}], uiParams: #{ff: #{autoAction: #{name: 'preview'}}}})<CR>
-  nnoremap <silent> [prefix]u <Cmd>call ddu#start(#{sources: [#{name: 'mr'}], uiParams: #{ff: #{autoAction: #{name: 'preview'}}}})<CR>
-  nnoremap <silent> [prefix]w <Cmd>call ddu#start(#{sources: [#{name: 'mr', params: #{kind: 'mrw'}}], uiParams: #{ff: #{autoAction: #{name: 'preview'}}}})<CR>
-  nnoremap <silent> [prefix]j <Cmd>call ddu#start(#{sources: [#{name: 'junkfile'}], uiParams: #{ff: #{autoAction: #{name: 'preview'}}}})<CR>
+  nnoremap <silent> [prefix]b <Cmd>call ddu#start(#{sources: [#{name: 'buffer'}]})<CR>
+  nnoremap <silent> [prefix]u <Cmd>call ddu#start(#{sources: [#{name: 'mr'}]})<CR>
+  nnoremap <silent> [prefix]w <Cmd>call ddu#start(#{sources: [#{name: 'mr', params: #{kind: 'mrw'}}]})<CR>
+  nnoremap <silent> [prefix]j <Cmd>call ddu#start(#{sources: [#{name: 'junkfile'}]})<CR>
 
   nnoremap <silent> [prefix]df <Cmd>call ddu#start(#{sources: [#{name: 'file'}], ui: 'filer'})<CR>
-  nnoremap <silent> [prefix]dl <Cmd>call ddu#start(#{sources: [#{name: 'line'}], uiParams: #{ff: #{winCol: &columns / 4}}})<CR>
-  nnoremap <silent> [prefix]dgs <Cmd>call ddu#start(#{sources: [#{name: 'git_stash'}], uiParams: #{ff: #{autoAction: #{name: 'preview'}}}})<CR>
+  nnoremap <silent> [prefix]dl <Cmd>call ddu#start(#{sources: [#{name: 'line'}], uiParams: #{ff: #{winCol: &columns / 4, autoAction: #{}}}})<CR>
+  nnoremap <silent> [prefix]dgs <Cmd>call ddu#start(#{sources: [#{name: 'git_stash'}]})<CR>
 
   if executable('rg')
       nnoremap <silent> gr <Cmd>call ddu#start(#{
           \   sources: [#{name: 'rg', options: #{matchers: []}}],
           \   sourceParams : #{rg: #{args: ['-i', '--column', '--no-heading', '--color', 'never']}},
-          \   uiParams: #{ff: #{autoAction: #{name: 'preview'}}},
           \ })<CR>
   endif
 
@@ -25,7 +24,8 @@ hook_add = '''
           \   sources: [#{name: 'file_external'}],
           \   sourceOptions: #{file_external: #{path: ghq_root}},
           \   sourceParams: #{file_external: #{cmd: ['ghq', 'list', '-p']}},
-          \   kindOptions: #{ file: #{ defaultAction: 'cd' } },
+          \   kindOptions: #{file: #{defaultAction: 'cd'}},
+          \   uiParams: #{ff: #{autoAction: #{}}},
           \ })<CR>
   endif
 
@@ -41,7 +41,6 @@ hook_add = '''
           \         : ['find', chezmoi_src_path, '-type', 'f', '-a', '-not', '-path', '*/.git/*'],
           \     },
           \   },
-          \   uiParams: #{ff: #{autoAction: #{name: 'preview'}}},
           \ })<CR>
   endif
 '''
@@ -74,6 +73,9 @@ hook_source = '''
       \     action: { 'defaultAction': 'do' },
       \   },
       \   uiParams: #{
+      \     ff: #{
+      \       autoAction: #{name: 'preview'},
+      \     },
       \     filer: #{
       \       split: 'no',
       \       sort: 'filename',
