@@ -195,9 +195,9 @@ ddu-ff = '''
   nnoremap <buffer> q <Cmd>call ddu#ui#do_action('quit')<CR>
   nnoremap <buffer> * <Cmd>call ddu#ui#do_action('toggleAllItems')<CR>
   nnoremap <buffer> ; <Cmd>call ddu#ui#do_action('toggleSelectItem')<CR>
-  nnoremap <buffer> r <Cmd>call ddu#ui#do_action('itemAction', {'name': 'quickfix'})<CR>
+  nnoremap <buffer> r <Cmd>call ddu#ui#do_action('itemAction', #{name: 'quickfix'})<CR>
   nnoremap <buffer> d <Nop>
-  nnoremap <buffer> dd <Cmd>call ddu#ui#do_action('itemAction', {'name': 'delete' })<CR>
+  nnoremap <buffer> dd <Cmd>call ddu#ui#do_action('itemAction', #{name: 'delete'})<CR>
 '''
 ddu-ff-filter = '''
   inoremap <buffer> <CR> <Esc><Cmd>call ddu#ui#do_action('closeFilterWindow')<CR>
@@ -239,34 +239,34 @@ ddu-filer = '''
         \ })
   endfunction
   nnoremap <silent><buffer> . <Cmd>call ToggleHidden('file')<CR>
-  nnoremap <silent><buffer> c <Cmd>call ddu#ui#do_action('itemAction', {'name': 'copy'})<CR>
-  nnoremap <silent><buffer> m <Cmd>call ddu#ui#do_action('itemAction', {'name': 'move'})<CR>
-  nnoremap <silent><buffer> p <Cmd>call ddu#ui#do_action('itemAction', {'name': 'paste'})<CR>
-  nnoremap <silent><buffer> h <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': '..'}})<CR>
+  nnoremap <silent><buffer> c <Cmd>call ddu#ui#do_action('itemAction', #{name: 'copy'})<CR>
+  nnoremap <silent><buffer> m <Cmd>call ddu#ui#do_action('itemAction', #{name: 'move'})<CR>
+  nnoremap <silent><buffer> p <Cmd>call ddu#ui#do_action('itemAction', #{name: 'paste'})<CR>
+  nnoremap <silent><buffer> h <Cmd>call ddu#ui#do_action('itemAction', #{name: 'narrow', params: #{path: '..'}})<CR>
   nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
   nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
   nnoremap <silent><buffer><expr> l ddu#ui#get_item()->get('isTree', v:false) ?
-        \ "<Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow'})<CR>" : 
-        \ "<Cmd>call ddu#ui#do_action('itemAction', {'name': 'open'})<CR>"
+        \ "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'narrow'})<CR>" : 
+        \ "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open'})<CR>"
   nnoremap <silent><buffer><expr> <CR> ddu#ui#filer#get_item().kind == 'file' ?
         \ ddu#ui#get_item()->get('isTree', v:false) ?
-        \   "<Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow'})<CR>" : 
-        \   "<Cmd>call ddu#ui#do_action('itemAction', {'name': 'open'})<CR>" :
+        \   "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'narrow'})<CR>" : 
+        \   "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open'})<CR>" :
         \ "<Cmd>call ddu#ui#do_action('itemAction')<CR>"
-  nnoremap <silent><buffer> w <Cmd>call ddu#ui#do_action('itemAction', {'name': 'open', 'params': {'command': 'split'}})<CR>
-  nnoremap <silent><buffer> t <Cmd>call ddu#ui#do_action('itemAction', {'name': 'open', 'params': {'command': 'tabnew'}})<CR>
-  nnoremap <nowait><silent><buffer> d <Cmd>call ddu#ui#do_action('itemAction', {'name': 'trash' })<CR>
-  nnoremap <silent><buffer> D <Cmd>call ddu#ui#do_action('itemAction', {'name': 'newDirectory'})<CR>
-  nnoremap <silent><buffer> F <Cmd>call ddu#ui#do_action('itemAction', {'name': 'newFile'})<CR>
-  nnoremap <silent><buffer> r <Cmd>call ddu#ui#do_action('itemAction', {'name': 'rename'})<CR>
-  nnoremap <silent><buffer> ~ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': $HOME}})<CR>
-  nnoremap <silent><buffer> \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': '/'}})<CR>
-  nnoremap <silent><buffer> - <Cmd>call ddu#ui#do_action('expandItem', {'mode': 'toggle'})<CR>
+  nnoremap <silent><buffer> w <Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{command: 'split'}})<CR>
+  nnoremap <silent><buffer> t <Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{command: 'tabnew'}})<CR>
+  nnoremap <nowait><silent><buffer> d <Cmd>call ddu#ui#do_action('itemAction', #{name: 'trash' })<CR>
+  nnoremap <silent><buffer> D <Cmd>call ddu#ui#do_action('itemAction', #{name: 'newDirectory'})<CR>
+  nnoremap <silent><buffer> F <Cmd>call ddu#ui#do_action('itemAction', #{name: 'newFile'})<CR>
+  nnoremap <silent><buffer> r <Cmd>call ddu#ui#do_action('itemAction', #{name: 'rename'})<CR>
+  nnoremap <silent><buffer> ~ <Cmd>call ddu#ui#do_action('itemAction', #{name: 'narrow', params: #{path: $HOME}})<CR>
+  nnoremap <silent><buffer> \ <Cmd>call ddu#ui#do_action('itemAction', #{name: 'narrow', params: #{path: '/'}})<CR>
+  nnoremap <silent><buffer> - <Cmd>call ddu#ui#do_action('expandItem', #{mode: 'toggle'})<CR>
   nnoremap <silent><buffer> q <Cmd>call ddu#ui#do_action('quit')<CR>
   nnoremap <silent><buffer> Q <Cmd>bp\|bd #<CR>
   nnoremap <silent><buffer> * <Cmd>call ddu#ui#do_action('toggleAllItems')<CR>
   nnoremap <silent><buffer> ; <Cmd>call ddu#ui#do_action('toggleSelectItem')<CR>
   nnoremap <silent><buffer> <C-l> <Cmd>call ddu#ui#do_action('checkItems')<CR>
-  nnoremap <silent><buffer> y <Cmd>call ddu#ui#do_action('itemAction', {'name': 'yank'})<CR>
+  nnoremap <silent><buffer> y <Cmd>call ddu#ui#do_action('itemAction', #{name: 'yank'})<CR>
   nnoremap <silent><buffer> a <Cmd>call ddu#ui#do_action('chooseAction')<CR>
 '''
