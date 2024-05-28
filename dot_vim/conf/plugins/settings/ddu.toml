@@ -41,6 +41,7 @@ hook_add = '''
           \         : ['find', chezmoi_src_path, '-type', 'f', '-a', '-not', '-path', '*/.git/*'],
           \     },
           \   },
+          \   uiParams: #{ff: #{autoAction: #{name: 'preview'}}},
           \ })<CR>
   endif
 '''
@@ -60,6 +61,12 @@ hook_source = '''
       \     file: #{
       \       matchers: ['matcher_hidden'],
       \       columns: ['filename'],
+      \     },
+      \     mr: #{
+      \       matchers: ['matcher_zf'],
+      \     },
+      \     file_external: #{
+      \       matchers: ['matcher_zf'],
       \     },
       \   },
       \   kindOptions: #{
