@@ -27,6 +27,14 @@ hook_add = '''
 [[plugins]]
 repo = 'tomtom/tcomment_vim'
 on_event = ['CursorHold', 'CursorMoved', 'ModeChanged']
+hook_add = '''
+    let g:tcomment_mapleader1 = ''
+    let g:tcomment_mapleader2 = ''
+    let g:tcomment_opleader1 = 'gc'
+    let g:tcomment_mapleader_uncomment_anyway = ''
+    let g:tcomment_mapleader_comment_anyway = ''
+    let g:tcomment_textobject_inlinecomment = ''
+'''
 
 [[plugins]]
 repo = 'bfredl/nvim-miniyank'
