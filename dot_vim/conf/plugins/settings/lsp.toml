@@ -7,7 +7,7 @@ repo = 'mfussenegger/nvim-dap'
 if = "has('nvim')"
 
 [[plugins]]
-repo = 'jose-elias-alvarez/null-ls.nvim'
+repo = 'nvimtools/none-ls.nvim'
 if = "has('nvim')"
 lua_source = '''
   require("null-ls").setup()
@@ -18,7 +18,7 @@ repo = 'jay-babu/mason-null-ls.nvim'
 if = "has('nvim')"
 depends = [
   'mason.nvim',
-  'null-ls.nvim',
+  'none-ls.nvim',
 ]
 lua_source = '''
   require("mason-null-ls").setup({
