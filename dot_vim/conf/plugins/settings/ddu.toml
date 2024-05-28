@@ -45,50 +45,50 @@ hook_add = '''
   endif
 '''
 hook_source = '''
-  call ddu#custom#patch_global({
-      \   'ui': 'ff',
-      \   'sourceOptions': {
-      \     '_': {
-      \       'matchers': ['matcher_fzf'],
+  call ddu#custom#patch_global(#{
+      \   ui: 'ff',
+      \   sourceOptions: #{
+      \     _: #{
+      \       matchers: ['matcher_fzf'],
       \     },
-      \     'junkfile': {
-      \       'volatile': v:true,
+      \     junkfile: #{
+      \       volatile: v:true,
       \     },
-      \     'rg': {
-      \       'volatile': v:true,
+      \     rg: #{
+      \       volatile: v:true,
       \     },
-      \     'file': {
-      \       'matchers': ['matcher_hidden'],
-      \       'columns': ['filename'],
+      \     file: #{
+      \       matchers: ['matcher_hidden'],
+      \       columns: ['filename'],
       \     },
       \   },
-      \   'kindOptions': {
-      \     'file': { 'defaultAction': 'open' },
-      \     'action': { 'defaultAction': 'do' },
+      \   kindOptions: #{
+      \     file: { 'defaultAction': 'open' },
+      \     action: { 'defaultAction': 'do' },
       \   },
-      \   'uiParams': {
-      \     'filer': {
-      \       'split': 'no',
-      \       'sort': 'filename',
+      \   uiParams: #{
+      \     filer: #{
+      \       split: 'no',
+      \       sort: 'filename',
       \     },
       \   },
       \ })
   if has('nvim')
-    call ddu#custom#patch_global({
-        \   'uiParams': {
-        \     'ff': {
-        \       'split': 'floating',
-        \       'floatingBorder': 'single',
-        \       'winRow': -1,
-        \       'winCol': -1,
-        \       'winHeight': &lines - 5,
-        \       'startAutoAction': v:true,
-        \       'previewFloating': v:true,
-        \       'previewFloatingBorder': 'single',
-        \       'previewSplit': 'vertical',
-        \       'previewWidth': &columns / 2 - 2,
-        \       'previewHeight': &lines - 5,
-        \       'filterFloatingPosition': 'bottom',
+    call ddu#custom#patch_global(#{
+        \   uiParams: #{
+        \     ff: #{
+        \       split: 'floating',
+        \       floatingBorder: 'single',
+        \       winRow: -1,
+        \       winCol: -1,
+        \       winHeight: &lines - 5,
+        \       startAutoAction: v:true,
+        \       previewFloating: v:true,
+        \       previewFloatingBorder: 'single',
+        \       previewSplit: 'vertical',
+        \       previewWidth: &columns / 2 - 2,
+        \       previewHeight: &lines - 5,
+        \       filterFloatingPosition: 'bottom',
         \     },
         \   },
         \ })
@@ -226,9 +226,9 @@ ddu-filer = '''
             call extend(opts, #{matchers: matchers})
         endif
     endfor
-    call ddu#ui#do_action('updateOptions', {
-        \   'sourceOptions': { a:name: { 'matchers': matchers } },
-        \   'sources': sources,
+    call ddu#ui#do_action('updateOptions', #{
+        \   sourceOptions: { a:name: #{ matchers: matchers } },
+        \   sources: sources,
         \ })
   endfunction
   nnoremap <silent><buffer> . <Cmd>call ToggleHidden('file')<CR>
