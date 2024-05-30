@@ -41,9 +41,6 @@ hook_post_source = '''
       \   'cmdline': {
       \     'mark': 'cmdline',
       \   },
-      \   'cmdline-history': {
-      \     'mark': 'history',
-      \   },
       \   'input': {
       \     'mark': 'input',
       \     'isVolatile': v:true,
@@ -80,9 +77,9 @@ hook_post_source = '''
     \ })
 
   call ddc#custom#patch_global('cmdlineSources', {
-      \   ':': ['cmdline-history', 'cmdline', 'around'],
-      \   '@': ['cmdline-history', 'input', 'file', 'around'],
-      \   '>': ['cmdline-history', 'input', 'file', 'around'],
+      \   ':': ['cmdline', 'around'],
+      \   '@': ['input', 'file', 'around'],
+      \   '>': ['input', 'file', 'around'],
       \   '/': ['around', 'line'],
       \   '?': ['around', 'line'],
       \   '-': ['around', 'line'],
@@ -181,10 +178,6 @@ on_source = 'ddc.vim'
 
 [[plugins]]
 repo = 'Shougo/ddc-source-cmdline'
-on_source = 'ddc.vim'
-
-[[plugins]]
-repo = 'Shougo/ddc-source-cmdline-history'
 on_source = 'ddc.vim'
 
 [[plugins]]
