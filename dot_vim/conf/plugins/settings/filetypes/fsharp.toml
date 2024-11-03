@@ -1,0 +1,6 @@
+[[plugins]]
+repo = 'ionide/Ionide-vim'
+hook_add = '''
+  let g:fsharp#lsp_auto_setup = 0
+'''
+lazy = 0

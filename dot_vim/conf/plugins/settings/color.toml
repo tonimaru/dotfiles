@@ -9,6 +9,16 @@ on_event = ['FileType']
 on_cmd = ["TSInstall", "TSUpdate"]
 hook_post_update = 'TSUpdate'
 lua_source = '''
+  local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
+  parser_config.fsharp = {
+    install_info = {
+      url = 'https://github.com/ionide/tree-sitter-fsharp',
+      branch = 'main',
+      files = { 'src/scanner.c', 'src/parser.c' },
+    },
+    requires_generate_from_grammar = false,
+    filetype = 'fsharp',
+  }
   require'nvim-treesitter.configs'.setup {
     highlight = {
       enable = true,
