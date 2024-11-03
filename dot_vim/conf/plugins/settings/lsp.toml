@@ -21,6 +21,7 @@ depends = [
   'nvim-lsp-ts-utils',
   'rust-tools.nvim',
   'nvim-metals',
+  'sqls.nvim',
 ]
 lua_source = '''
   function has_value(tab, val)
@@ -105,7 +106,6 @@ lua_source = '''
     on_attach(client, bufnr)
   end
 
-
   vim.diagnostic.config({
     update_in_insert = true,
   })
@@ -115,7 +115,12 @@ lua_source = '''
 
   local servers = {
     ["gopls"] = {},
-    ["sqls"] = {},
+    ["sqls"] = {
+      on_attach = function(client, bufnr)
+        require("sqls").on_attach(client, bufnr)
+        on_attach(client, bufnr)
+      end
+    },
     ["bufls"] = {
       cmd = {'buf', 'beta', 'lsp'},
     },
@@ -236,3 +241,7 @@ lua << EOM
   require('metals').initialize_or_attach(metals_config)
 EOM
 '''
+
+[[plugins]]
+repo = 'nanotee/sqls.nvim'
+if = "has('nvim')"
