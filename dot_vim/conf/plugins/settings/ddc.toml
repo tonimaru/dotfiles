@@ -27,6 +27,7 @@ hook_post_source = '''
   call ddc#custom#patch_global('autoCompleteDelay', 66)
   call ddc#custom#patch_global('sourceOptions', {
       \   '_': {
+      \     'ignoreCase': v:true,
       \     'matchers': ['matcher_vimregexp'],
       \   },
       \   'file': {
@@ -54,6 +55,9 @@ hook_post_source = '''
       \     'forceCompletionPattern': '\.\w*|:\w*|->\w*|\\\w*',
       \     'minAutoCompleteLength': 0,
       \     'dup': 'keep',
+      \     'matchers': ['matcher_fuzzy'],
+      \     'sorters': ['sorter_fuzzy'],
+      \     'converters': ['converter_fuzzy'],
       \   },
       \   'vsnip': {
       \     'mark': 'vsnip',
@@ -100,6 +104,7 @@ hook_post_source = '''
       \   'lua',
       \   'markdown',
       \   'sh',
+      \   'sql',
       \   'typescript',
       \   'typescriptreact',
       \   'vim',
@@ -204,6 +209,10 @@ on_source = 'ddc.vim'
 
 [[plugins]]
 repo = 'Shougo/ddc-filter-matcher_vimregexp'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'tani/ddc-fuzzy'
 on_source = 'ddc.vim'
 
 # ui

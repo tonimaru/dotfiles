@@ -14,29 +14,9 @@ lua_source = '''
 '''
 
 [[plugins]]
-repo = 'jay-babu/mason-null-ls.nvim'
-if = "has('nvim')"
-depends = [
-  'mason.nvim',
-  'none-ls.nvim',
-]
-lua_source = '''
-  require("mason-null-ls").setup({
-    automatic_setup = true,
-    handlers = {
-        prettierd = function(source_name, methods)
-            local null_ls = require('null-ls')
-            null_ls.register(null_ls.builtins.formatting.prettierd.with {
-                extra_filetypes = { "graphql" },
-            })
-        end,
-    },
-  })
-'''
-
-[[plugins]]
 repo = 'neovim/nvim-lspconfig'
 if = "has('nvim')"
+on_event = ['FileType']
 depends = [
   'nvim-lsp-ts-utils',
   'rust-tools.nvim',
@@ -104,29 +84,43 @@ lua_source = '''
     lsp_buf_keymap(bufnr)
   end
 
+  local lspconfig = require("lspconfig")
+
+  local is_node_dir = function()
+    return lspconfig.util.root_pattern('package.json')(vim.fn.getcwd())
+  end
+
+
+  function on_attach_ts(client, bufnr)
+    if not is_node_dir() then
+        client.stop()
+    end
+    on_attach(client, bufnr)
+  end
+
+  function on_attach_deno(client, bufnr)
+    if is_node_dir() then
+        client.stop()
+    end
+    on_attach(client, bufnr)
+  end
+
+
   vim.diagnostic.config({
     update_in_insert = true,
-  })
-'''
-
-[[plugins]]
-repo = 'williamboman/mason-lspconfig.nvim'
-if = "has('nvim')"
-depends = [ 'mason-null-ls.nvim', 'nvim-lspconfig', 'mason.nvim' ]
-on_event = ['FileType']
-lua_source = '''
-  local mlc = require("mason-lspconfig")
-  mlc.setup({
-    automatic_installation = true,
-    ensure_initialized = { "sumneko_lua" },
   })
 
   local capabilities = vim.lsp.protocol.make_client_capabilities()
   capabilities.textDocument.completion.completionItem.snippetSupport = true
 
-  lspconfig = require("lspconfig")
-  local opts = {
-    ["tsserver"] = {
+  local servers = {
+    ["gopls"] = {},
+    ["sqls"] = {},
+    ["bufls"] = {
+      cmd = {'buf', 'beta', 'lsp'},
+    },
+    ["ts_ls"] = {
+      on_attach = on_attach_ts,
       single_file_support = false,
       root_dir = lspconfig.util.root_pattern("package.json"),
     },
@@ -143,10 +137,10 @@ lua_source = '''
       },
     },
     ["denols"] = {
+      on_attach = on_attach_deno,
       single_file_support = false,
       root_dir = lspconfig.util.root_pattern("deno.json", "denops"),
       init_options = {
-        lint = true,
         unstable = true,
         suggest = {
           imports = {
@@ -159,27 +153,17 @@ lua_source = '''
         },
       },
     },
-    ["rust_analyzer"] = function()
-      require('rust-tools').setup({
-        server = {
-          on_attach = on_attach,
-          capabilities = capabilities,
-          standalone = true,
-          settings = {
-            ["rust-analyzer"] = {
-              cargo = {
-                allFeatures = true,
-                loadOutDirsFromCheck = true
-              },
-              procMacro = { enable = true },
-              checkOnSave = { command = "clippy" },
-            },
+    ["rust_analyzer"] = {
+      settings = {
+        ["rust_analyzer"] = {
+          cargo = {
+            allFeatures = true,
+            loadOutDirsFromCheck = true
           },
+          procMacro = { enable = true },
+          checkOnSave = { command = "clippy" },
         },
-      })
-    end,
-    ["sumneko_lua"] = {
-      settings = { Lua = { diagnostics = { globals = { 'vim' } } } },
+      },
     },
     ["yamlls"] = {
         settings = {
@@ -208,35 +192,20 @@ lua_source = '''
     ["graphql"] = {
         root_dir = lspconfig.util.root_pattern("package.json", "go.mod", ".git"),
     },
+    ["fsautocomplete"] = {
+        single_file_support = true,
+    },
   }
 
-  mlc.setup_handlers({
-    function(server_name)
-      ---@type table<any, any>
-      local opt = {
-        on_attach = on_attach,
-        capabilities = capabilities,
-      }
-      if opts[server_name] ~= nil then
-        local exopt = opts[server_name]
-        if type(exopt) == "table" then
-          for k, v in pairs(exopt) do opt[k] = v end
-        elseif type(opts[server_name]) == "function" then
-          return exopt()
-        end
-      end
-      lspconfig = require("lspconfig")
-      lspconfig[server_name].setup(opt)
-    end,
-  })
-'''
-
-[[plugins]]
-repo = 'williamboman/mason.nvim'
-if = "has('nvim')"
-on_cmd = ['Mason']
-lua_source = '''
-  require("mason").setup()
+  ---@type table<any, any>
+  for server_name, server_opt in pairs(servers) do
+    local opt = {
+      on_attach = on_attach,
+      capabilities = capabilities,
+    }
+    for k, v in pairs(server_opt) do opt[k] = v end
+    lspconfig[server_name].setup(opt)
+  end
 '''
 
 [[plugins]]
