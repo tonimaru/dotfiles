@@ -89,3 +89,7 @@ call system("go install github.com/cweill/gotests/gotests@latest")
 # hook_source = '''
 #   nnoremap <silent><buffer> [prefix]lc <Cmd>GoCover<CR>
 # '''
+
+[[plugins]]
+repo = 'sebdah/vim-delve'
+on_ft = 'go'
