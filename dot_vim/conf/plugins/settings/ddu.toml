@@ -14,7 +14,7 @@ hook_add = '''
   if executable('rg')
       nnoremap <silent> gr <Cmd>call ddu#start(#{
           \   sources: [#{name: 'rg', options: #{matchers: []}}],
-          \   sourceParams : #{rg: #{args: ['-i', '--column', '--no-heading', '--color', 'never']}},
+          \   sourceParams: #{rg: #{args: ['-i', '--column', '--no-heading', '--color', 'never']}},
           \ })<CR>
   endif
 
@@ -63,9 +63,13 @@ hook_source = '''
       \     },
       \     mr: #{
       \       matchers: ['matcher_zf'],
+      \       sorters: ['sorter_zf'],
+      \       converters: ['converter_zf'],
       \     },
       \     file_external: #{
       \       matchers: ['matcher_zf'],
+      \       sorters: ['sorter_zf'],
+      \       converters: ['converter_zf'],
       \     },
       \   },
       \   kindOptions: #{
@@ -79,6 +83,11 @@ hook_source = '''
       \     filer: #{
       \       split: 'no',
       \       sort: 'filename',
+      \     },
+      \   },
+      \   filterParams: #{
+      \     converter_zf: #{
+      \       highlight: 'Search',
       \     },
       \   },
       \ })
