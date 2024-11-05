@@ -1,8 +1,8 @@
 let s:dein_base = $HOME .'/.cache/dein'
 let s:dein_src = s:dein_base . "/repos/github.com/Shougo/dein.vim"
 
-let s:proot = fnamemodify($MYVIMRC, ":p:h") . '/conf/plugins/'
-let s:tomls = glob(s:proot . "settings/**/*.toml")->split("\n")
+let s:proot = fnamemodify($MYVIMRC, ":p:h") . '/conf/plugins'
+let s:tomls = glob(s:proot . "/settings/**/*.toml")->split("\n")
 
 if !isdirectory(s:dein_src)
   if !executable('git')
@@ -20,6 +20,8 @@ endif
 if has('vim_starting')
   execute 'set runtimepath+=' . s:dein_src
 endif
+
+let $HOOKS_DIR=s:proot . "/settings/hooks"
 
 let g:dein#auto_recache = v:true
 if dein#load_state(s:dein_base)
