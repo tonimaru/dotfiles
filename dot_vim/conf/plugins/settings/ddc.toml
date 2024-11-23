@@ -103,6 +103,7 @@ hook_post_source = '''
       \   'json',
       \   'lua',
       \   'markdown',
+      \   'rust',
       \   'sh',
       \   'sql',
       \   'typescript',

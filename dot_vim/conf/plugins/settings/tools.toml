@@ -5,7 +5,7 @@ repo = 'Shougo/vinarise.vim'
 repo = 'skanehira/translate.vim'
 hook_add = '''
   let g:translate_popup_window=0
-  vnoremap t <Cmd>Translate<CR>
+  xnoremap t <Cmd>Translate<CR>
 '''
 
 [[plugins]]

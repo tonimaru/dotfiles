@@ -9,9 +9,7 @@ if = "has('nvim')"
 [[plugins]]
 repo = 'nvimtools/none-ls.nvim'
 if = "has('nvim')"
-lua_source = '''
-  require("null-ls").setup()
-'''
+depends = ['plenary.nvim']
 
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
@@ -22,6 +20,7 @@ depends = [
   'rust-tools.nvim',
   'nvim-metals',
   'sqls.nvim',
+  'none-ls.nvim',
 ]
 hooks_file ='$HOOKS_DIR/lspconfig.lua'
 

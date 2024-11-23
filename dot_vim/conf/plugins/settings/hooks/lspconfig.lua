@@ -13,7 +13,10 @@ local function lsp_client_settings(client)
 end
 
 function Ignore_fmts(client)
-    local ignore_fmts = { ["tsserver"] = true }
+    local ignore_fmts = {
+        ["tsserver"] = true,
+        ["sqls"] = true,
+    }
     return not ignore_fmts[client.name]
 end
 
@@ -59,6 +62,20 @@ vim.diagnostic.config({
     update_in_insert = true,
 })
 
+local null_ls = require("null-ls")
+null_ls.setup({
+    debug = true,
+    on_attach = on_attach,
+    sources = {
+        null_ls.builtins.formatting.biome,
+        null_ls.builtins.formatting.sql_formatter.with({
+            cwd = function()
+                return vim.fn.getcwd()
+            end
+        }),
+    },
+})
+
 local lspconfig = require("lspconfig")
 
 local is_node_dir = function()
@@ -66,14 +83,16 @@ local is_node_dir = function()
 end
 
 local servers = {
-    ["gopls"]            = {},
+    ["gopls"]            = {
+        workspace = false,
+    },
     ["sqls"]             = {
         on_attach = function(client, bufnr)
             require("sqls").on_attach(client, bufnr)
             on_attach(client, bufnr)
         end,
     },
-    ["bufls"]            = {
+    ["buf_ls"]           = {
         cmd = { 'buf', 'beta', 'lsp' },
     },
     ["ts_ls"]            = {
