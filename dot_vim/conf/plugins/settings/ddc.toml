@@ -153,7 +153,6 @@ repo = 'Shougo/pum.vim'
 hook_add = '''
   inoremap <C-n> <Cmd>call pum#map#select_relative(+1)<CR>
   inoremap <C-p> <Cmd>call pum#map#select_relative(-1)<CR>
-  inoremap <C-e> <Cmd>call pum#map#cancel()<CR>
 
   imap <expr> <C-j>
     \ pum#entered() ? '<Cmd>call pum#map#confirm()<CR>' :
@@ -164,8 +163,6 @@ hook_add = '''
     \ pum#entered() ? '<Cmd>call pum#map#confirm()<CR>' :
     \ vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' :
     \ '<C-l>'
-
-  imap <expr> <C-h> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-h>'
 
   smap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
   smap <expr> <C-l> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-l>'
