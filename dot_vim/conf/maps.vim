@@ -18,6 +18,16 @@ inoremap <expr> <C-t> pumvisible() ? "\<C-p>" : "\<C-t>"
 nnoremap [prefix]id a<C-r>=strftime('%F')<CR>
 nnoremap [prefix]iD a<C-r>=strftime('%F %T')<CR>
 
+nnoremap Y y$
+nnoremap U <C-r>
+xnoremap p P
+xnoremap y mzy`z
+xnoremap < <gv
+xnoremap > >gv
+
+inoremap <C-a> <C-o>^
+inoremap <C-e> <C-o>$
+
 nnoremap [prefix]iu <Cmd>call <SID>uuid()<CR>
 function! s:uuid()
   let uuid = system('uuidgen | tr "[A-Z]" "[a-z]" | tr -d "\n"')
