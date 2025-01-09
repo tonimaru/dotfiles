@@ -24,6 +24,14 @@ lua_source = '''
 '''
 
 [[plugins]]
+repo = 'delphinus/skkeleton_indicator.nvim'
+if = "has('nvim')"
+on_source = 'skkeleton'
+lua_source = '''
+  require("skkeleton_indicator").setup {}
+'''
+
+[[plugins]]
 repo = 'itchyny/lightline.vim'
 if = "!has('nvim')"
 on_event = "VimEnter"

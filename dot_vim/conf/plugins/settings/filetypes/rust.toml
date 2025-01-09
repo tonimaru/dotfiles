@@ -1,5 +1,5 @@
 hook_add = '''
-function! s:rust_run()
+function! Rust_run()
   let l:cargo = findfile('Cargo.toml', ".;")
   if filereadable(l:cargo)
     call Terminal_exec('cargo', 'run')
@@ -10,7 +10,7 @@ endfunction
 '''
 [ftplugin]
 rust = '''
-nnoremap <silent><buffer> [prefix]q <Cmd>call <SID>rust_run()<CR>
+nnoremap <silent><buffer> [prefix]q <Cmd>call Rust_run()<CR>
 nnoremap <silent><buffer> [prefix]lb <Cmd>call Terminal_exec('cargo', 'build')<CR>
 nnoremap <silent><buffer> [prefix]t <Cmd>call Terminal_exec('cargo', 'test -- --test-threads=4 --nocapture')<CR>
 '''

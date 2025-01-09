@@ -22,7 +22,7 @@ hook_add = '''
 '''
 hook_post_source = '''
   call ddc#custom#patch_global('ui', 'pum')
-  call ddc#custom#patch_global('sources', ['file', 'vsnip', 'around'])
+  call ddc#custom#patch_global('sources', ['file', 'vsnip', 'copilot', 'around'])
   call ddc#custom#patch_global('backspaceCompletion', v:true)
   call ddc#custom#patch_global('autoCompleteDelay', 66)
   call ddc#custom#patch_global('sourceOptions', {
@@ -112,6 +112,7 @@ hook_post_source = '''
       \   'yaml',
       \ ], 'sources', [
       \   'lsp',
+      \   'copilot',
       \   'file',
       \   'vsnip',
       \   'around',
@@ -155,13 +156,15 @@ hook_add = '''
   inoremap <C-p> <Cmd>call pum#map#select_relative(-1)<CR>
 
   imap <expr> <C-j>
-    \ pum#entered() ? '<Cmd>call pum#map#confirm()<CR>' :
-    \ vsnip#expandable() ? '<Plug>(vsnip-expand)' :
+    \ exists("*pum#entered") && pum#entered() ? '<Cmd>call pum#map#confirm()<CR>' :
+    \ exists("*vsnip#expandable") && vsnip#expandable() ? '<Plug>(vsnip-expand)' :
+    \ exists("*copilot#GetDisplayedSuggestion") && !empty(copilot#GetDisplayedSuggestion().text) ? '<Plug>(copilot-accept-word)' :
     \ '<C-j>'
 
   imap <expr> <C-l>
-    \ pum#entered() ? '<Cmd>call pum#map#confirm()<CR>' :
-    \ vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' :
+    \ exists("*pum#entered") && pum#entered() ? '<Cmd>call pum#map#confirm()<CR>' :
+    \ exists("*vsnip#expandable") && vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' :
+    \ exists("*copilot#GetDisplayedSuggestion") && !empty(copilot#GetDisplayedSuggestion().text) ? '<Plug>(copilot-accept-line)' :
     \ '<C-l>'
 
   smap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
@@ -192,15 +195,28 @@ repo = 'Shougo/ddc-source-line'
 on_source = 'ddc.vim'
 
 [[plugins]]
-repo = 'Shougo/ddc-source-lsp'
-on_source = 'ddc.vim'
-
-[[plugins]]
 repo = 'tani/ddc-git'
 on_source = 'ddc.vim'
 
 [[plugins]]
 repo = 'uga-rosa/ddc-source-vsnip'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-source-lsp'
+on_source = 'nvim-lspconfig'
+
+[[plugins]]
+repo = 'uga-rosa/ddc-source-lsp-setup'
+on_source = 'ddc-source-lsp'
+lua_source = '''
+    print("hoge")
+  require('ddc_source_lsp_setup').setup()
+'''
+
+[[plugins]]
+repo = 'Shougo/ddc-source-copilot'
+depends = ['copilot.vim']
 on_source = 'ddc.vim'
 
 # matcher

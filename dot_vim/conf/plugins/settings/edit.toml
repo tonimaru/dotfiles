@@ -60,3 +60,30 @@ hook_add = '''
   vmap g<C-a> g<Plug>(dial-increment)
   vmap g<C-x> g<Plug>(dial-decrement)
 '''
+
+[[plugins]]
+repo = 'vim-skk/skkeleton'
+depends = ['denops.vim']
+on_event = ['InsertEnter']
+hook_source = '''
+  imap <C-s> <Plug>(skkeleton-toggle)
+'''
+
+[[plugins]]
+repo = 'shg-eo/skkeleton-azik'
+depends = ['skkeleton']
+on_event = ['InsertEnter']
+
+[[plugins]]
+repo = 'ysmb-wtsg/in-and-out.nvim'
+on_map = { i = ['<C-CR>'] }
+on_event = ['InsertEnter']
+lua_source = '''
+  vim.keymap.set("i", "<C-CR>", function()
+    require("in-and-out").in_and_out()
+  end)
+'''
+
+[[plugins]]
+repo = 'cohama/lexima.vim'
+on_event = ['InsertEnter']

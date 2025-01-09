@@ -1,10 +1,10 @@
 let s:dir = fnamemodify($MYVIMRC, ":p:h")
 
 execute 'source' s:dir.'/'.'conf/options.vim'
-execute 'source' s:dir.'/'.'conf/maps.vim'
 execute 'source' s:dir.'/'.'conf/autocmds.vim'
 execute 'source' s:dir.'/'.'conf/functions.vim'
 execute 'source' s:dir.'/'.'conf/plugins/init.vim'
+execute 'source' s:dir.'/'.'conf/maps.vim'
 
 highlight LineNr guifg=grey guibg=black
 
