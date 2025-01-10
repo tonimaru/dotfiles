@@ -210,7 +210,6 @@ on_source = 'nvim-lspconfig'
 repo = 'uga-rosa/ddc-source-lsp-setup'
 on_source = 'ddc-source-lsp'
 lua_source = '''
-    print("hoge")
   require('ddc_source_lsp_setup').setup()
 '''
 
