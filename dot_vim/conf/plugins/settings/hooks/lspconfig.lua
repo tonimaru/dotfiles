@@ -64,7 +64,6 @@ vim.diagnostic.config({
 
 local null_ls = require("null-ls")
 null_ls.setup({
-    debug = true,
     on_attach = on_attach,
     sources = {
         null_ls.builtins.formatting.biome,
