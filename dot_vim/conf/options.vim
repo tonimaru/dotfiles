@@ -25,7 +25,9 @@ set nofoldenable
 set mouse=
 set incsearch
 set smartindent
-set imdisable
+if exists("+imdisable")
+  set imdisable
+endif
 set helplang=ja,en
 set clipboard=unnamed,unnamedplus
 set nofixendofline
