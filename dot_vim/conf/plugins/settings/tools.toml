@@ -76,10 +76,3 @@ hook_add = '''
   xmap ga <Plug>(EasyAlign)
   nmap ga <Plug>(EasyAlign)
 '''
-
-[[plugins]]
-repo = 'github/copilot.vim'
-hook_add = '''
-    let g:copilot_no_tab_map = v:true
-    let g:copilot_filetypes = { '*': v:true }
-'''

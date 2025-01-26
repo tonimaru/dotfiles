@@ -22,7 +22,7 @@ hook_add = '''
 '''
 hook_post_source = '''
   call ddc#custom#patch_global('ui', 'pum')
-  call ddc#custom#patch_global('sources', ['file', 'vsnip', 'copilot', 'around'])
+  call ddc#custom#patch_global('sources', ['file', 'vsnip', 'around'])
   call ddc#custom#patch_global('backspaceCompletion', v:true)
   call ddc#custom#patch_global('autoCompleteDelay', 66)
   call ddc#custom#patch_global('sourceOptions', {
@@ -112,7 +112,6 @@ hook_post_source = '''
       \   'yaml',
       \ ], 'sources', [
       \   'lsp',
-      \   'copilot',
       \   'file',
       \   'vsnip',
       \   'around',
@@ -158,13 +157,11 @@ hook_add = '''
   imap <expr> <C-j>
     \ exists("*pum#entered") && pum#entered() ? '<Cmd>call pum#map#confirm()<CR>' :
     \ exists("*vsnip#expandable") && vsnip#expandable() ? '<Plug>(vsnip-expand)' :
-    \ exists("*copilot#GetDisplayedSuggestion") && !empty(copilot#GetDisplayedSuggestion().text) ? '<Plug>(copilot-accept-word)' :
     \ '<C-j>'
 
   imap <expr> <C-l>
     \ exists("*pum#entered") && pum#entered() ? '<Cmd>call pum#map#confirm()<CR>' :
     \ exists("*vsnip#expandable") && vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' :
-    \ exists("*copilot#GetDisplayedSuggestion") && !empty(copilot#GetDisplayedSuggestion().text) ? '<Plug>(copilot-accept-line)' :
     \ '<C-l>'
 
   smap <expr> <C-j> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-j>'
@@ -212,11 +209,6 @@ on_source = 'ddc-source-lsp'
 lua_source = '''
   require('ddc_source_lsp_setup').setup()
 '''
-
-[[plugins]]
-repo = 'Shougo/ddc-source-copilot'
-depends = ['copilot.vim']
-on_source = 'ddc.vim'
 
 # matcher
 
