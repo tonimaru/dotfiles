@@ -60,6 +60,9 @@ endif
 if has("nvim")
   set backupdir-=.
   set inccommand=split
+  if executable($HOME."/.local/share/mise/shims/python3")
+    let g:python3_host_prog = $HOME."/.local/share/mise/shims/python3"
+  endif
 else
   execute "set directory=" .. fnamemodify($MYVIMRC, ":p:h") .. "/swap"
   execute "set backupdir=" .. fnamemodify($MYVIMRC, ":p:h") .. "/backup"
