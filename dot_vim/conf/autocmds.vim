@@ -40,6 +40,9 @@ if has('nvim')
     tnoremap <silent> <M-Left> <Esc>b
     tnoremap <silent> <M-Right> <Esc>f
   endfunction
+else
+  autocmd my_vimrc InsertEnter * set timeoutlen=50
+  autocmd my_vimrc InsertLeave * set timeoutlen=1000
 endif
 
 function! s:lazy_init() abort

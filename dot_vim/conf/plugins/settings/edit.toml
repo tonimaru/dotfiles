@@ -76,6 +76,7 @@ on_event = ['InsertEnter']
 
 [[plugins]]
 repo = 'ysmb-wtsg/in-and-out.nvim'
+if = 'has("nvim")'
 on_map = { i = ['<C-CR>'] }
 on_event = ['InsertEnter']
 lua_source = '''

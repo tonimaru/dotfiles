@@ -67,7 +67,6 @@ else
   execute "set directory=" .. fnamemodify($MYVIMRC, ":p:h") .. "/swap"
   execute "set backupdir=" .. fnamemodify($MYVIMRC, ":p:h") .. "/backup"
   execute "set undodir=" .. fnamemodify($MYVIMRC, ":p:h") .. "/undo"
-  set timeoutlen=50
   function! s:pydll(cmd, optname)
     if !isdirectory($PYENV_ROOT) || !executable(a:cmd)
       return
