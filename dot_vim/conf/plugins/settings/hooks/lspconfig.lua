@@ -27,18 +27,25 @@ local function lsp_buf_keymap(bufnr)
     buf_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
 
     buf_set_keymap('n', 'gl', '<cmd>lua vim.diagnostic.open_float(nil, { focus = false, scope = "cursor" })<CR>', opts)
-    buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
     buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
     buf_set_keymap('n', 'gI', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
     buf_set_keymap('n', 'gT', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-    buf_set_keymap('n', 'gR', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-
     buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
     buf_set_keymap('n', '[prefix]lr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
     buf_set_keymap('n', '[prefix]la', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     buf_set_keymap('n', '<c-p>', '<cmd>lua vim.diagnostic.goto_prev({float=false})<CR>', opts)
     buf_set_keymap('n', '<c-n>', '<cmd>lua vim.diagnostic.goto_next({float=false})<CR>', opts)
     buf_set_keymap('n', '==', '<cmd>lua vim.lsp.buf.format({ filter = Ignore_fmts })<CR>', opts)
+
+    if (vim.fn.exists("*ddu#start")) then
+        buf_set_keymap('n', 'gd', '<cmd>call ddu#start(#{ sources: [#{ name: "lsp_documentSymbol" }] })<CR>', opts)
+        buf_set_keymap('n', 'gR', '<cmd>call ddu#start(#{ sources: [#{ name: "lsp_references" }] })<CR>', opts)
+        buf_set_keymap('n', 'gw', '<cmd>call ddu#start(#{ sources: [#{ name: "lsp_workspaceSymbol" }] })<CR>', opts)
+    else
+        buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
+        buf_set_keymap('n', 'gR', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+        buf_set_keymap('n', 'gw', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
+    end
 end
 
 local function on_attach(client, bufnr)
@@ -182,6 +189,7 @@ local servers = {
     ["fsautocomplete"]   = {
         single_file_support = true,
     },
+    ["vimls"]   = {},
 }
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()

@@ -73,8 +73,9 @@ hook_source = '''
       \     },
       \   },
       \   kindOptions: #{
-      \     file: { 'defaultAction': 'open' },
-      \     action: { 'defaultAction': 'do' },
+      \     file: #{ defaultAction: 'open' },
+      \     action: #{ defaultAction: 'do' },
+      \     lsp: #{ defaultAction: 'open' },
       \   },
       \   uiParams: #{
       \     ff: #{
@@ -163,6 +164,10 @@ on_source = 'ddu.vim'
 
 [[plugins]]
 repo = 'peacock0803sz/ddu-source-git_stash'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'uga-rosa/ddu-source-lsp'
 on_source = 'ddu.vim'
 
 # filter
