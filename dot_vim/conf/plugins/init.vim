@@ -60,6 +60,8 @@ execute 'autocmd' 'my_vimrc' 'BufWritePost' $BASE_DIR .. '/**/*.toml' 'call s:ch
 if exists(':filetype') | filetype indent plugin on | endif
 if exists(':syntax') | syntax on | endif
 
-if !empty(globpath(&runtimepath, expand('colors/tokyonight-night.lua')))
-  colorscheme tokyonight-night
+if has("nvim")
+  if !empty(globpath(&runtimepath, expand('colors/tokyonight-night.lua')))
+    colorscheme tokyonight-night
+  endif
 endif
