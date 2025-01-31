@@ -98,6 +98,7 @@ local servers = {
         on_attach = function(client, bufnr)
             if not is_node_dir() then
                 client.stop()
+                return
             end
             on_attach(client, bufnr)
         end,
@@ -120,10 +121,11 @@ local servers = {
         on_attach = function(client, bufnr)
             if is_node_dir() then
                 client.stop()
+                return
             end
             on_attach(client, bufnr)
         end,
-        single_file_support = false,
+        single_file_support = true,
         root_dir = lspconfig.util.root_pattern("deno.json", "denops"),
         init_options = {
             unstable = true,

@@ -12,7 +12,7 @@ on_ft = 'markdown'
 
 [[plugins]]
 repo = 'iamcco/markdown-preview.nvim'
-build = 'cd app && yarn install'
+extAttrs.installerBuild = 'cd app && yarn install'
 on_cmd = [
   'MarkdownPreview',
   'MarkdownPreviewStop',

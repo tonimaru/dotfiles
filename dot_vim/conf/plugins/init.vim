@@ -1,53 +1,65 @@
-let s:dein_base = $HOME .'/.cache/dein'
-let s:dein_src = s:dein_base . "/repos/github.com/Shougo/dein.vim"
+if !executable('git')
+  echoerr "git is not executable"
+  finish
+endif
 
-let s:proot = fnamemodify($MYVIMRC, ":p:h") . '/conf/plugins'
-let s:tomls = glob(s:proot . "/settings/**/*.toml")->split("\n")
+let s:dpp_base = '~/.cache/dpp'->expand()
+let s:repo_base = s:dpp_base . '/repos'
 
-if !isdirectory(s:dein_src)
-  if !executable('git')
-    finish
+function! s:init_plugin(repo) abort
+  const dir = s:repo_base .. '/' .. a:repo
+  if !dir->isdirectory()
+    silent execute printf('!mkdir -p %s', dir)
+    execute '!git clone https://' .. a:repo dir
+    if v:shell_error
+      echoerr "failed to git clone"
+      finish
+    endif
   endif
 
-  echo 'Install dein.'
-  silent execute printf('!mkdir -p %s', s:dein_src)
-  execute '!git clone https://github.com/Shougo/dein.vim.git' s:dein_src
-  if v:shell_error
-    finish
+  if has('vim_starting')
+    execute 'set runtimepath+=' . dir
+  endif
+endfunction
+call s:init_plugin('github.com/Shougo/dpp.vim')
+let s:exts = [
+    \ 'github.com/Shougo/dpp-ext-installer',
+    \ 'github.com/Shougo/dpp-ext-toml',
+    \ 'github.com/Shougo/dpp-ext-lazy',
+    \ 'github.com/Shougo/dpp-protocol-git',
+    \ ]
+for ext in s:exts
+    call s:init_plugin(ext)
+endfor
+
+function! s:check_install()
+  if !dpp#sync_ext_action('installer', 'getNotInstalled')->empty()
+    call dpp#async_ext_action('installer', 'install')
+  endif
+endfunction
+
+let $BASE_DIR = '<sfile>'->expand()->fnamemodify(':h')
+let $HOOKS_DIR=$BASE_DIR . "/settings/hooks"
+
+if s:dpp_base->dpp#min#load_state()
+  call s:init_plugin('github.com/vim-denops/denops.vim')
+  call denops#server#wait_async({ -> dpp#make_state(s:dpp_base, $BASE_DIR .. '/init.ts') })
+  if has('nvim')
+    runtime! plugin/denops.vim
+  endif
+else
+  if has('vim_starting')
+    call s:check_install()
   endif
 endif
 
-if has('vim_starting')
-  execute 'set runtimepath+=' . s:dein_src
-endif
-
-let $HOOKS_DIR=s:proot . "/settings/hooks"
-
-let g:dein#auto_recache = v:true
-if dein#load_state(s:dein_base)
-  call dein#begin(s:dein_base, s:tomls)
-  call dein#add(s:dein_src, #{merge: v:false})
-
-  for toml in s:tomls
-    call dein#load_toml(toml, #{lazy: 1})
-  endfor
-
-  if filereadable(s:proot . "/local.vim")
-    execute "source" s:proot . "/local.vim"
-  endif
-
-  call dein#end()
-  call dein#save_state()
-endif
+execute 'autocmd' 'my_vimrc' 'BufWritePost' $BASE_DIR .. '/**.lua,' .. $BASE_DIR .. '/**.vim,' .. $BASE_DIR .. '/**.toml,' .. $BASE_DIR .. '/**.ts,vimrc,.vimrc' 'call dpp#check_files()'
+" autocmd my_vimrc User Dpp:makeStatePost echom 'dpp has made a state'
+execute 'autocmd' 'my_vimrc' 'BufWritePost' $BASE_DIR .. '/**/*.toml' 'call s:check_install()'
 
 if exists(':filetype') | filetype indent plugin on | endif
 if exists(':syntax') | syntax on | endif
 
 if !empty(globpath(&runtimepath, expand('colors/tokyonight-night.lua')))
   colorscheme tokyonight-night
-endif
-
-if dein#check_install()
-  echo 'Install plugins.'
-  call dein#install()
 endif

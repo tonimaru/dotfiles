@@ -63,7 +63,6 @@ depends = [
 on_cmd = [
   'OpenGithubFile',
   'OpenGithubIssue',
-  'OpenGithubPullReq',
   'OpenGithubProject',
   'OpenGithubCommit',
   'OpenGithubPullReq',
