@@ -54,13 +54,23 @@ function! s:lazy_init() abort
   endfunction
 
   if executable('chezmoi')
+    func s:job(cmd, cb) abort
+      if has('nvim')
+        call jobstart(a:cmd, #{on_stdout: {ch, data, name -> a:cb(trim(join(data)))}})
+      else
+        call job_start(a:cmd, #{out_cb: {ch, msg -> a:cb(trim(msg))}})
+      endif
+    endfunc
+    function! s:chezmoi_target_doautocmd(file)
+      doautocmd "BufWritePost" a:file
+    endfunction
+    function! s:chezmoi_target_path(file)
+      let cmd = ['chezmoi', 'target-path', a:file]
+      call s:job(cmd, function("s:chezmoi_target_doautocmd"))
+    endfunction
     function! s:chezmoi_apply(file) abort
       let cmd = ['chezmoi', 'apply', '--force', '--source-path', a:file]
-      if has('nvim')
-        call jobstart(cmd)
-      else
-        call job_start(cmd)
-      endif
+      call s:job(cmd, function("s:chezmoi_target_path"))
     endfunction
     function! s:chezmoi_autocmd(source_path) abort
       if a:source_path == ''
@@ -68,11 +78,7 @@ function! s:lazy_init() abort
       endif
       execute 'autocmd my_vimrc BufWritePost ' . a:source_path . '/* call s:chezmoi_apply(expand("<afile>:p"))'
     endfunction
-    if has('nvim')
-      call jobstart(['chezmoi', 'source-path'], #{on_stdout: {ch, data, name -> s:chezmoi_autocmd(trim(join(data)))}})
-    else
-      call job_start(['chezmoi', 'source-path'], #{out_cb: {ch, msg -> s:chezmoi_autocmd(trim(msg))}})
-    endif
+    call s:job(['chezmoi', 'source-path'], function("s:chezmoi_autocmd"))
   endif
 endfunction
 
