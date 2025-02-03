@@ -44,23 +44,13 @@ let s:config_path=$BASE_DIR .. '/init.ts'
 
 if s:dpp_base->dpp#min#load_state()
   call s:init_plugin('github.com/vim-denops/denops.vim')
+  autocmd my_vimrc User Dpp:makeStatePost call s:check_install()
   call denops#server#wait_async({ -> dpp#make_state(s:dpp_base, s:config_path) })
-  if has('nvim')
-    runtime! plugin/denops.vim
-  endif
 else
-  if has('vim_starting')
-    call s:check_install()
-  endif
+  call denops#server#wait_async({ -> s:check_install() })
 endif
 
-function! s:remake(file)
-  call dpp#make_state(s:dpp_base, s:config_path)
-  if expand("<afile>:e") == "toml"
-    call s:check_install()
-  endif
-endfunction
-execute 'autocmd' 'my_vimrc' 'BufWritePost' $BASE_DIR .. '/**' 'call s:remake(expand("<afile>"))'
+execute 'autocmd' 'my_vimrc' 'BufWritePost' $BASE_DIR .. '/**' 'call dpp#make_state(s:dpp_base, s:config_path)'
 
 if exists(':filetype') | filetype indent plugin on | endif
 if exists(':syntax') | syntax on | endif
