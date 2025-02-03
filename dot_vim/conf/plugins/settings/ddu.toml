@@ -11,9 +11,20 @@ hook_add = '''
   nnoremap <silent> [prefix]dl <Cmd>call ddu#start(#{sources: [#{name: 'line'}], uiParams: #{ff: #{winCol: &columns / 4, autoAction: #{}}}})<CR>
   nnoremap <silent> [prefix]dgs <Cmd>call ddu#start(#{sources: [#{name: 'git_stash'}]})<CR>
 
+  nnoremap <silent> [prefix]dp <Cmd>call ddu#start(#{
+      \   sources: ['item'],
+      \   sourceParams : #{
+      \     item: #{
+      \       items: map(values(dpp#_plugins), {k, v -> #{word: v.path, kind: 'file', action: #{path: v.path, isDirectory: v:true}}}),
+      \     },
+      \   },
+      \   kindOptions: #{file: #{defaultAction: 'cd'}},
+      \   uiParams: #{ff: #{winCol: &columns / 4, autoAction: #{}}},
+      \ })<CR>
+
   if executable('rg')
       nnoremap <silent> gr <Cmd>call ddu#start(#{
-          \   sources: [#{name: 'rg', options: #{matchers: []}}],
+          \   sources: [#{name: 'rg', options: #{matchers: [], volatile: v:true}}],
           \   sourceParams: #{rg: #{args: ['-i', '--column', '--no-heading', '--color', 'never']}},
           \ })<CR>
   endif
@@ -25,7 +36,7 @@ hook_add = '''
           \   sourceOptions: #{file_external: #{path: ghq_root}},
           \   sourceParams: #{file_external: #{cmd: ['ghq', 'list', '-p']}},
           \   kindOptions: #{file: #{defaultAction: 'cd'}},
-          \   uiParams: #{ff: #{autoAction: #{}}},
+          \   uiParams: #{ff: #{winCol: &columns / 4, autoAction: #{}}},
           \ })<CR>
   endif
 
@@ -140,6 +151,10 @@ on_source = 'ddu.vim'
 
 [[plugins]]
 repo = 'Shougo/junkfile.vim'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-item'
 on_source = 'ddu.vim'
 
 [[plugins]]
