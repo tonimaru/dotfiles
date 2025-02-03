@@ -67,11 +67,3 @@ on_cmd = [
   'OpenGithubCommit',
   'OpenGithubPullReq',
 ]
-
-[[plugins]]
-repo = 'junegunn/vim-easy-align'
-on_map = '<Plug>(EasyAlign)'
-hook_add = '''
-  xmap ga <Plug>(EasyAlign)
-  nmap ga <Plug>(EasyAlign)
-'''

@@ -88,3 +88,11 @@ lua_source = '''
 [[plugins]]
 repo = 'cohama/lexima.vim'
 on_event = ['InsertEnter']
+
+[[plugins]]
+repo = 'junegunn/vim-easy-align'
+on_map = '<Plug>(EasyAlign)'
+hook_add = '''
+  xmap ga <Plug>(EasyAlign)
+  nmap ga <Plug>(EasyAlign)
+'''
