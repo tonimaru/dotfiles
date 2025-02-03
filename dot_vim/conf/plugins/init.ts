@@ -7,7 +7,6 @@ import {
 import {
     BaseConfig,
     type ConfigReturn,
-    type MultipleHook,
 } from "jsr:@shougo/dpp-vim@~4.1.0/config";
 import type {
     Ext as TomlExt,
@@ -15,7 +14,6 @@ import type {
 } from "jsr:@shougo/dpp-ext-toml@~1.3.0";
 import type {
     Ext as LazyExt,
-    LazyMakeStateResult,
     Params as LazyParams,
 } from "jsr:@shougo/dpp-ext-lazy@~1.5.0";
 import { Protocol } from "jsr:@shougo/dpp-vim@~4.1.0/protocol";
@@ -23,7 +21,7 @@ import { mergeFtplugins } from "jsr:@shougo/dpp-vim@~4.1.0/utils";
 import { globToRegExp } from "jsr:@std/path";
 import { walk } from "jsr:@std/fs";
 
-async function glob(root: string, glob: string) {
+async function glob(root: string, glob: string): Promise<string[]> {
     const tomlWalked = walk(root, { match: [globToRegExp(glob)] });
     return (await Array.fromAsync(tomlWalked)).map((v) => v.path);
 }

@@ -40,10 +40,11 @@ endfunction
 
 let $BASE_DIR = '<sfile>'->expand()->fnamemodify(':h')
 let $HOOKS_DIR=$BASE_DIR . "/settings/hooks"
+let s:config_path=$BASE_DIR .. '/init.ts'
 
 if s:dpp_base->dpp#min#load_state()
   call s:init_plugin('github.com/vim-denops/denops.vim')
-  call denops#server#wait_async({ -> dpp#make_state(s:dpp_base, $BASE_DIR .. '/init.ts') })
+  call denops#server#wait_async({ -> dpp#make_state(s:dpp_base, s:config_path) })
   if has('nvim')
     runtime! plugin/denops.vim
   endif
@@ -53,9 +54,13 @@ else
   endif
 endif
 
-execute 'autocmd' 'my_vimrc' 'BufWritePost' $BASE_DIR .. '/**.lua,' .. $BASE_DIR .. '/**.vim,' .. $BASE_DIR .. '/**.toml,' .. $BASE_DIR .. '/**.ts,vimrc,.vimrc' 'call dpp#check_files()'
-" autocmd my_vimrc User Dpp:makeStatePost echom 'dpp has made a state'
-execute 'autocmd' 'my_vimrc' 'BufWritePost' $BASE_DIR .. '/**/*.toml' 'call s:check_install()'
+function! s:remake(file)
+  call dpp#make_state(s:dpp_base, s:config_path)
+  if expand("<afile>:e") == "toml"
+    call s:check_install()
+  endif
+endfunction
+execute 'autocmd' 'my_vimrc' 'BufWritePost' $BASE_DIR .. '/**' 'call s:remake(expand("<afile>"))'
 
 if exists(':filetype') | filetype indent plugin on | endif
 if exists(':syntax') | syntax on | endif

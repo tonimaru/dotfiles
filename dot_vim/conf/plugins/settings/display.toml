@@ -1,4 +1,26 @@
 [[plugins]]
+repo = 'folke/tokyonight.nvim'
+if = 'has("nvim")'
+lazy = 0
+
+[[plugins]]
+repo = 'nvim-treesitter/nvim-treesitter'
+if = 'has("nvim")'
+on_event = ['FileType']
+on_cmd = ['TSInstall', 'TSInstallInfo', 'TSUpdate', 'TSUninstall']
+hook_post_update = 'TSUpdate'
+lua_source = '''
+  require'nvim-treesitter.configs'.setup {
+    highlight = {
+      enable = true,
+      disable = function(lang, bufnr)
+        return vim.api.nvim_buf_line_count(bufnr) > 50000
+      end,
+    },
+  }
+'''
+
+[[plugins]]
 repo = 'nvim-tree/nvim-web-devicons'
 if = "has('nvim')"
 lua_source = '''
@@ -9,7 +31,7 @@ lua_source = '''
 repo = 'nvim-lualine/lualine.nvim'
 depends = ['nvim-web-devicons', 'tokyonight.nvim']
 if = "has('nvim')"
-on_event = "VimEnter"
+lazy = 0
 lua_source = '''
   require('lualine').setup {
     options = {
