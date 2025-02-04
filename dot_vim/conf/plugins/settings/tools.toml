@@ -67,3 +67,19 @@ on_cmd = [
   'OpenGithubCommit',
   'OpenGithubPullReq',
 ]
+
+[[plugins]]
+repo = 'CoderCookE/vim-chatgpt'
+on_cmd = [
+  'Ask',
+  'Rewrite',
+  'Review',
+  'Document',
+  'Explain',
+  'Test',
+  'Fix',
+]
+hook_add = '''
+  let g:chat_gpt_lang = 'Japanese'
+  let g:chat_gpt_model='gpt-4o-mini'
+'''
