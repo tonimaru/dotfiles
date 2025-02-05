@@ -147,6 +147,7 @@ lua_source = '''
     end,
     callbacks = {
       enter_note = function(client, note)
+        vim.cmd("lcd %:p:h")
         vim.api.nvim_buf_set_keymap(note.bufnr, 'n', 'gb', "<Cmd>ObsidianBacklinks<CR>", { noremap = true, silent = true})
         vim.api.nvim_buf_set_keymap(note.bufnr, 'n', 'gr', "<Cmd>ObsidianSearch<CR>", { noremap = true, silent = true})
       end,
