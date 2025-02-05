@@ -83,3 +83,76 @@ hook_add = '''
   let g:chat_gpt_lang = 'Japanese'
   let g:chat_gpt_model='gpt-4o-mini'
 '''
+
+[[plugins]]
+repo = 'nvim-telescope/telescope.nvim'
+
+[[plugins]]
+repo = 'epwalsh/obsidian.nvim'
+if = "has('nvim')"
+depends = ['plenary.nvim', 'telescope.nvim']
+on_cmd = [
+  'ObsidianOpen',
+  'ObsidianNew',
+  'ObsidianQuickSwitch',
+  'ObsidianFollowLink',
+  'ObsidianBacklinks',
+  'ObsidianTags',
+  'ObsidianToday',
+  'ObsidianYesterday',
+  'ObsidianTomorrow',
+  'ObsidianDailies',
+  'ObsidianTemplate',
+  'ObsidianSearch',
+  'ObsidianLink',
+  'ObsidianLinkNew',
+  'ObsidianLinks',
+  'ObsidianExtractNote',
+  'ObsidianWorkspace',
+  'ObsidianPasteImg',
+  'ObsidianRename',
+  'ObsidianToggleCheckbox',
+  'ObsidianNewFromTemplate',
+  'ObsidianTOC',
+]
+hook_add = '''
+  nnoremap <silent> [prefix]mb <Cmd>ObsidianBacklinks<CR>
+  nnoremap <silent> [prefix]md <Cmd>ObsidianDailies<CR>
+  nnoremap <silent> [prefix]mm <Cmd>ObsidianNew<CR>
+  nnoremap <silent> [prefix]mo <Cmd>ObsidianToday<CR>
+  nnoremap <silent> [prefix]ms <Cmd>ObsidianSearch<CR>
+  nnoremap <silent> [prefix]mt <Cmd>ObsidianTags<CR>
+  nnoremap <silent> [prefix]J <Cmd>ObsidianQuickSwitch<CR>
+  nnoremap <silent> [prefix]M <Cmd>ObsidianToday<CR>
+'''
+lua_source = '''
+  print("source")
+  if vim.fn.isdirectory(vim.fn.expand('~/vaults/default')) == 0 then
+      print("mkdir")
+      vim.fn.mkdir(vim.fn.expand('~/vaults/default'), 'p')
+  end
+  require("obsidian").setup({
+    workspaces = {
+      {
+        name = "default",
+        path = "~/vaults/default",
+      },
+    },
+    notes_subdir = "notes",
+    daily_notes = {
+      folder = "notes/dailies",
+    },
+    note_path_func = function(spec)
+      return spec.dir / tostring(spec.id)
+    end,
+    callbacks = {
+      enter_note = function(client, note)
+        vim.api.nvim_buf_set_keymap(note.bufnr, 'n', 'gb', "<Cmd>ObsidianBacklinks<CR>", { noremap = true, silent = true})
+        vim.api.nvim_buf_set_keymap(note.bufnr, 'n', 'gr', "<Cmd>ObsidianSearch<CR>", { noremap = true, silent = true})
+      end,
+    },
+    ui = {
+      enable = false,
+    },
+  })
+'''
