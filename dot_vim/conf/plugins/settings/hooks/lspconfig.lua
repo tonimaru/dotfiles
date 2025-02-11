@@ -194,6 +194,7 @@ local servers = {
         single_file_support = true,
     },
     ["vimls"]            = {},
+    ["marksman"]         = {},
 }
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
