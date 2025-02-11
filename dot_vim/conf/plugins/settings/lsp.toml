@@ -17,7 +17,6 @@ if = "has('nvim')"
 on_event = ['FileType']
 depends = [
   'nvim-lsp-ts-utils',
-  'rust-tools.nvim',
   'nvim-metals',
   'sqls.nvim',
   'none-ls.nvim',
@@ -27,11 +26,6 @@ hooks_file ='$HOOKS_DIR/lspconfig.lua'
 [[plugins]]
 repo = 'jose-elias-alvarez/nvim-lsp-ts-utils'
 if = "has('nvim')"
-
-[[plugins]]
-repo = 'simrat39/rust-tools.nvim'
-if = "has('nvim')"
-depends = ['plenary.nvim', 'nvim-dap']
 
 [[plugins]]
 repo = 'scalameta/nvim-metals'
