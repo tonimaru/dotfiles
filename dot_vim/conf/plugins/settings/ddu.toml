@@ -88,6 +88,11 @@ hook_source = '''
       \     action: #{ defaultAction: 'do' },
       \     lsp: #{ defaultAction: 'open' },
       \   },
+      \   actionOptions: #{
+      \     narrow: #{
+      \       quit: v:false,
+      \     },
+      \   },
       \   uiParams: #{
       \     ff: #{
       \       autoAction: #{name: 'preview'},
@@ -257,17 +262,10 @@ ddu-filer = '''
     else 
         call add(matchers, 'matcher_hidden')
     endif
-    let sources = cur->get('sources', [])
-    for source in sources
-        if source.name == a:name
-            let opts = source->get('options', {})
-            call extend(opts, #{matchers: matchers})
-        endif
-    endfor
     call ddu#ui#do_action('updateOptions', #{
         \   sourceOptions: { a:name: #{ matchers: matchers } },
-        \   sources: sources,
         \ })
+    call ddu#redraw(cur.name, #{method: "refreshItems"})
   endfunction
   nnoremap <silent><buffer> . <Cmd>call ToggleHidden('file')<CR>
   nnoremap <silent><buffer> c <Cmd>call ddu#ui#do_action('itemAction', #{name: 'copy'})<CR>
