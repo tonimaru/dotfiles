@@ -28,11 +28,6 @@ function! Go_alternate_Switch(bang, cmd) abort
   endif
 endfunction
 '''
-ftplugin = '''
-set noexpandtab
-set tabstop=4
-set softtabstop=4
-'''
 
 [[plugins]]
 repo = 'fatih/vim-go'

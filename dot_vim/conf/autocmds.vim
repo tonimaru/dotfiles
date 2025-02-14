@@ -14,14 +14,14 @@ endfunction
 autocmd my_vimrc FileType help noremap <buffer><nowait> q <C-w>c
 
 function! s:ft_go() abort
-  setlocal noexpandtab
+  setlocal noexpandtab tabstop=4 shiftwidth=4 softtabstop=4
 endfunction
 autocmd my_vimrc FileType go call s:ft_go()
 
 function! s:indent2() abort
   setlocal tabstop=2 shiftwidth=2 softtabstop=2
 endfunction
-autocmd my_vimrc FileType vim,proto,sql,go call s:indent2()
+autocmd my_vimrc FileType vim,proto,sql call s:indent2()
 
 autocmd my_vimrc WinEnter * checktime
 
