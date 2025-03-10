@@ -1,49 +1,113 @@
 [[plugins]]
-repo = 'roxma/nvim-yarp'
-if = "!has('nvim')"
-
-[[plugins]]
-repo = 'roxma/vim-hug-neovim-rpc'
-if = "!has('nvim')"
-
-[[plugins]]
-repo = 'Shougo/defx.nvim'
-depends = ['nvim-yarp', 'vim-hug-neovim-rpc']
-on_cmd = 'Defx'
+repo = 'Shougo/ddu-ui-filer'
+on_source = 'ddu.vim'
 hook_add = '''
-nnoremap <silent> [prefix]f <Cmd>Defx -auto-cd -show-ignored-files -resume<CR>
-nnoremap <silent> [prefix]F <Cmd>Defx -auto-cd -show-ignored-files -new<CR>
+  function! StartDduFiler(opt)
+    let winids = ddu#ui#winids(a:opt.name)
+    if !empty(winids)
+        call win_gotoid(winids[0])
+        return
+    endif
+    call ddu#start(a:opt)
+  endfunction
+  nnoremap <silent> [prefix]f <Cmd>call StartDduFiler(#{name: "filer1", sources: [#{name: 'file'}], ui: 'filer', resume: v:true})<CR>
+  nnoremap <silent> [prefix]F <Cmd>call StartDduFiler(#{name: "filer2", sources: [#{name: 'file'}], ui: 'filer', uiOptions: #{toggle: v:true}})<CR>
+
+  function! ToggleHidden(name) abort
+    let cur = ddu#custom#get_current(b:ddu_ui_name)
+    let matchers = cur
+        \ ->get('sourceOptions', {})
+        \ ->get(a:name, {})
+        \ ->get('matchers', [])
+    let foundIdx = matchers->index('matcher_hidden')
+    if foundIdx >= 0
+        call remove(matchers, foundIdx)
+    else 
+        call add(matchers, 'matcher_hidden')
+    endif
+    call ddu#ui#do_action('updateOptions', #{
+        \   sourceOptions: { a:name: #{ matchers: matchers } },
+        \ })
+    call ddu#redraw(cur.name, #{method: "refreshItems"})
+  endfunction
+  function! Narrow(path = '')
+    if  a:path != '..' && get(ddu#ui#get_item(), '__expanded', v:true)
+      return
+    endif
+    let args = #{name: 'narrow'}
+    if a:path != ''
+        let args['params'] = #{path: a:path}
+    endif
+    call ddu#ui#sync_action('itemAction', args)
+    let cur = ddu#custom#get_current(b:ddu_ui_name)
+    let dir = cur
+        \ ->get('sourceOptions', {})
+        \ ->get('file', {})
+        \ ->get('path', '')
+    if dir != ''
+        execute 'lcd' dir
+    endif
+  endfunction
 '''
 hook_source = '''
-  call defx#custom#option('_', { 'columns': 'mark:filename:type:size:time', })
+  autocmd my_vimrc TabEnter,WinEnter,CursorHold,FocusGained ddu-filer-* call ddu#ui#do_action('checkItems')
+
+  function! OpenFiler(args)
+    const path = a:args.items[0].action.path
+    const directory = isdirectory(path) ? path : fnamemodify(path, ':h')
+    call StartDduFiler(#{sources: [#{name: 'file', options: #{path: directory}}], ui: 'filer'})
+  endfunction
+  call ddu#custom#action('kind', 'file', 'filer', { args -> OpenFiler(args) })
 '''
 [plugins.ftplugin]
-defx = '''
-nnoremap <silent><buffer> f <Cmd>call ddu#start({'sources': [{'name': 'file_rec'}]})<CR>
-nnoremap <silent><buffer> u <Cmd>call ddu#start({'sources': [{'name': 'mr'}]})<CR>
-
-nnoremap <nowait><silent><buffer><expr> . defx#do_action('toggle_ignored_files')
-nnoremap <nowait><silent><buffer><expr> c defx#do_action('copy')
-nnoremap <nowait><silent><buffer><expr> m defx#do_action('move')
-nnoremap <nowait><silent><buffer><expr> p defx#do_action('paste')
-nnoremap <nowait><silent><buffer><expr> h defx#do_action('cd', ['..'])
-nnoremap <nowait><silent><buffer><expr> j line('.') == line('$') ? 'ggj' : 'j'
-nnoremap <nowait><silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
-nnoremap <nowait><silent><buffer><expr> l defx#do_action('open')
-nnoremap <nowait><silent><buffer><expr> t defx#do_action('open', 'tabnew')
-nnoremap <nowait><silent><buffer><expr> D defx#do_action('new_directory')
-nnoremap <nowait><silent><buffer><expr> F defx#do_action('new_file')
-nnoremap <nowait><silent><buffer><expr> d defx#do_action('remove')
-nnoremap <nowait><silent><buffer><expr> r defx#do_action('rename')
-nnoremap <nowait><silent><buffer><expr> ~ defx#do_action('cd')
-nnoremap <nowait><silent><buffer><expr> \ defx#do_action('cd', ['/'])
-nnoremap <nowait><silent><buffer><expr> - defx#do_action('open_or_close_tree')
-nnoremap <nowait><silent><buffer><expr> q defx#do_action('quit')
-nnoremap <nowait><silent><buffer> Q <Cmd>bp\|bd #<CR>
-nnoremap <nowait><silent><buffer><expr> * defx#do_action('toggle_select_all')
-nnoremap <nowait><silent><buffer><expr> <CR> defx#do_action('open')
-nnoremap <nowait><silent><buffer><expr> ; defx#do_action('toggle_select') . 'j'
-nnoremap <nowait><silent><buffer><expr> <C-l> defx#do_action('redraw')
-nnoremap <nowait><silent><buffer><expr> <C-g> defx#do_action('print')
-nnoremap <nowait><silent><buffer><expr> y defx#do_action('yank_path')
+ddu-filer = '''
+  nnoremap <silent><buffer> . <Cmd>call ToggleHidden('file')<CR>
+  nnoremap <silent><buffer> c <Cmd>call ddu#ui#do_action('itemAction', #{name: 'copy'})<CR>
+  nnoremap <silent><buffer> m <Cmd>call ddu#ui#do_action('itemAction', #{name: 'move'})<CR>
+  nnoremap <silent><buffer> p <Cmd>call ddu#ui#do_action('itemAction', #{name: 'paste'})<CR>
+  nnoremap <silent><buffer> h <Cmd>call Narrow("..")<CR>
+  nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
+  nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
+  nnoremap <silent><buffer><expr> l
+        \ ddu#ui#get_item().kind == 'file' ?
+        \   ddu#ui#get_item()->get('action', {})->get('isDirectory', v:false) ?
+        \     ddu#ui#get_item()->get('__expanded', v:true) ?
+        \         "j" :
+        \         "<Cmd>call Narrow()<CR>" :
+        \     "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{ command: 'drop' }})<CR>" :
+        \   "<Cmd>call ddu#ui#do_action('itemAction')<CR>"
+  nnoremap <silent><buffer><expr> <CR>
+        \ ddu#ui#get_item().kind == 'file' ?
+        \   ddu#ui#get_item()->get('action', {})->get('isDirectory', v:false) ?
+        \     ddu#ui#get_item()->get('__expanded', v:true) ?
+        \         "j" :
+        \         "<Cmd>call Narrow()<CR>" :
+        \     "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{ command: 'drop' }})<CR>" :
+        \   "<Cmd>call ddu#ui#do_action('itemAction')<CR>"
+  nnoremap <silent><buffer><expr> w
+        \ ddu#ui#get_item().kind == 'file' ?
+        \   ddu#ui#get_item()->get('action', {})->get('isDirectory', v:false) ?
+        \     "" :
+        \     "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{ command: 'split' }})<CR>" :
+        \   "<Cmd>call ddu#ui#do_action('itemAction')<CR>"
+  nnoremap <silent><buffer><expr> t
+        \ ddu#ui#get_item().kind == 'file' ?
+        \   ddu#ui#get_item()->get('action', {})->get('isDirectory', v:false) ?
+        \     "" :
+        \     "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{ command: 'tabnew' }})<CR>" :
+        \   "<Cmd>call ddu#ui#do_action('itemAction')<CR>"
+  nnoremap <nowait><silent><buffer> d <Cmd>call ddu#ui#do_action('itemAction', #{name: 'trash' })<CR>
+  nnoremap <silent><buffer> D <Cmd>call ddu#ui#do_action('itemAction', #{name: 'newDirectory'})<CR>
+  nnoremap <silent><buffer> F <Cmd>call ddu#ui#do_action('itemAction', #{name: 'newFile'})<CR>
+  nnoremap <silent><buffer> r <Cmd>call ddu#ui#do_action('itemAction', #{name: 'rename'})<CR>
+  nnoremap <silent><buffer> ~ <Cmd>call Narrow($HOME)<CR>
+  nnoremap <silent><buffer> \ <Cmd>call Narrow('/')<CR>
+  nnoremap <silent><buffer> o <Cmd>call ddu#ui#do_action('expandItem', #{mode: 'toggle'})<CR>
+  nnoremap <silent><buffer> q <Cmd>call ddu#ui#do_action('quit')<CR>
+  nnoremap <silent><buffer> * <Cmd>call ddu#ui#do_action('toggleAllItems')<CR>
+  nnoremap <silent><buffer> ; <Cmd>call ddu#ui#do_action('toggleSelectItem')<CR>
+  nnoremap <silent><buffer> <C-l> <Cmd>call ddu#ui#do_action('redraw')<CR>
+  nnoremap <silent><buffer> y <Cmd>call ddu#ui#do_action('itemAction', #{name: 'yank'})<CR>
+  nnoremap <silent><buffer> a <Cmd>call ddu#ui#do_action('chooseAction')<CR>
+  nnoremap <silent><buffer> i <Cmd>call ddu#ui#do_action('openFilterWindow')<CR>
 '''

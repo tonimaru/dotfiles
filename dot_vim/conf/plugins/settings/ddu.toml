@@ -7,8 +7,7 @@ hook_add = '''
   nnoremap <silent> [prefix]w <Cmd>call ddu#start(#{sources: [#{name: 'mr', params: #{kind: 'mrw'}}]})<CR>
   nnoremap <silent> [prefix]j <Cmd>call ddu#start(#{sources: [#{name: 'junkfile'}]})<CR>
 
-  nnoremap <silent> [prefix]df <Cmd>call ddu#start(#{sources: [#{name: 'file'}], ui: 'filer'})<CR>
-  nnoremap <silent> [prefix]dl <Cmd>call ddu#start(#{sources: [#{name: 'line'}], uiParams: #{ff: #{winCol: &columns / 4, autoAction: #{}}}})<CR>
+  nnoremap <silent> [prefix]dl <Cmd>call ddu#start(#{sources: [#{name: 'line'}], uiParams: #{ff: #{autoAction: #{}}}})<CR>
   nnoremap <silent> [prefix]dgs <Cmd>call ddu#start(#{sources: [#{name: 'git_stash'}]})<CR>
 
   nnoremap <silent> [prefix]dp <Cmd>call ddu#start(#{
@@ -19,7 +18,7 @@ hook_add = '''
       \     },
       \   },
       \   kindOptions: #{file: #{defaultAction: 'cd'}},
-      \   uiParams: #{ff: #{winCol: &columns / 4, autoAction: #{}}},
+      \   uiParams: #{ff: #{autoAction: #{}}},
       \ })<CR>
 
   if executable('rg')
@@ -36,7 +35,7 @@ hook_add = '''
           \   sourceOptions: #{file_external: #{path: ghq_root}},
           \   sourceParams: #{file_external: #{cmd: ['ghq', 'list', '-p']}},
           \   kindOptions: #{file: #{defaultAction: 'cd'}},
-          \   uiParams: #{ff: #{winCol: &columns / 4, autoAction: #{}}},
+          \   uiParams: #{ff: #{autoAction: #{}}},
           \ })<CR>
   endif
 
@@ -69,7 +68,9 @@ hook_source = '''
       \       volatile: v:true,
       \     },
       \     file: #{
-      \       matchers: ['matcher_hidden'],
+      \       matchers: ['matcher_hidden', 'matcher_zf'],
+      \       sorters: ['sorter_zf'],
+      \       converters: ['converter_zf'],
       \       columns: ['filename'],
       \     },
       \     mr: #{
@@ -92,14 +93,29 @@ hook_source = '''
       \     narrow: #{
       \       quit: v:false,
       \     },
+      \     open: #{
+      \       quit: v:true,
+      \     },
+      \   },
+      \   actionParams: #{
+      \     open: #{
+      \       command: 'drop',
+      \     },
       \   },
       \   uiParams: #{
       \     ff: #{
+      \       split: 'tab',
       \       autoAction: #{name: 'preview'},
+      \       startAutoAction: v:true,
+      \       autoResize: v:true,
+      \       previewSplit: 'vertical',
       \     },
       \     filer: #{
+      \       displayRoot: v:true,
       \       split: 'no',
       \       sort: 'filename',
+      \       sortTreesFirst: v:true,
+      \       statusline: v:false,
       \     },
       \   },
       \   filterParams: #{
@@ -108,32 +124,6 @@ hook_source = '''
       \     },
       \   },
       \ })
-  if has('nvim')
-    call ddu#custom#patch_global(#{
-        \   uiParams: #{
-        \     ff: #{
-        \       split: 'floating',
-        \       floatingBorder: 'single',
-        \       winRow: -1,
-        \       winCol: -1,
-        \       winHeight: &lines - 5,
-        \       startAutoAction: v:true,
-        \       previewFloating: v:true,
-        \       previewFloatingBorder: 'single',
-        \       previewSplit: 'vertical',
-        \       previewWidth: &columns / 2 - 2,
-        \       previewHeight: &lines - 5,
-        \       filterFloatingPosition: 'bottom',
-        \     },
-        \   },
-        \ })
-  endif
-  call ddu#custom#action('kind', 'file', 'filer', { args -> OpenFiler(args) })
-  function! OpenFiler(args)
-    const path = a:args.items[0].action.path
-    const directory = isdirectory(path) ? path : fnamemodify(path, ':h')
-    call ddu#start(#{sources: [#{name: 'file', options: #{path: directory}}], ui: 'filer'})
-  endfunction
 '''
 
 # source
@@ -240,70 +230,4 @@ ddu-ff-filter = '''
   nnoremap <buffer> <CR> <Cmd>call ddu#ui#do_action('closeFilterWindow')<CR>
   nnoremap <buffer> q <Cmd>call ddu#ui#do_action('closeFilterWindow')<CR>
   nnoremap <buffer> <nowait> <Esc> <Cmd>call ddu#ui#do_action('closeFilterWindow')<CR>
-'''
-
-[[plugins]]
-repo = 'Shougo/ddu-ui-filer'
-on_source = 'ddu.vim'
-hook_source = '''
-  autocmd my_vimrc BufEnter ddu-filer-filer call ddu#ui#do_action('checkItems')
-'''
-[plugins.ftplugin]
-ddu-filer = '''
-  function! ToggleHidden(name) abort
-    let cur = ddu#custom#get_current(b:ddu_ui_name)
-    let matchers = cur
-        \ ->get('sourceOptions', {})
-        \ ->get(a:name, {})
-        \ ->get('matchers', [])
-    let foundIdx = matchers->index('matcher_hidden')
-    if foundIdx >= 0
-        call remove(matchers, foundIdx)
-    else 
-        call add(matchers, 'matcher_hidden')
-    endif
-    call ddu#ui#do_action('updateOptions', #{
-        \   sourceOptions: { a:name: #{ matchers: matchers } },
-        \ })
-    call ddu#redraw(cur.name, #{method: "refreshItems"})
-  endfunction
-  function! Narrow(path = '')
-    let params = {}
-    if a:path != ''
-        let params = #{path: a:path}
-    endif
-    call ddu#ui#sync_action('itemAction', #{name: 'narrow', params: params})
-    execute 'lcd' ddu#ui#get_items()[0].treePath
-  endfunction
-  nnoremap <silent><buffer> . <Cmd>call ToggleHidden('file')<CR>
-  nnoremap <silent><buffer> c <Cmd>call ddu#ui#do_action('itemAction', #{name: 'copy'})<CR>
-  nnoremap <silent><buffer> m <Cmd>call ddu#ui#do_action('itemAction', #{name: 'move'})<CR>
-  nnoremap <silent><buffer> p <Cmd>call ddu#ui#do_action('itemAction', #{name: 'paste'})<CR>
-  nnoremap <silent><buffer> h <Cmd>call Narrow("..")<CR>
-  nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
-  nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
-  nnoremap <silent><buffer><expr> l ddu#ui#get_item()->get('isTree', v:false) ?
-        \ "<Cmd>call Narrow()<CR>" : 
-        \ "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open'})<CR>"
-  nnoremap <silent><buffer><expr> <CR> ddu#ui#filer#get_item().kind == 'file' ?
-        \ ddu#ui#get_item()->get('isTree', v:false) ?
-        \   "<Cmd>call Narrow()<CR>" : 
-        \   "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open'})<CR>" :
-        \ "<Cmd>call ddu#ui#do_action('itemAction')<CR>"
-  nnoremap <silent><buffer> w <Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{command: 'split'}})<CR>
-  nnoremap <silent><buffer> t <Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{command: 'tabnew'}})<CR>
-  nnoremap <nowait><silent><buffer> d <Cmd>call ddu#ui#do_action('itemAction', #{name: 'trash' })<CR>
-  nnoremap <silent><buffer> D <Cmd>call ddu#ui#do_action('itemAction', #{name: 'newDirectory'})<CR>
-  nnoremap <silent><buffer> F <Cmd>call ddu#ui#do_action('itemAction', #{name: 'newFile'})<CR>
-  nnoremap <silent><buffer> r <Cmd>call ddu#ui#do_action('itemAction', #{name: 'rename'})<CR>
-  nnoremap <silent><buffer> ~ <Cmd>call Narrow($HOME)<CR>
-  nnoremap <silent><buffer> \ <Cmd>call Narrow('/')<CR>
-  nnoremap <silent><buffer> - <Cmd>call ddu#ui#do_action('expandItem', #{mode: 'toggle'})<CR>
-  nnoremap <silent><buffer> q <Cmd>call ddu#ui#do_action('quit')<CR>
-  nnoremap <silent><buffer> Q <Cmd>bp\|bd #<CR>
-  nnoremap <silent><buffer> * <Cmd>call ddu#ui#do_action('toggleAllItems')<CR>
-  nnoremap <silent><buffer> ; <Cmd>call ddu#ui#do_action('toggleSelectItem')<CR>
-  nnoremap <silent><buffer> <C-l> <Cmd>call ddu#ui#do_action('checkItems')<CR>
-  nnoremap <silent><buffer> y <Cmd>call ddu#ui#do_action('itemAction', #{name: 'yank'})<CR>
-  nnoremap <silent><buffer> a <Cmd>call ddu#ui#do_action('chooseAction')<CR>
 '''

@@ -43,6 +43,9 @@ function! s:lazy_init() abort
 
   autocmd my_vimrc CursorHold * call s:clean_no_name_empty_buffers()
   function! s:clean_no_name_empty_buffers() abort
+    if expand('%') =~# '^ddu-.*$'
+      return
+    endif
     let buffers = filter(range(1, bufnr('$')), 'buflisted(v:val) && empty(bufname(v:val)) && bufwinnr(v:val) < 0 && (getbufline(v:val, 1, "$") == [""]) && getbufinfo(v:val)[0].changed == 0 && &buftype != "terminal"')
     if !empty(buffers)
       silent exe 'bd '.join(buffers, ' ')
