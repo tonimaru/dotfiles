@@ -8,6 +8,14 @@ hook_add = '''
         call win_gotoid(winids[0])
         return
     endif
+    if a:opt->get("resume", v:false)
+        let path = ddu#get_context("filer1")->get('path', '')
+        if path != ''
+            let so = a:opt->get('sourceOptions', {})
+            let so['file'] = #{ path: path }
+            let a:opt.sourceOptions = so
+        endif
+    endif
     call ddu#start(a:opt)
   endfunction
   nnoremap <silent> [prefix]f <Cmd>call StartDduFiler(#{name: "filer1", sources: [#{name: 'file'}], ui: 'filer', resume: v:true})<CR>
