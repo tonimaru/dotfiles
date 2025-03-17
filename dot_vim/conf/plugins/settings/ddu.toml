@@ -107,7 +107,6 @@ hook_source = '''
       \       split: 'tab',
       \       autoAction: #{name: 'preview'},
       \       startAutoAction: v:true,
-      \       autoResize: v:true,
       \       previewSplit: 'vertical',
       \     },
       \     filer: #{
