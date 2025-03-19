@@ -33,6 +33,9 @@ if has('nvim')
     tnoremap <silent> <M-Left> <Esc>b
     tnoremap <silent> <M-Right> <Esc>f
   endfunction
+  hi DimNormal guibg=#202020
+  autocmd my_vimrc WinEnter * setlocal winhighlight=
+  autocmd my_vimrc WinLeave * setlocal winhighlight=Normal:DimNormal
 else
   autocmd my_vimrc InsertEnter * set timeoutlen=50
   autocmd my_vimrc InsertLeave * set timeoutlen=1000
