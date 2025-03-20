@@ -39,7 +39,7 @@ hook_add = '''
     call ddu#redraw(cur.name, #{method: "refreshItems"})
   endfunction
   function! Narrow(path = '')
-    if  a:path != '..' && get(ddu#ui#get_item(), '__expanded', v:true)
+    if get(ddu#ui#get_item(), '__expanded', v:true) && index(['..', $HOME, '/'], a:path) < 0
       return
     endif
     let args = #{name: 'narrow'}
@@ -73,7 +73,7 @@ ddu-filer = '''
   nnoremap <silent><buffer> c <Cmd>call ddu#ui#do_action('itemAction', #{name: 'copy'})<CR>
   nnoremap <silent><buffer> m <Cmd>call ddu#ui#do_action('itemAction', #{name: 'move'})<CR>
   nnoremap <silent><buffer> p <Cmd>call ddu#ui#do_action('itemAction', #{name: 'paste'})<CR>
-  nnoremap <silent><buffer> h <Cmd>call Narrow("..")<CR>
+  nnoremap <silent><buffer> h <Cmd>call Narrow('..')<CR>
   nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
   nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
   nnoremap <silent><buffer><expr> l
