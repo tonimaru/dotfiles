@@ -6,7 +6,7 @@ set fileencoding=utf-8
 set fileencodings=utf-8,euc-jp,cp932
 set ambiwidth=double
 set maxmempattern=2000
-set swapfile
+set noswapfile
 set backup
 set undofile
 set number
