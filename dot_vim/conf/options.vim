@@ -60,24 +60,10 @@ endif
 if has("nvim")
   set backupdir-=.
   set inccommand=split
-  if executable($HOME."/.local/share/mise/shims/python3")
-    let g:python3_host_prog = $HOME."/.local/share/mise/shims/python3"
-  endif
 else
   execute "set directory=" .. fnamemodify($MYVIMRC, ":p:h") .. "/swap"
   execute "set backupdir=" .. fnamemodify($MYVIMRC, ":p:h") .. "/backup"
   execute "set undodir=" .. fnamemodify($MYVIMRC, ":p:h") .. "/undo"
-  function! s:pydll(cmd, optname)
-    if !isdirectory($PYENV_ROOT) || !executable(a:cmd)
-      return
-    endif
-    let l:ver=substitute(system(a:cmd . ' -c "import platform; print(platform.python_version())"'), '\n$', '', '')
-    let l:dir=$PYENV_ROOT . '/versions/' . l:ver
-    let l:dll=substitute(system('find "' . l:dir . '" -name "libpython*.dylib"'), '\n$', '', '')
-    eval('let &' . a:optname . '=' . '"' . l:dll . '"')
-  endfunction
-  call s:pydll('python2', 'pythondll')
-  call s:pydll('python3', 'pythonthreedll')
   if has('vim_starting')
     let &t_SI .= "\e[6 q"
     let &t_EI .= "\e[2 q"
