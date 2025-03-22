@@ -39,7 +39,7 @@ hook_add = '''
     call ddu#redraw(cur.name, #{method: "refreshItems"})
   endfunction
   function! Narrow(path = '')
-    if get(ddu#ui#get_item(), '__expanded', v:true) && index(['..', $HOME, '/'], a:path) < 0
+    if get(ddu#ui#get_item(), '__expanded', v:true) && a:path == ''
       return
     endif
     let args = #{name: 'narrow'}
@@ -74,8 +74,8 @@ ddu-filer = '''
   nnoremap <silent><buffer> m <Cmd>call ddu#ui#do_action('itemAction', #{name: 'move'})<CR>
   nnoremap <silent><buffer> p <Cmd>call ddu#ui#do_action('itemAction', #{name: 'paste'})<CR>
   nnoremap <silent><buffer> h <Cmd>call Narrow('..')<CR>
-  nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
-  nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
+  nnoremap <silent><buffer> j <Cmd>call ddu#ui#do_action('cursorNext', #{loop: v:true})<CR>
+  nnoremap <silent><buffer> k <Cmd>call ddu#ui#do_action('cursorPrevious', #{loop: v:true})<CR>
   nnoremap <silent><buffer><expr> l
         \ ddu#ui#get_item().kind == 'file' ?
         \   ddu#ui#get_item()->get('action', {})->get('isDirectory', v:false) ?
