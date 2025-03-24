@@ -36,7 +36,7 @@ hook_add = '''
     call ddu#ui#do_action('updateOptions', #{
         \   sourceOptions: { a:name: #{ matchers: matchers } },
         \ })
-    call ddu#redraw(cur.name, #{method: "refreshItems"})
+    call ddu#ui#do_action('redraw', #{ method: 'refreshItems' })
   endfunction
   function! Narrow(path = '')
     if get(ddu#ui#get_item(), '__expanded', v:true) && a:path == ''
@@ -77,34 +77,29 @@ ddu-filer = '''
   nnoremap <silent><buffer> j <Cmd>call ddu#ui#do_action('cursorNext', #{loop: v:true})<CR>
   nnoremap <silent><buffer> k <Cmd>call ddu#ui#do_action('cursorPrevious', #{loop: v:true})<CR>
   nnoremap <silent><buffer><expr> l
-        \ ddu#ui#get_item().kind == 'file' ?
-        \   ddu#ui#get_item()->get('action', {})->get('isDirectory', v:false) ?
-        \     ddu#ui#get_item()->get('__expanded', v:true) ?
-        \         "j" :
-        \         "<Cmd>call Narrow()<CR>" :
-        \     "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{ command: 'drop' }})<CR>" :
+        \ ddu#ui#get_item()->get('action', {})->get('isDirectory', v:false) ?
+        \   ddu#ui#get_item()->get('__expanded', v:true) ?
+        \       "<Cmd>call ddu#ui#do_action('cursorNext')<CR>" :
+        \       "<Cmd>call Narrow()<CR>" :
         \   "<Cmd>call ddu#ui#do_action('itemAction')<CR>"
   nnoremap <silent><buffer><expr> <CR>
-        \ ddu#ui#get_item().kind == 'file' ?
-        \   ddu#ui#get_item()->get('action', {})->get('isDirectory', v:false) ?
-        \     ddu#ui#get_item()->get('__expanded', v:true) ?
-        \         "j" :
-        \         "<Cmd>call Narrow()<CR>" :
-        \     "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{ command: 'drop' }})<CR>" :
+        \ ddu#ui#get_item()->get('action', {})->get('isDirectory', v:false) ?
+        \   ddu#ui#get_item()->get('__expanded', v:true) ?
+        \       "<Cmd>call ddu#ui#do_action('cursorNext')<CR>" :
+        \       "<Cmd>call Narrow()<CR>" :
         \   "<Cmd>call ddu#ui#do_action('itemAction')<CR>"
-  nnoremap <silent><buffer><expr> w
-        \ ddu#ui#get_item().kind == 'file' ?
-        \   ddu#ui#get_item()->get('action', {})->get('isDirectory', v:false) ?
-        \     "" :
-        \     "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{ command: 'split' }})<CR>" :
-        \   "<Cmd>call ddu#ui#do_action('itemAction')<CR>"
-  nnoremap <silent><buffer><expr> t
-        \ ddu#ui#get_item().kind == 'file' ?
-        \   ddu#ui#get_item()->get('action', {})->get('isDirectory', v:false) ?
-        \     "" :
-        \     "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{ command: 'tabnew' }})<CR>" :
-        \   "<Cmd>call ddu#ui#do_action('itemAction')<CR>"
-  nnoremap <nowait><silent><buffer> d <Cmd>call ddu#ui#do_action('itemAction', #{name: 'trash' })<CR>
+  nnoremap <silent><buffer><expr> W
+        \ ddu#ui#get_item()->get('action', {})->get('isDirectory', v:false) ?
+        \   "" :
+        \   "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{ command: 'split' }})<CR>"
+  nnoremap <silent><buffer><expr> T
+        \ ddu#ui#get_item()->get('action', {})->get('isDirectory', v:false) ?
+        \   "" :
+        \   "<Cmd>call ddu#ui#do_action('itemAction', #{name: 'open', params: #{ command: 'tabnew' }})<CR>"
+  nnoremap <nowait><silent><buffer> d <Cmd>call ddu#ui#multi_actions([
+        \   ['itemAction', #{name: 'trash' }],
+        \   ['redraw', #{ method: 'refreshItems' }],
+        \ ])<CR>
   nnoremap <silent><buffer> D <Cmd>call ddu#ui#do_action('itemAction', #{name: 'newDirectory'})<CR>
   nnoremap <silent><buffer> F <Cmd>call ddu#ui#do_action('itemAction', #{name: 'newFile'})<CR>
   nnoremap <silent><buffer> r <Cmd>call ddu#ui#do_action('itemAction', #{name: 'rename'})<CR>
