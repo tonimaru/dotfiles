@@ -6,8 +6,8 @@ execute 'source' s:dir.'/'.'conf/functions.vim'
 execute 'source' s:dir.'/'.'conf/plugins/init.vim'
 execute 'source' s:dir.'/'.'conf/maps.vim'
 
-if filereadable(s:dir.'/local_vimrc')
-  execute 'source' s:dir.'/local_vimrc'
+if filereadable(s:dir.'/'.'local_vimrc')
+  execute 'source' s:dir.'/'.'local_vimrc'
 endif
 
 highlight LineNr guifg=grey guibg=black
