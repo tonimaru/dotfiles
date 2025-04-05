@@ -26,7 +26,13 @@ autocmd my_vimrc FileType vim,proto,sql call s:indent2()
 autocmd my_vimrc WinEnter * checktime
 
 if has('nvim')
-  autocmd my_vimrc TermOpen * startinsert
+  autocmd my_vimrc TermOpen * call s:term_open()
+  function! s:term_open() abort
+    if &previewwindow
+      return
+    endif
+    startinsert
+  endfunction
   autocmd my_vimrc TermOpen * ++once call s:term_init()
   function! s:term_init() abort
     tnoremap <silent> <ESC> <C-\><C-n>
