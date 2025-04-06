@@ -3,7 +3,13 @@ repo = 'Shougo/ddu-ui-filer'
 on_source = 'ddu.vim'
 hook_add = '''
   function! StartDduFiler(opt)
-    let winids = ddu#ui#winids(a:opt.name)
+    let optPath = a:opt->get('sources', {})->get(0, {})->get('options', {})->get('path', '')
+    if !empty(optPath)
+        call ddu#start(a:opt)
+        return
+    endif
+    let optName = a:opt->get('name', '')
+    let winids = ddu#ui#winids(optName)
     if !empty(winids)
         call win_gotoid(winids[0])
         return
@@ -63,7 +69,7 @@ hook_source = '''
   function! OpenFiler(args)
     const path = a:args.items[0].action.path
     const directory = isdirectory(path) ? path : fnamemodify(path, ':h')
-    call StartDduFiler(#{sources: [#{name: 'file', options: #{path: directory}}], ui: 'filer'})
+    call StartDduFiler(#{name: "filer1", sources: [#{name: 'file', options: #{path: directory, toggle: v:true}}], ui: 'filer'})
   endfunction
   call ddu#custom#action('kind', 'file', 'filer', { args -> OpenFiler(args) })
 '''
