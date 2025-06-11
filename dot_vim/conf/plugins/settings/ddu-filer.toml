@@ -15,7 +15,7 @@ hook_add = '''
         return
     endif
     if a:opt->get("resume", v:false)
-        let path = ddu#get_context("filer1")->get('path', '')
+        let path = ddu#get_context(a:opt.name)->get('path', '')
         if path != ''
             let so = a:opt->get('sourceOptions', {})
             let so['file'] = #{ path: path }
