@@ -4,6 +4,9 @@ execute 'source' s:dir.'/'.'conf/options.vim'
 execute 'source' s:dir.'/'.'conf/autocmds.vim'
 execute 'source' s:dir.'/'.'conf/functions.vim'
 execute 'source' s:dir.'/'.'conf/plugins/init.vim'
+if has('nvim')
+  lua require("lsp")
+endif
 execute 'source' s:dir.'/'.'conf/maps.vim'
 
 if filereadable(s:dir.'/'.'local_vimrc')

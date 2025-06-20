@@ -1,52 +1,16 @@
-[[plugins]]
-repo = 'nvim-lua/plenary.nvim'
-if = "has('nvim')"
+# [[plugins]]
+# repo = 'nvim-lua/plenary.nvim'
+# if = "has('nvim')"
 
-[[plugins]]
-repo = 'mfussenegger/nvim-dap'
-if = "has('nvim')"
-
-[[plugins]]
-repo = 'nvimtools/none-ls.nvim'
-if = "has('nvim')"
-depends = ['plenary.nvim']
+# [[plugins]]
+# repo = 'mfussenegger/nvim-dap'
+# if = "has('nvim')"
 
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
 if = "has('nvim')"
-on_event = ['FileType']
-depends = [
-  'nvim-lsp-ts-utils',
-  'nvim-metals',
-  'sqls.nvim',
-  'none-ls.nvim',
-]
-hooks_file ='$HOOKS_DIR/lspconfig.lua'
+lazy = false
 
-[[plugins]]
-repo = 'jose-elias-alvarez/nvim-lsp-ts-utils'
-if = "has('nvim')"
-
-[[plugins]]
-repo = 'scalameta/nvim-metals'
-if = "has('nvim')"
-depends = ['plenary.nvim']
-[plugins.ftplugin]
-scala = '''
-lua << EOM
-  local metals_config = require("metals").bare_config()
-  metals_config.on_attach = on_attach
-  require('metals').initialize_or_attach(metals_config)
-EOM
-'''
-sbt = '''
-lua << EOM
-  local metals_config = require("metals").bare_config()
-  metals_config.on_attach = on_attach
-  require('metals').initialize_or_attach(metals_config)
-EOM
-'''
-
-[[plugins]]
-repo = 'nanotee/sqls.nvim'
-if = "has('nvim')"
+# [[plugins]]
+# repo = 'nanotee/sqls.nvim'
+# if = "has('nvim')"

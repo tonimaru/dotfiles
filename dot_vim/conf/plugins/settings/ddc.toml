@@ -55,9 +55,9 @@ hook_post_source = '''
       \     'forceCompletionPattern': '\.\w*|:\w*|->\w*|\\\w*',
       \     'minAutoCompleteLength': 0,
       \     'dup': 'keep',
-      \     'matchers': ['matcher_fuzzy'],
-      \     'sorters': ['sorter_fuzzy'],
-      \     'converters': ['converter_fuzzy'],
+      \     'matchers': [],
+      \     'sorters': [],
+      \     'converters': [],
       \   },
       \   'vsnip': {
       \     'mark': 'vsnip',
@@ -201,11 +201,11 @@ on_source = 'ddc.vim'
 
 [[plugins]]
 repo = 'Shougo/ddc-source-lsp'
-on_source = 'nvim-lspconfig'
+on_source = 'ddc.vim'
 
 [[plugins]]
 repo = 'uga-rosa/ddc-source-lsp-setup'
-on_source = 'ddc-source-lsp'
+on_source = 'ddc.vim'
 lua_source = '''
   require('ddc_source_lsp_setup').setup()
 '''
