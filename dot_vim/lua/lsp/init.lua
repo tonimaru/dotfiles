@@ -61,6 +61,7 @@ vim.lsp.config('*', {
 })
 
 vim.lsp.enable({
+    'buf_ls',
     'denols',
     'gopls',
     'lua_ls',
