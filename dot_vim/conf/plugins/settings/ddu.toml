@@ -23,7 +23,7 @@ hook_add = '''
 
   if executable('rg')
       nnoremap <silent> gr <Cmd>call ddu#start(#{
-          \   sources: [#{name: 'rg', options: #{matchers: [], volatile: v:true}}],
+          \   sources: [#{name: 'rg', options: #{path: getcwd(), matchers: [], volatile: v:true}}],
           \   sourceParams: #{rg: #{args: ['-i', '--column', '--no-heading', '--color', 'never']}},
           \ })<CR>
   endif

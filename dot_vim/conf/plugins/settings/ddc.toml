@@ -17,7 +17,6 @@ hook_add = '''
     silent! cunmap <C-y>
     silent! cunmap <C-e>
   endfunction
-  nnoremap : <Cmd>call CommandlinePre()<CR>:
   inoremap <expr> <C-x><C-o> ddc#map#manual_complete()
 '''
 hook_post_source = '''

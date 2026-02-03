@@ -37,17 +37,6 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = 'bfredl/nvim-miniyank'
-if = 'has("nvim")'
-on_map = '<Plug>(miniyank-'
-hook_add = '''
-  nmap p <Plug>(miniyank-autoput)
-  nmap P <Plug>(miniyank-autoPut)
-  xmap p <Plug>(miniyank-autoput)
-  xmap P <Plug>(miniyank-autoPut)
-'''
-
-[[plugins]]
 repo = 'monaqa/dial.nvim'
 if = 'has("nvim")'
 on_event = ['CursorHold', 'CursorMoved', 'ModeChanged']

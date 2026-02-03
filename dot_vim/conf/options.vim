@@ -29,11 +29,12 @@ if exists("+imdisable")
   set imdisable
 endif
 set helplang=ja,en
-set clipboard=unnamed,unnamedplus
+set clipboard=unnamedplus
 set nofixendofline
 set synmaxcol=2000
 set conceallevel=0
 set background=dark
+set updatetime=500
 
 set diffopt+=vertical,algorithm:histogram,indent-heuristic
 set cinoptions+=t0

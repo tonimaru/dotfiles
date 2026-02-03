@@ -72,40 +72,6 @@ function! s:lazy_init() abort
       setlocal filetype=gotmpl tabstop=4 shiftwidth=4 noexpandtab
     endif
   endfunction
-
-  if executable('chezmoi')
-    func s:job(cmd, cb) abort
-      if has('nvim')
-        call jobstart(a:cmd, #{on_stdout: {ch, data, name -> a:cb(trim(join(data)))}})
-      else
-        call job_start(a:cmd, #{out_cb: {ch, msg -> a:cb(trim(msg))}})
-      endif
-    endfunc
-    function! s:chezmoi_target_doautocmd(file) abort
-      if a:file == ''
-        return
-      endif
-      execute 'doautocmd' 'my_vimrc' 'BufWritePost' a:file
-    endfunction
-    function! s:chezmoi_target_path(file) abort
-      if a:file == ''
-        return
-      endif
-      let cmd = ['chezmoi', 'target-path', '--force', a:file]
-      call s:job(cmd, function("s:chezmoi_target_doautocmd"))
-    endfunction
-    function! s:chezmoi_apply(file) abort
-      let cmd = ['chezmoi', 'apply', '--force', '--source-path', a:file]
-      call s:job(cmd, {d -> s:chezmoi_target_path(a:file)})
-    endfunction
-    function! s:chezmoi_autocmd(source_path) abort
-      if a:source_path == ''
-        return
-      endif
-      execute 'autocmd' 'my_vimrc' 'BufWritePost' a:source_path .. '/*' 'call s:chezmoi_apply(expand("<afile>:p"))'
-    endfunction
-    call s:job(['chezmoi', 'source-path'], function("s:chezmoi_autocmd"))
-  endif
 endfunction
 
 au BufReadPost * ++once call s:lazy_init()

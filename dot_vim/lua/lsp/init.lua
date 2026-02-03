@@ -1,39 +1,45 @@
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-
 local function lsp_buf_keymap(bufnr)
-    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-
-    local opts = { noremap = true, silent = true }
-    buf_set_keymap('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-
-    buf_set_keymap('n', 'gl', '<cmd>lua vim.diagnostic.open_float(nil, { focus = false, scope = "cursor" })<CR>', opts)
-    buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-    buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-    buf_set_keymap('n', 'gI', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-    buf_set_keymap('n', 'gT', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-    buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-    buf_set_keymap('n', '[prefix]lr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    buf_set_keymap('n', '<c-p>', '<cmd>lua vim.diagnostic.goto_prev({float=false})<CR>', opts)
-    buf_set_keymap('n', '<c-n>', '<cmd>lua vim.diagnostic.goto_next({float=false})<CR>', opts)
-    buf_set_keymap('n', '==', '<cmd>lua vim.lsp.buf.format()<CR>', opts)
+    local float_opts = {
+        focusable = true,
+        close_events = { "CursorMoved", "CursorMovedI", "BufHidden", "InsertCharPre" },
+        border = 'rounded',
+        source = 'always',
+        prefix = ' ',
+        scope = 'cursor',
+    }
+    local map_opts = {
+        buffer = bufnr,
+        noremap = true,
+        silent = true
+    }
+    vim.keymap.set('n', '<c-]>', function() vim.lsp.buf.definition() end, map_opts)
+    vim.keymap.set('n', 'gl', function() vim.diagnostic.open_float(float_opts) end, map_opts)
+    vim.keymap.set('n', 'gd', function() vim.lsp.buf.declaration() end, map_opts)
+    vim.keymap.set('n', 'gD', function() vim.lsp.buf.definition() end, map_opts)
+    vim.keymap.set('n', 'gI', function() vim.lsp.buf.implementation() end, map_opts)
+    vim.keymap.set('n', 'gT', function() vim.lsp.buf.type_definition() end, map_opts)
+    vim.keymap.set('n', 'K', function() vim.lsp.buf.hover(float_opts) end, map_opts)
+    vim.keymap.set('n', '[prefix]lr', function() vim.lsp.buf.rename() end, map_opts)
+    vim.keymap.set('n', '<c-p>', function() vim.diagnostic.jump({ count = -1, float = true }) end, map_opts)
+    vim.keymap.set('n', '<c-n>', function() vim.diagnostic.jump({ count = 1, float = true }) end, map_opts)
+    vim.keymap.set('n', '==', function() vim.lsp.buf.format() end, map_opts)
 
     if (vim.fn.exists("*ddu#start")) then
-        buf_set_keymap('n', 'go', '<cmd>call ddu#start(#{ sources: [#{ name: "lsp_documentSymbol" }] })<CR>', opts)
-        buf_set_keymap('n', 'gR', '<cmd>call ddu#start(#{ sources: [#{ name: "lsp_references" }] })<CR>', opts)
-        buf_set_keymap('n', 'gw', '<cmd>call ddu#start(#{ sources: [#{ name: "lsp_workspaceSymbol" }] })<CR>', opts)
-        buf_set_keymap('n', '[prefix]la',
+        vim.keymap.set('n', 'go', '<cmd>call ddu#start(#{ sources: [#{ name: "lsp_documentSymbol" }] })<CR>', map_opts)
+        vim.keymap.set('n', 'gR', '<cmd>call ddu#start(#{ sources: [#{ name: "lsp_references" }] })<CR>', map_opts)
+        vim.keymap.set('n', 'gw', '<cmd>call ddu#start(#{ sources: [#{ name: "lsp_workspaceSymbol" }] })<CR>', map_opts)
+        vim.keymap.set('n', '[prefix]la',
             '<cmd>call ddu#start(#{sources: [#{ name: "lsp_codeAction" }], kindOptions: #{ lsp_codeAction: #{defaultAction: "apply" }}})<CR>',
-            opts)
+            map_opts)
     else
-        buf_set_keymap('n', 'go', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
-        buf_set_keymap('n', 'gR', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-        buf_set_keymap('n', 'gw', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
-        buf_set_keymap('n', '[prefix]la', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+        vim.keymap.set('n', 'go', function() vim.lsp.buf.document_symbol() end, map_opts)
+        vim.keymap.set('n', 'gR', function() vim.lsp.buf.references() end, map_opts)
+        vim.keymap.set('n', 'gw', function() vim.lsp.buf.workspace_symbol() end, map_opts)
+        vim.keymap.set('n', '[prefix]la', function() vim.lsp.buf.code_action() end, map_opts)
     end
 end
 
-local function on_attach(client, bufnr)
+local function on_attach(_, bufnr)
     local success, is_attached = pcall(vim.api.nvim_buf_get_var, bufnr, 'is_nivm_lsp_attached')
     if success and is_attached or false then
         return
@@ -56,6 +62,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end,
 })
 
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
 vim.lsp.config('*', {
     capabilities = capabilities
 })
@@ -65,6 +74,7 @@ vim.lsp.enable({
     'denols',
     'gopls',
     'lua_ls',
+    'rust_analyzer',
     'sqls',
     'ts_ls',
     'vimls',

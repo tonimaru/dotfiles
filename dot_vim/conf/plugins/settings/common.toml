@@ -5,18 +5,6 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = 'matsui54/denops-popup-preview.vim'
-depends = ['denops.vim']
-on_event = ['TextChangedI']
-hook_post_source = 'call popup_preview#enable()'
-
-[[plugins]]
-repo = 'matsui54/denops-signature_help'
-depends = ['denops.vim']
-on_event = ['TextChangedI']
-hook_post_source = 'call signature_help#enable()'
-
-[[plugins]]
 repo = 'Shougo/context_filetype.vim'
 hook_source = '''
   let g:context_filetype#ignore_patterns = #{

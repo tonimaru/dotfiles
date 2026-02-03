@@ -50,7 +50,7 @@ else
   call denops#server#wait_async({ -> s:check_install() })
 endif
 
-execute 'autocmd' 'my_vimrc' 'BufWritePost' $BASE_DIR .. '/**' 'call dpp#make_state(s:dpp_base, s:config_path)'
+execute 'autocmd' 'my_vimrc' 'BufWritePost' $BASE_DIR .. '/**' 'call dpp#clear_state() | call dpp#make_state()'
 
 if exists(':filetype') | filetype indent plugin on | endif
 if exists(':syntax') | syntax on | endif
