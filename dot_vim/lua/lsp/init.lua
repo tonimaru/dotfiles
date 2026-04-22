@@ -70,10 +70,13 @@ vim.lsp.config('*', {
 })
 
 vim.lsp.enable({
+    'basedpyright',
     'buf_ls',
     'denols',
     'gopls',
     'lua_ls',
+    'oxfmt',
+    'ruff',
     'rust_analyzer',
     'sqls',
     'ts_ls',
