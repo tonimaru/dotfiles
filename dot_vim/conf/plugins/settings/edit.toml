@@ -51,19 +51,6 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = 'vim-skk/skkeleton'
-depends = ['denops.vim']
-on_event = ['InsertEnter']
-hook_source = '''
-  imap <C-s> <Plug>(skkeleton-toggle)
-'''
-
-[[plugins]]
-repo = 'shg-eo/skkeleton-azik'
-depends = ['skkeleton']
-on_event = ['InsertEnter']
-
-[[plugins]]
 repo = 'ysmb-wtsg/in-and-out.nvim'
 if = 'has("nvim")'
 on_map = { i = ['<C-CR>'] }
