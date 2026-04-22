@@ -4,12 +4,8 @@ on_event = ['CursorHold', 'CursorMoved', 'ModeChanged', 'BufReadPost']
 hook_add = '''
   let g:matchup_matchparen_deferred = 1
   let g:matchup_matchparen_offscreen = {}
-'''
-lua_source = '''
-  local success, conf = pcall(require, 'nvim-treesitter.configs')
-  if success then
-    conf.setup { matchup = { enable = true } }
-  end
+  let g:matchup_treesitter_enabled = v:true
+  let g:matchup_treesitter_stopline = 500
 '''
 
 [[plugins]]

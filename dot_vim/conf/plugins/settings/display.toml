@@ -5,12 +5,14 @@ lazy = 0
 
 [[plugins]]
 repo = 'nvim-treesitter/nvim-treesitter'
+rev = 'main'
 if = 'has("nvim")'
+lazy = 0
 on_event = ['FileType']
-on_cmd = ['TSInstall', 'TSInstallInfo', 'TSUpdate', 'TSUninstall']
+on_cmd = ['TSInstall', 'TSUpdate']
 hook_post_update = 'TSUpdate'
 lua_source = '''
-  require'nvim-treesitter.configs'.setup {
+  require('nvim-treesitter').setup {
     highlight = {
       enable = true,
       disable = function(lang, bufnr)
